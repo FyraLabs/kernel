@@ -3,10 +3,9 @@
 
 Summary: The Linux kernel
 
-# For a stable, released kernel, released_kernel should be 1. For rawhide
-# and/or a kernel built from an rc or git snapshot, released_kernel should
-# be 0.
-%global released_kernel 0
+# For a kernel released for public testing, released_kernel should be 1.
+# For internal testing builds during development, it should be 0.
+%global released_kernel %%RELEASED_KERNEL%%
 
 # Sign modules on x86.  Make sure the config files match this setting if more
 # architectures are added.
@@ -26,54 +25,13 @@ Summary: The Linux kernel
 
 # define buildid .local
 
-# baserelease defines which build revision of this kernel version we're
-# building.  We used to call this fedora_build, but the magical name
-# baserelease is matched by the rpmdev-bumpspec tool, which you should use.
-#
-# We used to have some extra magic weirdness to bump this automatically,
-# but now we don't.  Just use: rpmdev-bumpspec -c 'comment for changelog'
-# When changing base_sublevel below or going from rc to a final kernel,
-# reset this by hand to 1 (or to 0 and then use rpmdev-bumpspec).
-# scripts/rebase.sh should be made to do that for you, actually.
-#
-# NOTE: baserelease must be > 0 or bad things will happen if you switch
-#       to a released kernel (released version will be < rc version)
-#
-# For non-released -rc kernels, this will be appended after the rcX and
-# gitX tags, so a 3 here would become part of release "0.rcX.gitX.3"
-#
-%global baserelease 1
-%global fedora_build %{baserelease}
+%define rpmversion %%KVERSION%%.%%KPATCHLEVEL%%.%%KSUBLEVEL%%
+%define pkgrelease %%PKGRELEASE%%
 
-# base_sublevel is the kernel version we're starting with and patching
-# on top of -- for example, 3.1-rc7-git1 starts with a 3.0 base,
-# which yields a base_sublevel of 0.
-%define base_sublevel 13
+# allow pkg_release to have configurable %{?dist} tag
+%define specrelease %%SPECRELEASE%%
 
-## If this is a released kernel ##
-%if 0%{?released_kernel}
-
-# Do we have a -stable update to apply?
-%define stable_update 0
-# Set rpm version accordingly
-%if 0%{?stable_update}
-%define stablerev %{stable_update}
-%define stable_base %{stable_update}
-%endif
-%define rpmversion 4.%{base_sublevel}.%{stable_update}
-
-## The not-released-kernel case ##
-%else
-# The next upstream release sublevel (base_sublevel+1)
-%define upstream_sublevel %(echo $((%{base_sublevel} + 1)))
-# The rc snapshot level
-%global rcrev 3
-# The git snapshot level
-%define gitrev 0
-# Set rpm version accordingly
-%define rpmversion 4.%{upstream_sublevel}.0
-%endif
-# Nb: The above rcrev and gitrev values automagically define Patch00 and Patch01 below.
+%define pkg_release %{specrelease}%{?buildid}
 
 # What parts do we want to build?  We must build at least one kernel.
 # These are the kernels that are built IF the architecture allows it.
@@ -127,33 +85,8 @@ Summary: The Linux kernel
 # See also 'make debug' and 'make release'.
 %define debugbuildsenabled 1
 
-# Want to build a vanilla kernel build without any non-upstream patches?
-%define with_vanilla %{?_with_vanilla: 1} %{?!_with_vanilla: 0}
-
-# pkg_release is what we'll fill in for the rpm Release: field
-%if 0%{?released_kernel}
-
-%define pkg_release %{fedora_build}%{?buildid}%{?dist}
-
-%else
-
-# non-released_kernel
-%if 0%{?rcrev}
-%define rctag .rc%rcrev
-%else
-%define rctag .rc0
-%endif
-%if 0%{?gitrev}
-%define gittag .git%gitrev
-%else
-%define gittag .git0
-%endif
-%define pkg_release 0%{?rctag}%{?gittag}.%{fedora_build}%{?buildid}%{?dist}
-
-%endif
-
 # The kernel tarball/base version
-%define kversion 4.%{base_sublevel}
+%define kversion %%KVERSION%%.%%KPATCHLEVEL%%
 
 %define make_target bzImage
 %define image_install_path boot
@@ -161,19 +94,6 @@ Summary: The Linux kernel
 %define KVERREL %{version}-%{release}.%{_target_cpu}
 %define hdrarch %_target_cpu
 %define asmarch %_target_cpu
-
-%if 0%{!?nopatches:1}
-%define nopatches 0
-%endif
-
-%if %{with_vanilla}
-%define nopatches 1
-%endif
-
-%if %{nopatches}
-%define with_bootwrapper 0
-%define variant -vanilla
-%endif
 
 %if !%{debugbuildsenabled}
 %define with_debug 0
@@ -316,13 +236,8 @@ Summary: The Linux kernel
 
 # Should make listnewconfig fail if there's config options
 # printed out?
-%if %{nopatches}
 %define listnewconfig_fail 0
 %define configmismatch_fail 0
-%else
-%define listnewconfig_fail 1
-%define configmismatch_fail 1
-%endif
 
 # To temporarily exclude an architecture from being built, add it to
 # %%nobuildarches. Do _NOT_ use the ExclusiveArch: line, because if we
@@ -437,11 +352,10 @@ BuildRequires: binutils-%{_build_arch}-linux-gnu, gcc-%{_build_arch}-linux-gnu
 %define cross_opts CROSS_COMPILE=%{_build_arch}-linux-gnu-
 %endif
 
-Source0: https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{kversion}.tar.xz
+Source0: linux-%{rpmversion}-%{pkgrelease}.tar.xz
 
 Source10: perf-man-%{kversion}.tar.gz
 Source11: x509.genkey
-Source12: remove-binary-diff.pl
 Source15: merge.pl
 Source16: mod-extra.list
 Source17: mod-extra.sh
@@ -488,158 +402,9 @@ Source1000: kernel-local
 Source2000: cpupower.service
 Source2001: cpupower.config
 
-# Here should be only the patches up to the upstream canonical Linus tree.
-
-# For a stable release kernel
-%if 0%{?stable_update}
-%if 0%{?stable_base}
-%define    stable_patch_00  patch-4.%{base_sublevel}.%{stable_base}.xz
-Source5000: %{stable_patch_00}
-%endif
-
-# non-released_kernel case
-# These are automagically defined by the rcrev and gitrev values set up
-# near the top of this spec file.
-%else
-%if 0%{?rcrev}
-Source5000: patch-4.%{upstream_sublevel}-rc%{rcrev}.xz
-%if 0%{?gitrev}
-Source5001: patch-4.%{upstream_sublevel}-rc%{rcrev}-git%{gitrev}.xz
-%endif
-%else
-# pre-{base_sublevel+1}-rc1 case
-%if 0%{?gitrev}
-Source5000: patch-4.%{base_sublevel}-git%{gitrev}.xz
-%endif
-%endif
-%endif
-
 ## Patches needed for building this package
 
-## compile fixes
-
-# ongoing complaint, full discussion delayed until ksummit/plumbers
-Patch002: 0001-iio-Use-event-header-from-kernel-tree.patch
-
-%if !%{nopatches}
-
-# Git trees.
-
-# Standalone patches
-# 100 - Generic long running patches
-
-Patch110: lib-cpumask-Make-CPUMASK_OFFSTACK-usable-without-deb.patch
-
-Patch111: input-kill-stupid-messages.patch
-
-Patch112: die-floppy-die.patch
-
-Patch113: no-pcspkr-modalias.patch
-
-Patch114: silence-fbcon-logo.patch
-
-Patch115: Kbuild-Add-an-option-to-enable-GCC-VTA.patch
-
-Patch116: crash-driver.patch
-
-Patch117: lis3-improve-handling-of-null-rate.patch
-
-Patch118: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
-
-Patch119: criu-no-expert.patch
-
-Patch120: ath9k-rx-dma-stop-check.patch
-
-Patch121: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
-
-Patch122: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
-
-# This no longer applies, let's see if it needs to be updated
-# Patch123: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
-
-# 200 - x86 / secureboot
-
-Patch201: efi-lockdown.patch
-
-Patch202: KEYS-Allow-unrestricted-boot-time-addition-of-keys-t.patch
-
-Patch203: Add-EFI-signature-data-types.patch
-
-Patch204: Add-an-EFI-signature-blob-parser-and-key-loader.patch
-
-Patch205: MODSIGN-Import-certificates-from-UEFI-Secure-Boot.patch
-
-Patch206: MODSIGN-Support-not-importing-certs-from-db.patch
-
-Patch210: disable-i8042-check-on-apple-mac.patch
-
-Patch211: drm-i915-hush-check-crtc-state.patch
-
-# 300 - ARM patches
-
-# http://www.spinics.net/lists/linux-tegra/msg26029.html
-Patch301: usb-phy-tegra-Add-38.4MHz-clock-table-entry.patch
-
-# Fix OMAP4 (pandaboard)
-Patch302: arm-revert-mmc-omap_hsmmc-Use-dma_request_chan-for-reque.patch
-
-# http://patchwork.ozlabs.org/patch/587554/
-Patch303: ARM-tegra-usb-no-reset.patch
-
-Patch304: allwinner-net-emac.patch
-
-# https://www.spinics.net/lists/arm-kernel/msg554183.html
-Patch305: arm-imx6-hummingboard2.patch
-
-Patch306: arm64-Add-option-of-13-for-FORCE_MAX_ZONEORDER.patch
-
-# https://patchwork.kernel.org/patch/9967397/
-Patch307: tegra-Use-different-MSI-target-address-for-Tegra20.patch
-
-# https://patchwork.kernel.org/patch/9815555/
-# https://patchwork.kernel.org/patch/9815651/
-# https://patchwork.kernel.org/patch/9819885/
-# https://patchwork.kernel.org/patch/9820417/
-# https://patchwork.kernel.org/patch/9821151/
-# https://patchwork.kernel.org/patch/9821157/
-Patch310: qcom-msm89xx-fixes.patch
-
-# https://patchwork.kernel.org/patch/9831825/
-# https://patchwork.kernel.org/patch/9833721/
-
-# http://www.spinics.net/lists/dri-devel/msg132235.html
-Patch320: bcm283x-vc4-Fix-OOPSes-from-trying-to-cache-a-partially-constructed-BO..patch
-
-# Fix USB on the RPi https://patchwork.kernel.org/patch/9879371/
-Patch321: bcm283x-dma-mapping-skip-USB-devices-when-configuring-DMA-during-probe.patch
-
-# bcm2837 bluetooth support
-#
-Patch323: bcm2837-bluetooth-support.patch
-
-# 400 - IBM (ppc/s390x) patches
-
-# 500 - Temp fixes/CVEs etc
-
-# CVE-2017-7477 rhbz 1445207 1445208
-Patch502: CVE-2017-7477.patch
-
-# 600 - Patches for improved Bay and Cherry Trail device support
-# Below patches are submitted upstream, awaiting review / merging
-Patch601: 0001-Input-gpio_keys-Allow-suppression-of-input-events-fo.patch
-Patch602: 0002-Input-soc_button_array-Suppress-power-button-presses.patch
-Patch610: 0010-Input-silead-Add-support-for-capactive-home-button-f.patch
-
-# rhbz 1476467
-Patch617: Fix-for-module-sig-verification.patch
-
-# rhbz 1431375
-Patch618: HID-rmi-Make-sure-the-HID-device-is-opened-on-resume.patch
-Patch619: input-rmi4-remove-the-need-for-artifical-IRQ.patch
-
 # END OF PATCH DEFINITIONS
-
-%endif
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root
 
@@ -1000,11 +765,6 @@ exit 1
 %endif
 %endif
 
-%if "%{baserelease}" == "0"
-echo "baserelease must be greater than zero"
-exit 1
-%endif
-
 # more sanity checking; do it quietly
 if [ "%{patches}" != "%%{patches}" ] ; then
   for patch in %{patches} ; do
@@ -1024,7 +784,7 @@ ApplyPatch()
     exit 1
   fi
   if ! grep -E "^Patch[0-9]+: $patch\$" %{_specdir}/${RPM_PACKAGE_NAME%%%%%{?variant}}.spec ; then
-    if [ "${patch:0:8}" != "patch-4." ] ; then
+    if [ "${patch:0:8}" != "patch-%%KVERSION%%." ] ; then
       echo "ERROR: Patch  $patch  not listed as a source patch in specfile"
       exit 1
     fi
@@ -1051,161 +811,10 @@ ApplyOptionalPatch()
   fi
 }
 
-# First we unpack the kernel tarball.
-# If this isn't the first make prep, we use links to the existing clean tarball
-# which speeds things up quite a bit.
-
-# Update to latest upstream.
-%if 0%{?released_kernel}
-%define vanillaversion 4.%{base_sublevel}
-# non-released_kernel case
-%else
-%if 0%{?rcrev}
-%define vanillaversion 4.%{upstream_sublevel}-rc%{rcrev}
-%if 0%{?gitrev}
-%define vanillaversion 4.%{upstream_sublevel}-rc%{rcrev}-git%{gitrev}
-%endif
-%else
-# pre-{base_sublevel+1}-rc1 case
-%if 0%{?gitrev}
-%define vanillaversion 4.%{base_sublevel}-git%{gitrev}
-%else
-%define vanillaversion 4.%{base_sublevel}
-%endif
-%endif
-%endif
-
-# %%{vanillaversion} : the full version name, e.g. 2.6.35-rc6-git3
-# %%{kversion}       : the base version, e.g. 2.6.34
-
-# Use kernel-%%{kversion}%%{?dist} as the top-level directory name
-# so we can prep different trees within a single git directory.
-
-# Build a list of the other top-level kernel tree directories.
-# This will be used to hardlink identical vanilla subdirs.
-sharedirs=$(find "$PWD" -maxdepth 1 -type d -name 'kernel-4.*' \
-            | grep -x -v "$PWD"/kernel-%{kversion}%{?dist}) ||:
-
-# Delete all old stale trees.
-if [ -d kernel-%{kversion}%{?dist} ]; then
-  cd kernel-%{kversion}%{?dist}
-  for i in linux-*
-  do
-     if [ -d $i ]; then
-       # Just in case we ctrl-c'd a prep already
-       rm -rf deleteme.%{_target_cpu}
-       # Move away the stale away, and delete in background.
-       mv $i deleteme-$i
-       rm -rf deleteme* &
-     fi
-  done
-  cd ..
-fi
-
-# Generate new tree
-if [ ! -d kernel-%{kversion}%{?dist}/vanilla-%{vanillaversion} ]; then
-
-  if [ -d kernel-%{kversion}%{?dist}/vanilla-%{kversion} ]; then
-
-    # The base vanilla version already exists.
-    cd kernel-%{kversion}%{?dist}
-
-    # Any vanilla-* directories other than the base one are stale.
-    for dir in vanilla-*; do
-      [ "$dir" = vanilla-%{kversion} ] || rm -rf $dir &
-    done
-
-  else
-
-    rm -f pax_global_header
-    # Look for an identical base vanilla dir that can be hardlinked.
-    for sharedir in $sharedirs ; do
-      if [[ ! -z $sharedir  &&  -d $sharedir/vanilla-%{kversion} ]] ; then
-        break
-      fi
-    done
-    if [[ ! -z $sharedir  &&  -d $sharedir/vanilla-%{kversion} ]] ; then
-%setup -q -n kernel-%{kversion}%{?dist} -c -T
-      cp -al $sharedir/vanilla-%{kversion} .
-    else
-%setup -q -n kernel-%{kversion}%{?dist} -c
-      mv linux-%{kversion} vanilla-%{kversion}
-    fi
-
-  fi
-
-%if "%{kversion}" != "%{vanillaversion}"
-
-  for sharedir in $sharedirs ; do
-    if [[ ! -z $sharedir  &&  -d $sharedir/vanilla-%{vanillaversion} ]] ; then
-      break
-    fi
-  done
-  if [[ ! -z $sharedir  &&  -d $sharedir/vanilla-%{vanillaversion} ]] ; then
-
-    cp -al $sharedir/vanilla-%{vanillaversion} .
-
-  else
-
-    # Need to apply patches to the base vanilla version.
-    cp -al vanilla-%{kversion} vanilla-%{vanillaversion}
-    cd vanilla-%{vanillaversion}
-
-cp %{SOURCE12} .
-
-# Update vanilla to the latest upstream.
-# (non-released_kernel case only)
-%if 0%{?rcrev}
-    xzcat %{SOURCE5000} | ./remove-binary-diff.pl | patch -p1 -F1 -s
-%if 0%{?gitrev}
-    xzcat %{SOURCE5001} | ./remove-binary-diff.pl | patch -p1 -F1 -s
-%endif
-%else
-# pre-{base_sublevel+1}-rc1 case
-%if 0%{?gitrev}
-    xzcat %{SOURCE5000} | ./remove-binary-diff.pl | patch -p1 -F1 -s
-%endif
-%endif
-    git init
-    git config user.email "kernel-team@fedoraproject.org"
-    git config user.name "Fedora Kernel Team"
-    git config gc.auto 0
-    git add .
-    git commit -a -q -m "baseline"
-
-    cd ..
-
-  fi
-
-%endif
-
-else
-
-  # We already have all vanilla dirs, just change to the top-level directory.
-  cd kernel-%{kversion}%{?dist}
-
-fi
-
-# Now build the fedora kernel tree.
-cp -al vanilla-%{vanillaversion} linux-%{KVERREL}
+%setup -q -n kernel-%{rpmversion}-%{pkgrelease} -c
+mv linux-%{rpmversion}-%{pkgrelease} linux-%{KVERREL}
 
 cd linux-%{KVERREL}
-if [ ! -d .git ]; then
-    git init
-    git config user.email "kernel-team@fedoraproject.org"
-    git config user.name "Fedora Kernel Team"
-    git config gc.auto 0
-    git add .
-    git commit -a -q -m "baseline"
-fi
-
-
-# released_kernel with possible stable updates
-%if 0%{?stable_base}
-# This is special because the kernel spec is hell and nothing is consistent
-xzcat %{SOURCE5000} | patch -p1 -F1 -s
-git commit -a -m "Stable update"
-%endif
 
 # Drop some necessary files from the source dir into the buildroot
 cp $RPM_SOURCE_DIR/kernel-*.config .
@@ -1236,11 +845,6 @@ do
   rm $i.tmp
 done
 %endif
-
-# Note: Even in the "nopatches" path some patches (build tweaks and compile
-# fixes) will always get applied; see patch defition above for details
-
-git am %{patches}
 
 # END OF PATCH APPLICATIONS
 
@@ -1343,20 +947,8 @@ BuildKernel() {
     KernelVer=%{version}-%{release}.%{_target_cpu}${Flav}
     echo BUILDING A KERNEL FOR ${Flavour} %{_target_cpu}...
 
-    %if 0%{?stable_update}
-    # make sure SUBLEVEL is incremented on a stable release.  Sigh 3.x.
-    perl -p -i -e "s/^SUBLEVEL.*/SUBLEVEL = %{?stablerev}/" Makefile
-    %endif
-
     # make sure EXTRAVERSION says what we want it to say
     perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = -%{release}.%{_target_cpu}${Flav}/" Makefile
-
-    # if pre-rc1 devel kernel, must fix up PATCHLEVEL for our versioning scheme
-    %if !0%{?rcrev}
-    %if 0%{?gitrev}
-    perl -p -i -e 's/^PATCHLEVEL.*/PATCHLEVEL = %{upstream_sublevel}/' Makefile
-    %endif
-    %endif
 
     # and now to start the build process
 
