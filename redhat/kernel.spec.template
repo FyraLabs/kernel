@@ -129,7 +129,7 @@ Summary: The Linux kernel
 
 # bootwrapper is only on ppc
 # sparse blows up on ppc
-%ifnarch %{power64}
+%ifnarch ppc64le
 %define with_bootwrapper 0
 %define with_sparse 0
 %endif
@@ -147,18 +147,13 @@ Summary: The Linux kernel
 %define kernel_image arch/x86/boot/bzImage
 %endif
 
-%ifarch %{power64}
+%ifarch ppc64le
 %define asmarch powerpc
 %define hdrarch powerpc
 %define make_target vmlinux
 %define kernel_image vmlinux
 %define kernel_image_elf 1
-%ifarch ppc64
-%define all_arch_configs kernel-%{version}-ppc64*.config
-%endif
-%ifarch ppc64le
 %define all_arch_configs kernel-%{version}-ppc64le*.config
-%endif
 %endif
 
 %ifarch s390x
@@ -196,7 +191,7 @@ Summary: The Linux kernel
 %endif
 
 # Architectures we build tools/cpupower on
-%define cpupowerarchs x86_64 %{power64} aarch64
+%define cpupowerarchs x86_64 ppc64le aarch64
 
 
 #
@@ -215,7 +210,7 @@ Version: %{rpmversion}
 Release: %{pkg_release}
 # DO NOT CHANGE THE 'ExclusiveArch' LINE TO TEMPORARILY EXCLUDE AN ARCHITECTURE BUILD.
 # SET %%nobuildarches (ABOVE) INSTEAD
-ExclusiveArch: i686 x86_64 ppc64 s390x aarch64 ppc64le
+ExclusiveArch: i686 x86_64 s390x aarch64 ppc64le
 ExclusiveOS: Linux
 %ifnarch %{nobuildarches}
 Requires: kernel-core-uname-r = %{KVERREL}%{?variant}
@@ -282,7 +277,6 @@ Source17: mod-extra.sh
 Source18: mod-sign.sh
 Source90: filter-x86_64.sh
 Source93: filter-aarch64.sh
-Source95: filter-ppc64.sh
 Source96: filter-ppc64le.sh
 Source97: filter-s390x.sh
 Source99: filter-modules.sh
@@ -290,8 +284,6 @@ Source99: filter-modules.sh
 
 Source20: kernel-aarch64.config
 Source21: kernel-aarch64-debug.config
-Source30: kernel-ppc64.config
-Source31: kernel-ppc64-debug.config
 Source32: kernel-ppc64le.config
 Source33: kernel-ppc64le-debug.config
 Source36: kernel-s390x.config
@@ -886,7 +878,7 @@ BuildKernel() {
     fi
     rm -f $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts/*.o
     rm -f $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts/*/*.o
-%ifarch %{power64}
+%ifarch ppc64le
     cp -a --parents arch/powerpc/lib/crtsavres.[So] $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/
 %endif
     if [ -d arch/%{asmarch}/include ]; then
