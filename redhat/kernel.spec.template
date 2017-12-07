@@ -9,7 +9,7 @@ Summary: The Linux kernel
 
 # Sign modules on x86.  Make sure the config files match this setting if more
 # architectures are added.
-%ifarch %{ix86} x86_64
+%ifarch x86_64
 %global signkernel 1
 %global signmodules 1
 %global zipmodules 1
@@ -44,8 +44,6 @@ Summary: The Linux kernel
 #
 # standard kernel
 %define with_up        %{?_without_up:        0} %{?!_without_up:        1}
-# kernel PAE (only valid for i686 (PAE))
-%define with_pae       %{?_without_pae:       0} %{?!_without_pae:       1}
 # kernel-debug
 %define with_debug     %{?_without_debug:     0} %{?!_without_debug:     1}
 # kernel-headers
@@ -66,8 +64,6 @@ Summary: The Linux kernel
 #
 # Only build the base kernel (--with baseonly):
 %define with_baseonly  %{?_with_baseonly:     1} %{?!_with_baseonly:     0}
-# Only build the pae kernel (--with paeonly):
-%define with_paeonly   %{?_with_paeonly:      1} %{?!_with_paeonly:      0}
 # Only build the debug kernel (--with dbgonly):
 %define with_dbgonly   %{?_with_dbgonly:      1} %{?!_with_dbgonly:      0}
 #
@@ -100,25 +96,15 @@ Summary: The Linux kernel
 
 # if requested, only build base kernel
 %if %{with_baseonly}
-%define with_pae 0
-%define with_debug 0
-%endif
-
-# if requested, only build pae kernel
-%if %{with_paeonly}
-%define with_up 0
 %define with_debug 0
 %endif
 
 # if requested, only build debug kernel
 %if %{with_dbgonly}
 %define with_up 0
-%define with_pae 0
 %define with_tools 0
 %define with_perf 0
 %endif
-
-%define all_x86 i386 i686
 
 %if %{with_vdso_install}
 %define use_vdso 1
@@ -150,12 +136,9 @@ Summary: The Linux kernel
 
 # Per-arch tweaks
 
-%ifarch %{all_x86}
+%ifarch i686
 %define asmarch x86
 %define hdrarch i386
-%define pae PAE
-%define all_arch_configs kernel-%{version}-i?86*.config
-%define kernel_image arch/x86/boot/bzImage
 %endif
 
 %ifarch x86_64
@@ -202,24 +185,18 @@ Summary: The Linux kernel
 # Which is a BadThing(tm).
 
 # We only build kernel-headers on the following...
-%define nobuildarches i386
+%define nobuildarches i686
 
 %ifarch %nobuildarches
 %define with_up 0
-%define with_pae 0
 %define with_debuginfo 0
 %define with_perf 0
 %define with_tools 0
 %define _enable_debug_packages 0
 %endif
 
-%define with_pae_debug 0
-%if %{with_pae}
-%define with_pae_debug %{with_debug}
-%endif
-
 # Architectures we build tools/cpupower on
-%define cpupowerarchs %{ix86} x86_64 %{power64} aarch64
+%define cpupowerarchs x86_64 %{power64} aarch64
 
 
 #
@@ -238,7 +215,7 @@ Version: %{rpmversion}
 Release: %{pkg_release}
 # DO NOT CHANGE THE 'ExclusiveArch' LINE TO TEMPORARILY EXCLUDE AN ARCHITECTURE BUILD.
 # SET %%nobuildarches (ABOVE) INSTEAD
-ExclusiveArch: %{all_x86} x86_64 ppc64 s390x aarch64 ppc64le
+ExclusiveArch: i686 x86_64 ppc64 s390x aarch64 ppc64le
 ExclusiveOS: Linux
 %ifnarch %{nobuildarches}
 Requires: kernel-core-uname-r = %{KVERREL}%{?variant}
@@ -304,7 +281,6 @@ Source16: mod-extra.list
 Source17: mod-extra.sh
 Source18: mod-sign.sh
 Source90: filter-x86_64.sh
-Source92: filter-i686.sh
 Source93: filter-aarch64.sh
 Source95: filter-ppc64.sh
 Source96: filter-ppc64le.sh
@@ -314,10 +290,6 @@ Source99: filter-modules.sh
 
 Source20: kernel-aarch64.config
 Source21: kernel-aarch64-debug.config
-Source26: kernel-i686.config
-Source27: kernel-i686-debug.config
-Source28: kernel-i686-PAE.config
-Source29: kernel-i686-PAEdebug.config
 Source30: kernel-ppc64.config
 Source31: kernel-ppc64-debug.config
 Source32: kernel-ppc64le.config
@@ -631,29 +603,6 @@ Provides: installonlypkg(kernel)\
 
 # Now, each variant package.
 
-%define variant_summary The Linux kernel compiled for PAE capable machines
-%kernel_variant_package %{pae}
-%description %{pae}-core
-This package includes a version of the Linux kernel with support for up to
-64GB of high memory. It requires a CPU with Physical Address Extensions (PAE).
-The non-PAE kernel can only address up to 4GB of memory.
-Install the kernel-PAE package if your machine has more than 4GB of memory.
-
-
-%define variant_summary The Linux kernel compiled with extra debugging enabled for PAE capable machines
-%kernel_variant_package %{pae}debug
-Obsoletes: kernel-PAE-debug
-%description %{pae}debug-core
-This package includes a version of the Linux kernel with support for up to
-64GB of high memory. It requires a CPU with Physical Address Extensions (PAE).
-The non-PAE kernel can only address up to 4GB of memory.
-Install the kernel-PAE package if your machine has more than 4GB of memory.
-
-This variant of the kernel has numerous debugging options enabled.
-It should only be installed when trying to gather additional information
-on kernel bugs, as some of these options impact performance noticably.
-
-
 %define variant_summary The Linux kernel compiled with extra debugging enabled
 %kernel_variant_package debug
 %description debug-core
@@ -680,7 +629,7 @@ input and output, etc.
 %prep
 # do a few sanity-checks for --with *only builds
 %if %{with_baseonly}
-%if !%{with_up}%{with_pae}
+%if !%{with_up}
 echo "Cannot build --with baseonly, up build is disabled"
 exit 1
 %endif
@@ -950,7 +899,7 @@ BuildKernel() {
     cp -a --parents arch/arm/include/asm/opcodes.h $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/
 %endif
     cp -a include $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/include
-%ifarch %{ix86} x86_64
+%ifarch x86_64
     # files for 'make prepare' to succeed with kernel-devel
     cp -a --parents arch/x86/entry/syscalls/syscall_32.tbl $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/
     cp -a --parents arch/x86/entry/syscalls/syscalltbl.sh $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/
@@ -1123,14 +1072,6 @@ cd linux-%{KVERREL}
 BuildKernel %make_target %kernel_image %{use_vdso} debug
 %endif
 
-%if %{with_pae_debug}
-BuildKernel %make_target %kernel_image %{use_vdso} %{pae}debug
-%endif
-
-%if %{with_pae}
-BuildKernel %make_target %kernel_image %{use_vdso} %{pae}
-%endif
-
 %if %{with_up}
 BuildKernel %make_target %kernel_image %{use_vdso}
 %endif
@@ -1150,17 +1091,12 @@ chmod +x tools/perf/check-headers.sh
 # make sure version-gen.sh is executable.
 chmod +x tools/power/cpupower/utils/version-gen.sh
 %{make} %{?_smp_mflags} -C tools/power/cpupower CPUFREQ_BENCH=false
-%ifarch %{ix86}
-    pushd tools/power/cpupower/debug/i386
-    %{make} %{?_smp_mflags} centrino-decode powernow-k8-decode
-    popd
-%endif
 %ifarch x86_64
     pushd tools/power/cpupower/debug/x86_64
     %{make} %{?_smp_mflags} centrino-decode powernow-k8-decode
     popd
 %endif
-%ifarch %{ix86} x86_64
+%ifarch x86_64
    pushd tools/power/x86/x86_energy_perf_policy/
    %{make}
    popd
@@ -1193,14 +1129,8 @@ popd
 
 %define __modsign_install_post \
   if [ "%{signmodules}" -eq "1" ]; then \
-    if [ "%{with_pae}" -ne "0" ]; then \
-      %{modsign_cmd} certs/signing_key.pem.sign+%{pae} certs/signing_key.x509.sign+%{pae} $RPM_BUILD_ROOT/lib/modules/%{KVERREL}+%{pae}/ \
-    fi \
     if [ "%{with_debug}" -ne "0" ]; then \
       %{modsign_cmd} certs/signing_key.pem.sign+debug certs/signing_key.x509.sign+debug $RPM_BUILD_ROOT/lib/modules/%{KVERREL}+debug/ \
-    fi \
-    if [ "%{with_pae_debug}" -ne "0" ]; then \
-      %{modsign_cmd} certs/signing_key.pem.sign+%{pae}debug certs/signing_key.x509.sign+%{pae}debug $RPM_BUILD_ROOT/lib/modules/%{KVERREL}+%{pae}debug/ \
     fi \
     if [ "%{with_up}" -ne "0" ]; then \
       %{modsign_cmd} certs/signing_key.pem.sign certs/signing_key.x509.sign $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/ \
@@ -1315,12 +1245,6 @@ popd
 rm -f %{buildroot}%{_libdir}/*.{a,la}
 %find_lang cpupower
 mv cpupower.lang ../
-%ifarch %{ix86}
-    pushd tools/power/cpupower/debug/i386
-    install -m755 centrino-decode %{buildroot}%{_bindir}/centrino-decode
-    install -m755 powernow-k8-decode %{buildroot}%{_bindir}/powernow-k8-decode
-    popd
-%endif
 %ifarch x86_64
     pushd tools/power/cpupower/debug/x86_64
     install -m755 centrino-decode %{buildroot}%{_bindir}/centrino-decode
@@ -1332,7 +1256,7 @@ mkdir -p %{buildroot}%{_unitdir} %{buildroot}%{_sysconfdir}/sysconfig
 install -m644 %{SOURCE2000} %{buildroot}%{_unitdir}/cpupower.service
 install -m644 %{SOURCE2001} %{buildroot}%{_sysconfdir}/sysconfig/cpupower
 %endif
-%ifarch %{ix86} x86_64
+%ifarch x86_64
    mkdir -p %{buildroot}%{_mandir}/man8
    pushd tools/power/x86/x86_energy_perf_policy
    make DESTDIR=%{buildroot} install
@@ -1462,12 +1386,6 @@ fi}\
 %kernel_variant_preun
 %kernel_variant_post -r kernel-smp
 
-%kernel_variant_preun %{pae}
-%kernel_variant_post -v %{pae} -r (kernel|kernel-smp)
-
-%kernel_variant_post -v %{pae}debug -r (kernel|kernel-smp)
-%kernel_variant_preun %{pae}debug
-
 %kernel_variant_preun debug
 %kernel_variant_post -v debug
 
@@ -1530,14 +1448,14 @@ fi
 %defattr(-,root,root)
 %ifarch %{cpupowerarchs}
 %{_bindir}/cpupower
-%ifarch %{ix86} x86_64
+%ifarch x86_64
 %{_bindir}/centrino-decode
 %{_bindir}/powernow-k8-decode
 %endif
 %{_unitdir}/cpupower.service
 %{_mandir}/man[1-8]/cpupower*
 %config(noreplace) %{_sysconfdir}/sysconfig/cpupower
-%ifarch %{ix86} x86_64
+%ifarch x86_64
 %{_bindir}/x86_energy_perf_policy
 %{_mandir}/man8/x86_energy_perf_policy*
 %{_bindir}/turbostat
@@ -1637,8 +1555,6 @@ fi
 
 %kernel_variant_files  %{use_vdso} %{with_up}
 %kernel_variant_files  %{use_vdso} %{with_debug} debug
-%kernel_variant_files %{use_vdso} %{with_pae} %{pae}
-%kernel_variant_files %{use_vdso} %{with_pae_debug} %{pae}debug
 
 # plz don't put in a version string unless you're going to tag
 # and build.
