@@ -184,6 +184,7 @@ Summary: The Linux kernel
 
 %ifarch %nobuildarches
 %define with_up 0
+%define with_debug 0
 %define with_debuginfo 0
 %define with_perf 0
 %define with_tools 0
