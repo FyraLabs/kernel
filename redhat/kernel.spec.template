@@ -80,11 +80,6 @@ Summary: The Linux kernel
 # build a release kernel on rawhide
 %define with_release   %{?_with_release:      1} %{?!_with_release:      0}
 
-# Set debugbuildsenabled to 1 for production (build separate debug kernels)
-#  and 0 for rawhide (all kernels are debug kernels).
-# See also 'make debug' and 'make release'.
-%define debugbuildsenabled 1
-
 # The kernel tarball/base version
 %define kversion %%KVERSION%%.%%KPATCHLEVEL%%
 
@@ -94,10 +89,6 @@ Summary: The Linux kernel
 %define KVERREL %{version}-%{release}.%{_target_cpu}
 %define hdrarch %_target_cpu
 %define asmarch %_target_cpu
-
-%if !%{debugbuildsenabled}
-%define with_debug 0
-%endif
 
 %if !%{with_debuginfo}
 %define _enable_debug_packages 0
@@ -128,10 +119,7 @@ Summary: The Linux kernel
 
 # if requested, only build debug kernel
 %if %{with_dbgonly}
-%if %{debugbuildsenabled}
 %define with_up 0
-%define with_pae 0
-%endif
 %define with_pae 0
 %define with_tools 0
 %define with_perf 0
@@ -233,11 +221,6 @@ Summary: The Linux kernel
 %define make_target Image.gz
 %define kernel_image arch/arm64/boot/Image.gz
 %endif
-
-# Should make listnewconfig fail if there's config options
-# printed out?
-%define listnewconfig_fail 0
-%define configmismatch_fail 0
 
 # To temporarily exclude an architecture from being built, add it to
 # %%nobuildarches. Do _NOT_ use the ExclusiveArch: line, because if we
@@ -356,7 +339,6 @@ Source0: linux-%{rpmversion}-%{pkgrelease}.tar.xz
 
 Source10: perf-man-%{kversion}.tar.gz
 Source11: x509.genkey
-Source15: merge.pl
 Source16: mod-extra.list
 Source17: mod-extra.sh
 Source18: mod-sign.sh
@@ -388,15 +370,6 @@ Source36: kernel-s390x.config
 Source37: kernel-s390x-debug.config
 Source38: kernel-x86_64.config
 Source39: kernel-x86_64-debug.config
-
-Source40: generate_all_configs.sh
-Source41: generate_debug_configs.sh
-
-Source42: check_configs.awk
-
-# This file is intentionally left empty in the stock kernel. Its a nicety
-# added for those wanting to do custom rebuilds with altered config opts.
-Source1000: kernel-local
 
 # Sources for kernel-tools
 Source2000: cpupower.service
@@ -818,33 +791,10 @@ cd linux-%{KVERREL}
 
 # Drop some necessary files from the source dir into the buildroot
 cp $RPM_SOURCE_DIR/kernel-*.config .
-cp %{SOURCE1000} .
-cp %{SOURCE15} .
-cp %{SOURCE40} .
-cp %{SOURCE41} .
-
-%if !%{debugbuildsenabled}
-# The normal build is a really debug build and the user has explicitly requested
-# a release kernel. Change the config files into non-debug versions.
-%if !%{with_release}
-VERSION=%{version} ./generate_debug_configs.sh
-%else
-VERSION=%{version} ./generate_all_configs.sh
-%endif
-
-%else
-VERSION=%{version} ./generate_all_configs.sh
-%endif
-
-# Merge in any user-provided local config option changes
-%ifnarch %nobuildarches
-for i in %{all_arch_configs}
-do
-  mv $i $i.tmp
-  ./merge.pl %{SOURCE1000} $i.tmp > $i
-  rm $i.tmp
+for i in kernel-*.config; do
+	NEW=kernel-%{version}-`echo $i | cut -d - -f2-`
+	mv $i $NEW
 done
-%endif
 
 # END OF PATCH APPLICATIONS
 
@@ -860,43 +810,17 @@ touch .scmversion
 
 mkdir configs
 
-%if !%{debugbuildsenabled}
-rm -f kernel-%{version}-*debug.config
-%endif
-
 %define make make %{?cross_opts}
 
-CheckConfigs() {
-     ./check_configs.awk $1 $2 > .mismatches
-     if [ -s .mismatches ]
-     then
-	echo "Error: Mismatches found in configuration files"
-	cat .mismatches
-	exit 1
-     fi
-}
-
-cp %{SOURCE42} .
 # now run oldconfig over all the config files
 for i in *.config
 do
   cat $i > temp-$i
   mv $i .config
   Arch=`head -1 .config | cut -b 3-`
-  make ARCH=$Arch listnewconfig | grep -E '^CONFIG_' >.newoptions || true
-%if %{listnewconfig_fail}
-  if [ -s .newoptions ]; then
-    cat .newoptions
-    exit 1
-  fi
-%endif
-  rm -f .newoptions
   make ARCH=$Arch oldnoconfig
   echo "# $Arch" > configs/$i
   cat .config >> configs/$i
-%if %{configmismatch_fail}
-  CheckConfigs configs/$i temp-$i
-%endif
   rm temp-$i
 done
 # end of kernel config
