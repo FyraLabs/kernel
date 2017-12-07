@@ -24,7 +24,7 @@ ethdrvs="3com adaptec alteon amd aquantia atheros broadcom cadence calxeda chels
 
 inputdrvs="gameport tablet touchscreen"
 
-scsidrvs="aacraid aic7xxx aic94xx be2iscsi bfa bnx2i bnx2fc csiostor cxgbi esas2r fcoe fnic isci libsas lpfc megaraid mpt2sas mpt3sas mvsas pm8001 qla2xxx qla4xxx sym53c8xx_2 ufs qedf"
+scsidrvs="aacraid aic7xxx aic94xx be2iscsi bfa bnx2i bnx2fc csiostor cxgbi esas2r fcoe fnic hisi_sas isci libsas lpfc megaraid mpt2sas mpt3sas mvsas pm8001 qla2xxx qla4xxx sym53c8xx_2 ufs qedf"
 
 usbdrvs="atm image misc serial wusbcore"
 
