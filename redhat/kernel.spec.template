@@ -269,9 +269,16 @@ BuildRequires: binutils-%{_build_arch}-linux-gnu, gcc-%{_build_arch}-linux-gnu
 %define cross_opts CROSS_COMPILE=%{_build_arch}-linux-gnu-
 %endif
 
+# These below are required to build man pages
+%if %{with_perf}
+BuildRequires: xmlto
+%endif
+%if %{with_perf} || %{with_tools}
+BuildRequires: asciidoc
+%endif
+
 Source0: linux-%{rpmversion}-%{pkgrelease}.tar.xz
 
-Source10: perf-man-%{kversion}.tar.gz
 Source11: x509.genkey
 Source16: mod-extra.list
 Source17: mod-extra.sh
@@ -1224,12 +1231,7 @@ rm -rf %{buildroot}%{_docdir}/perf-tip
 
 # perf man pages (note: implicit rpm magic compresses them later)
 mkdir -p %{buildroot}/%{_mandir}/man1
-pushd %{buildroot}/%{_mandir}/man1
-tar -xf %{SOURCE10}
-%if !%{with_tools}
-    rm -f kvm_stat.1
-%endif
-popd
+%{perf_make} DESTDIR=$RPM_BUILD_ROOT install-man
 %endif
 
 %if %{with_tools}
@@ -1269,6 +1271,7 @@ make DESTDIR=%{buildroot} install
 popd
 pushd tools/kvm/kvm_stat
 make INSTALL_ROOT=%{buildroot} install-tools
+make INSTALL_ROOT=%{buildroot} install-man
 popd
 %endif
 
