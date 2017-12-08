@@ -1,4 +1,4 @@
-# variables that can be overrided by ~/.rhel7git.mk or $(TOPDIR)/.rhel7git.mk
+# variables that can be overrided by ~/.rhel8git.mk or $(TOPDIR)/.rhel8git.mk
 #
 
 # Kerberos username for pkgs.devel.redhat.com
@@ -9,15 +9,15 @@ RHDISTGIT_USER:="$(shell whoami)"
 # have a faster storage
 RHDISTGIT_TMP:=/tmp
 # Branch it should be switched into
-RHDISTGIT_BRANCH:=rhel-alt-${RHELMAJOR}.${RHELMINOR}
+RHDISTGIT_BRANCH:=rhel-${RHELMAJOR}.${RHELMINOR}
 
 # load configuration, starting with home directory then local
 ifeq ("$(RHDISTGIT_CACHE)", "")
- ifneq ("$(wildcard ${HOME}/.rhel7git.mk)", "")
-  include ${HOME}/.rhel7git.mk
+ ifneq ("$(wildcard ${HOME}/.rhel8git.mk)", "")
+  include ${HOME}/.rhel8git.mk
  endif
- ifneq ("$(wildcard $(TOPDIR)/.rhel7git.mk)", "")
-  include $(TOPDIR)/.rhel7git.mk
+ ifneq ("$(wildcard $(TOPDIR)/.rhel8git.mk)", "")
+  include $(TOPDIR)/.rhel8git.mk
  endif
 endif
 
