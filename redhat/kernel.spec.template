@@ -106,10 +106,6 @@ Summary: The Linux kernel
 %define with_perf 0
 %endif
 
-%if %{with_vdso_install}
-%define use_vdso 1
-%endif
-
 # Overrides for generic default options
 
 # don't do debug builds on anything but i686 and x86_64
@@ -1069,11 +1065,11 @@ cd linux-%{KVERREL}
 
 
 %if %{with_debug}
-BuildKernel %make_target %kernel_image %{use_vdso} debug
+BuildKernel %make_target %kernel_image %{with_vdso_install} debug
 %endif
 
 %if %{with_up}
-BuildKernel %make_target %kernel_image %{use_vdso}
+BuildKernel %make_target %kernel_image %{with_vdso_install}
 %endif
 
 %global perf_make \
@@ -1549,8 +1545,8 @@ fi
 %endif\
 %{nil}
 
-%kernel_variant_files  %{use_vdso} %{with_up}
-%kernel_variant_files  %{use_vdso} %{with_debug} debug
+%kernel_variant_files  %{with_vdso_install} %{with_up}
+%kernel_variant_files  %{with_vdso_install} %{with_debug} debug
 
 # plz don't put in a version string unless you're going to tag
 # and build.
