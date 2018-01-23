@@ -3,13 +3,14 @@
 SOURCES=$1
 SPECFILE=$2
 PKGRELEASE=$3
-RPMVERSION=$4
-RELEASED_KERNEL=$5
-SPECRELEASE=$6
-DISTRO_BUILD=$7
-ZSTREAM_FLAG=$8
-PACKAGE_NAME=$9
+KVERSION=$4
+KPATCHLEVEL=$5
+KSUBLEVEL=$6
+RELEASED_KERNEL=$7
+SPECRELEASE=$8
+ZSTREAM_FLAG=$9
 MARKER=${10}
+RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
 HIDE_REDHAT=0;
@@ -177,24 +178,16 @@ if [ "$LENGTH" = 0 ]; then
 	rm -f $clogf.rev; touch $clogf.rev
 fi
 
-# add extra description if localdesc file is found. useful for
-# test builds that go to customer (added disclaimer)
-EXTRA_DESC=../localdesc
-if [ -f "$EXTRA_DESC" ]; then
-       sed -i -e "/%%EXTRA_DESC/r $EXTRA_DESC" $SPECFILE
-fi
-
 test -n "$SPECFILE" &&
         sed -i -e "
 	/%%CHANGELOG%%/r $clogf.rev
 	/%%CHANGELOG%%/d
-	/%%EXTRA_DESC%%/d
-	s/%%RPMVERSION%%/$RPMVERSION/
+	s/%%KVERSION%%/$KVERSION/
+	s/%%KPATCHLEVEL%%/$KPATCHLEVEL/
+	s/%%KSUBLEVEL%%/$KSUBLEVEL/
 	s/%%PKGRELEASE%%/$PKGRELEASE/
 	s/%%SPECRELEASE%%/$SPECRELEASE/
-	s/%%DISTRO_BUILD%%/$DISTRO_BUILD/
-	s/%%RELEASED_KERNEL%%/$RELEASED_KERNEL/
-	s/%%PACKAGE_NAME%%/$PACKAGE_NAME/" $SPECFILE
+	s/%%RELEASED_KERNEL%%/$RELEASED_KERNEL/" $SPECFILE
 
 rm -f $clogf{,.rev,.stripped};
 

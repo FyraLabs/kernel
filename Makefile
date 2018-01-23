@@ -4,6 +4,9 @@ PATCHLEVEL = 18
 SUBLEVEL = 0
 EXTRAVERSION =
 NAME = Merciless Moray
+RHEL_MAJOR = 8
+RHEL_MINOR = 0
+RHEL_RELEASE = 0
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"

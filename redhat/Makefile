@@ -3,8 +3,8 @@ include Makefile.rhpkg
 include Makefile.test
 
 LANG=C
-BUILD_DEFAULT_TARGET = rhel-alt-$(RHELMAJOR).$(RHELMINOR)-candidate
-BUILD_SCRATCH_TARGET = rhel-alt-$(RHELMAJOR).$(RHELMINOR)-candidate
+BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
+BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
 
 ifeq ("$(ZSTREAM)", "yes")
   ifeq ("$(origin RHDISTGIT_BRANCH)", "command line")
@@ -60,12 +60,12 @@ rh-check-kabi: rh-kabi
 	 -s $(_OUTPUT)/Module.symvers
 
 rh-configs:
-	cd $(REDHAT)/configs; ./build_configs.sh $(RPMVERSION) $(PACKAGE_NAME)
+	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME)
 
 rh-configs-prep: rh-configs
 
 rh-configs-arch-prep:
-	cd $(REDHAT)/configs; ./build_configs.sh $(RPMVERSION) $(PACKAGE_NAME) $(MACH)
+	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME) $(MACH)
 
 rh-clean-configs:
 	cd $(REDHAT)/configs; rm -f kernel-*.config
@@ -102,7 +102,7 @@ $(KABI_TARBALL):
 
 setup-source: rh-clean-sources
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
-	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(PKGRELEASE) $(RPMVERSION) $(RELEASED_KERNEL) $(SPECRELEASE) $(DISTRO_BUILD) $(__ZSTREAM) $(PACKAGE_NAME) $(MARKER)
+	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) $(MARKER)
 	@cp $(SOURCES)/$(SPECFILE) $(SOURCES)/../SPECS/
 
 sources-rh: $(TARBALL)
@@ -125,7 +125,7 @@ sources-rh: $(TARBALL)
 	@(if [ ! -f keys/extra_certificates ]; then \
 		touch keys/extra_certificates; \
 	fi)
-	@cp cpupower.* x509.genkey keys/rhel*.x509 keys/extra_certificates Makefile.common kabi/check-kabi configs/$(PACKAGE_NAME)-*.config rhpkg/Makefile scripts/sign-modules keys/*.cer $(SOURCES)/
+	@cp cpupower.* x509.genkey keys/rhel*.x509 keys/extra_certificates Makefile.common kabi/check-kabi configs/$(PACKAGE_NAME)-*.config rhpkg/Makefile keys/*.cer filter-*.sh mod-extra.* mod-sign.sh $(SOURCES)/
 	@for KABIARCH in $(ARCH_LIST); do \
 		cp kabi/Module.kabi_$$KABIARCH $(SOURCES)/; \
 	done
