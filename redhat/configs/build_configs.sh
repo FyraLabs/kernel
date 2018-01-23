@@ -4,9 +4,8 @@
 # and debug to form the necessary $PACKAGE_NAME<version>-<arch>-<variant>.config
 # files for building RHEL kernels, based on the contents of a control file
 
-KVERREL=$1 # sets the kenrel version-release string used for config file naming
-PACKAGE_NAME=$2 # defines the package name used
-SUBARCH=$3 # defines a specific arch for use with rh-configs-arch-prep target
+PACKAGE_NAME=$1 # defines the package name used
+SUBARCH=$2 # defines a specific arch for use with rh-configs-arch-prep target
 
 set errexit
 set nounset
@@ -32,7 +31,7 @@ function merge_configs()
 	archvar=$1
 	arch=$(echo "$archvar" | cut -f1 -d"-")
 	configs=$2
-	name=$PACKAGE_NAME-$KVERREL-$archvar.config
+	name=$PACKAGE_NAME-$archvar.config
 	echo -n "Building $name ... "
 	touch config-merging config-merged
 	for config in $(echo $configs | sed -e 's/:/ /g')
@@ -61,7 +60,7 @@ function process_configs()
 	cfg_dir=$(pwd)
 	kroot=$(cd ../..; pwd)
 	pushd $kroot/ > /dev/null
-	for cfg in $cfg_dir/$PACKAGE_NAME-$KVERREL-$SUBARCH*.config
+	for cfg in $cfg_dir/$PACKAGE_NAME-$SUBARCH*.config
 	do
 		arch=$(head -1 $cfg | cut -b 3-)
 		echo -n "Processing $cfg ... "

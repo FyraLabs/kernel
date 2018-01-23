@@ -3,15 +3,18 @@ RPMBUILD := $(shell if [ -x "/usr/bin/rpmbuild" ]; then echo rpmbuild; \
 REDHAT:=$(shell pwd)
 TOPDIR:=$(shell dirname $(REDHAT))
 MACH :=  $(shell uname -m)
-KVERSION:=4.14.0
+RPMKVERSION:=4
+RPMKPATCHLEVEL:=14
+RPMKSUBLEVEL:=0
+KVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)
 GITID:= $(shell git log --max-count=1 --pretty=format:%H)
 RPMVERSION:=4.14.0
 # marker is git tag which we base off of for exporting patches
-MARKER:=rebase-kernel-alt-4.11.0-44.el7a_to_v4.14
+MARKER:=v4.14
 PREBUILD:=
-BUILD:=30
-DIST:=.el7a
-PACKAGE_NAME:=kernel-alt
+BUILD:=0
+DIST:=.el8
+PACKAGE_NAME:=kernel
 SPECFILE:=$(PACKAGE_NAME).spec
 RPM:=$(REDHAT)/rpm
 SRPMS:=$(RPM)/SRPMS
@@ -47,8 +50,7 @@ SPECRELEASE:=$(PREBUILD)$(BUILD)%{?dist}$(BUILDID)
 
 TARFILE:=linux-$(KVERSION)-$(PKGRELEASE).tar.xz
 TARBALL:=$(REDHAT)/$(TARFILE)
-DISTRO_BUILD:=$(shell echo $(BUILD) | sed -e 's|\(^[0-9]\{1,4\}\)\..*|\1|')
-KABI_TARFILE:=kernel-abi-whitelists-$(DISTRO_BUILD).tar.bz2
+KABI_TARFILE:=kernel-abi-whitelists-$(KVERSION)-$(PKGRELEASE).tar.bz2
 KABI_TARBALL:=$(REDHAT)/rpm/SOURCES/$(KABI_TARFILE)
 
 RHELMAJOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MAJOR | sed -e s/RHEL_MAJOR\ =\ //)
