@@ -10,6 +10,7 @@ repo="$1";
 local="$2";
 tmp_dir="$3";
 package_name="$4";
+rhel_major="$5";
 
 function die
 {
@@ -18,7 +19,7 @@ function die
 }
 
 date=`date +"%Y-%m-%d"`
-tmp="$(mktemp -d --tmpdir="$tmp_dir" RHEL7.$date.XXXXXXXX)";
+tmp="$(mktemp -d --tmpdir="$tmp_dir" RHEL$rhel_major.$date.XXXXXXXX)";
 cd $tmp || die "Unable to create temporary directory";
 
 if [ -n "$repo" -a -n "$local" ]; then

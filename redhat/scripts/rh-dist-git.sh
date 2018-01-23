@@ -18,6 +18,7 @@ rhdistgit_tarball=$5;
 rhdistgit_kabi_tarball=$6;
 rhdistgit_zstream_flag=$7;
 package_name=$8;
+rhel_major=$9;
 
 redhat=$(dirname $0)/..;
 topdir=$redhat/..;
@@ -43,7 +44,7 @@ fi
 
 echo "Cloning the repository"
 # clone the dist-git, considering cache
-tmpdir=$($redhat/scripts/clone_tree.sh "$rhdistgit_server" "$rhdistgit_cache" "$rhdistgit_tmp" "$package_name");
+tmpdir=$($redhat/scripts/clone_tree.sh "$rhdistgit_server" "$rhdistgit_cache" "$rhdistgit_tmp" "$package_name" "$rhel_major");
 
 echo "Switching the branch"
 # change in the correct branch
