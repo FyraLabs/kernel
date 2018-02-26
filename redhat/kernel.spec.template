@@ -1481,8 +1481,10 @@ fi
 %endif # with_perf
 
 # empty meta-package
+%ifnarch %nobuildarches
 %files
 %defattr(-,root,root)
+%endif
 
 # This is %%{image_install_path} on an arch where that includes ELF files,
 # or empty otherwise.
