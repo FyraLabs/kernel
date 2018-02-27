@@ -23,7 +23,7 @@ RPM_VERSION="$RPMVERSION-$PKGRELEASE";
 
 echo >$clogf
 
-lasttag=$(git describe --match="${PACKAGE_NAME}-${RPMVERSION}-*" --abbrev=0)
+lasttag=$(git describe --match="kernel-${RPMVERSION}-*" --abbrev=0)
 # if we didn't find the proper tag, assume this is the first release
 if [ -z "$lasttag" ]; then
 	lasttag=$(git describe --match="$MARKER" --abbrev=0)
