@@ -187,11 +187,6 @@ M:	Vivek Goyal <vgoyal@redhat.com>
 S:	Maintained
 F:	block/
 
-BNA ETHERNET DRIVER (bna)
-M:	Jonathan Toppins <jtoppins@redhat.com>
-S:	Maintained
-F:	drivers/net/ethernet/brocade/bna/
-
 BROADCOM B44 10/100 ETHERNET DRIVER
 M:	Stanislaw Gruszka <sgruszka@redhat.com>
 S:	Maintained
@@ -213,6 +208,7 @@ BROADCOM BNXT_EN 50 GIGABIT ETHERNET DRIVER
 M:	Jonathan Toppins <jtoppins@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/broadcom/bnxt/
+F:	drivers/net/ethernet/broadcom/Kconfig
 
 Broadcom NetXtreme II BCM5706/5708/5709/57710/57711/57712/57800/57810/57840 iSCSI Driver
 M:	Maurizio Lombardi <mlombard@redhat.com>
@@ -233,6 +229,7 @@ BROADCOM TG3 GIGABIT ETHERNET DRIVER
 M:	Jonathan Toppins <jtoppins@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/broadcom/tg3.*
+F:	drivers/net/ethernet/broadcom/Kconfig
 
 BONDING DRIVER
 M:	Jarod Wilson <jarod@redhat.com>
