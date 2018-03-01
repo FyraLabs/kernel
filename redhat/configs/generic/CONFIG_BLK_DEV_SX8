@@ -1,1 +1,1 @@
-CONFIG_BLK_DEV_SX8=m
+# CONFIG_BLK_DEV_SX8 is not set
