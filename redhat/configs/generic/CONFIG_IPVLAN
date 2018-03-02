@@ -1,1 +1,1 @@
-# CONFIG_IPVLAN is not set
+CONFIG_IPVLAN=m
