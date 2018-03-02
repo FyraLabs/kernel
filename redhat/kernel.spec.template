@@ -701,7 +701,10 @@ touch .scmversion
 # only deal with configs if we are going to build for the arch
 %ifnarch %nobuildarches
 
-mkdir configs
+if [ -L configs ]; then
+	rm -f configs
+	mkdir configs
+fi
 
 %define make make %{?cross_opts}
 
