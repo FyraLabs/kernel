@@ -1,1 +1,1 @@
-CONFIG_SATA_SX4=m
+# CONFIG_SATA_SX4 is not set
