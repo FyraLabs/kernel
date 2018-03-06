@@ -1,1 +1,1 @@
-CONFIG_ATA_OVER_ETH=m
+# CONFIG_ATA_OVER_ETH is not set
