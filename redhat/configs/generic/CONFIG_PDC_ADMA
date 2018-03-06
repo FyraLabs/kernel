@@ -1,1 +1,1 @@
-CONFIG_PDC_ADMA=m
+# CONFIG_PDC_ADMA is not set
