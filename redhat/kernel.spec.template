@@ -703,8 +703,8 @@ touch .scmversion
 
 if [ -L configs ]; then
 	rm -f configs
-	mkdir configs
 fi
+mkdir configs
 
 %define make make %{?cross_opts}
 
