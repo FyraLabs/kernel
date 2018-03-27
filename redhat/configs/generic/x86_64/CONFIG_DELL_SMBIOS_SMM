@@ -7,4 +7,4 @@
 # WMI/SMM driver can only be built-in in the dell-smbios module. We keep
 # WMI part enabled while SMM stays disabled as before.
 # (https://bugzilla.redhat.com/show_bug.cgi?id=1561134)
-CONFIG_DELL_SMBIOS_WMI=y
+# CONFIG_DELL_SMBIOS_SMM is not set
