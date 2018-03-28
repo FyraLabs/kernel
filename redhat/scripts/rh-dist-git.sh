@@ -29,12 +29,18 @@ function die
 	exit 1;
 }
 
+function upload()
+{
+	[ -n "$RH_DIST_GIT_TEST" ] && return
+	rhpkg upload $1 >/dev/null || die "uploading $1 tarball";
+}
+
 function upload_kabi_tarball()
 {
 	echo "Uploading kernel-abi-whitelists tarball"
 	sed -i "/kernel-abi-whitelist.*.tar.bz2/d" $tmpdir/$package_name/sources;
 	sed -i "/kernel-abi-whitelist.*.tar.bz2/d" $tmpdir/$package_name/.gitignore;
-	rhpkg upload $rhdistgit_kabi_tarball >/dev/null || die "uploading kabi tarball";
+	upload $rhdistgit_kabi_tarball
 }
 
 if [ -z "$rhdistgit_branch" ]; then
@@ -59,7 +65,7 @@ echo "Uploading new tarballs"
 # upload tarballs
 sed -i "/linux-.*.tar.xz/d" $tmpdir/$package_name/sources;
 sed -i "/linux-.*.tar.xz/d" $tmpdir/$package_name/.gitignore;
-rhpkg upload $rhdistgit_tarball >/dev/null || die "uploading kernel tarball";
+upload $rhdistgit_tarball
 
 # Only upload kernel-abi-whitelists tarball if its release counter changed.
 if [ "$rhdistgit_zstream_flag" == "no" ]; then
