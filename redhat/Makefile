@@ -5,8 +5,8 @@ include Makefile.test
 LANG=C
 
 ifeq ("$(DIST)", ".elrdy")
-  BUILD_DEFAULT_TARGET = rhel-ready-test-pesign
-  BUILD_SCRATCH_TARGET = rhel-ready-test-pesign
+  BUILD_DEFAULT_TARGET = temp-ark-rhel-8-candidate
+  BUILD_SCRATCH_TARGET = temp-ark-rhel-8-candidate
 else
   BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
   BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
