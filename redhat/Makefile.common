@@ -4,13 +4,13 @@ REDHAT:=$(shell pwd)
 TOPDIR:=$(shell dirname $(REDHAT))
 MACH :=  $(shell uname -m)
 RPMKVERSION:=4
-RPMKPATCHLEVEL:=14
+RPMKPATCHLEVEL:=16
 RPMKSUBLEVEL:=0
 KVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)
 GITID:= $(shell git log --max-count=1 --pretty=format:%H)
-RPMVERSION:=4.14.0
+RPMVERSION:=4.16.0
 # marker is git tag which we base off of for exporting patches
-MARKER:=v4.14
+MARKER:=v4.16
 PREBUILD:=
 BUILD:=0
 DIST:=.el8
