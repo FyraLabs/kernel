@@ -12,8 +12,8 @@ RPMVERSION:=4.16.0
 # marker is git tag which we base off of for exporting patches
 MARKER:=v4.16
 PREBUILD:=
-BUILD:=0
-DIST:=.el8
+BUILD:=3
+DIST:=.elrdy
 PACKAGE_NAME:=kernel
 SPECFILE:=$(PACKAGE_NAME).spec
 RPM:=$(REDHAT)/rpm
@@ -55,3 +55,9 @@ KABI_TARBALL:=$(REDHAT)/rpm/SOURCES/$(KABI_TARFILE)
 
 RHELMAJOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MAJOR | sed -e s/RHEL_MAJOR\ =\ //)
 RHELMINOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MINOR | sed -e s/RHEL_MINOR\ =\ //)
+
+ifeq ("$(DIST)", ".elrdy")
+  RHPRODUCT:=rhel-ready
+else
+  RHPRODUCT:=rhel-$(RHELMAJOR).$(RHELMINOR)
+endif

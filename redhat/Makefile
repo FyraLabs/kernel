@@ -3,8 +3,14 @@ include Makefile.rhpkg
 include Makefile.test
 
 LANG=C
-BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
-BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
+
+ifeq ("$(DIST)", ".elrdy")
+  BUILD_DEFAULT_TARGET = temp-ark-rhel-8-candidate
+  BUILD_SCRATCH_TARGET = temp-ark-rhel-8-candidate
+else
+  BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
+  BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
+endif
 
 ifeq ("$(ZSTREAM)", "yes")
   ifeq ("$(origin RHDISTGIT_BRANCH)", "command line")
@@ -186,6 +192,7 @@ rh-brew rh-koji: rh-%: rh-srpm
 rhg-brew rhg-koji: rhg-%:
 	$* build $(BUILD_FLAGS) $(BUILD_TARGET) "$(RHGITURL)?redhat/koji#$(RHGITCOMMIT)"
 
+.PHONY: $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec
 $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec:
 	@echo "rh-sources"
 	@$(MAKE) rh-sources
