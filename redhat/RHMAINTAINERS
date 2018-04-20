@@ -788,6 +788,11 @@ F:	drivers/s390/cio/vfio_ccw*
 F:	Documentation/s390/vfio-ccw.txt
 F:	include/uapi/linux/vfio_ccw.h
 
+ROCKER DRIVER
+M:	Ivan Vecera <ivecera@redhat.com>
+S:	Maintained
+F:	drivers/net/ethernet/rocker/
+
 SCSI CORE SUBSYSTEM (NOT INDIVIDUAL DRIVERS)
 M:	David Milburn <dmilburn@redhat.com>
 S:	Maintained
