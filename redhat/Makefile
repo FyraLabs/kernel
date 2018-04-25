@@ -65,13 +65,18 @@ rh-check-kabi: rh-kabi
 	@$(REDHAT)/kabi/check-kabi -k $(REDHAT)/kabi/Module.kabi_$(MACH) \
 	 -s $(_OUTPUT)/Module.symvers
 
-rh-configs:
-	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME)
+rh-configs: rh-configs-prep
+	cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh; \
+	./process_configs.sh $(PACKAGE_NAME) $(KVERSION)
 
-rh-configs-prep: rh-configs
+rh-configs-check: rh-configs-prep
+	cd $(REDHAT)/configs; ./process_configs.sh -t $(PACKAGE_NAME)
 
-rh-configs-arch-prep:
-	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME) $(MACH)
+rh-configs-prep: rh-clean-configs
+	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME) $(ARCH_MACH)
+
+rh-configs-arch: ARCH_MACH = $(MACH)
+rh-configs-arch: rh-configs
 
 rh-clean-configs:
 	cd $(REDHAT)/configs; rm -f kernel-*.config
@@ -137,7 +142,7 @@ sources-rh: $(TARBALL)
 	done
 	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHELMAJOR)* kabi-current)
 
-rh-sources: setup-source rh-configs rh-kabi sources-rh
+rh-sources: setup-source rh-configs-check rh-kabi sources-rh
 
 rh-test-patch:
 	@git diff --no-renames HEAD > $(TESTPATCH);

@@ -55,28 +55,6 @@ function merge_configs()
 	echo "done"
 }
 
-function process_configs()
-{
-	cfg_dir=$(pwd)
-	kroot=$(cd ../..; pwd)
-	pushd $kroot/ > /dev/null
-	for cfg in $cfg_dir/$PACKAGE_NAME-$SUBARCH*.config
-	do
-		arch=$(head -1 $cfg | cut -b 3-)
-		echo -n "Processing $cfg ... "
-		make ARCH=$arch KCONFIG_CONFIG=$cfg listnewconfig > /dev/null || exit 1
-		make ARCH=$arch KCONFIG_CONFIG=$cfg oldnoconfig > /dev/null || exit 1
-		echo "# $arch" > ${cfg}.tmp
-		cat "${cfg}" >> ${cfg}.tmp
-		mv "${cfg}.tmp" "${cfg}"
-		echo "done"
-	done
-	rm "$cfg_dir"/*.config.old
-	popd > /dev/null
-
-	echo "Processed config files are in $cfg_dir"
-}
-
 glist=$(find generic -type d)
 dlist=$(find debug -type d)
 
@@ -103,6 +81,3 @@ do
 done < $control_file
 
 rm -f config-*
-
-process_configs
-
