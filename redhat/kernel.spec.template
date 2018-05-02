@@ -59,6 +59,8 @@ Summary: The Linux kernel
 %define with_bootwrapper %{?_without_bootwrapper: 0} %{?!_without_bootwrapper: 1}
 # Want to build a the vsdo directories installed
 %define with_vdso_install %{?_without_vdso_install: 0} %{?!_without_vdso_install: 1}
+# kernel-abi-whitelists
+%define with_kernel_abi_whitelists %{?_without_kernel_abi_whitelists: 0} %{?!_without_kernel_abi_whitelists: 1}
 #
 # Additional options for user-friendly one-off kernel building:
 #
@@ -107,6 +109,10 @@ Summary: The Linux kernel
 %define with_perf 0
 %endif
 
+%ifnarch noarch
+%define with_kernel_abi_whitelists 0
+%endif
+
 # Overrides for generic default options
 
 # don't build noarch kernels or headers (duh)
@@ -116,6 +122,7 @@ Summary: The Linux kernel
 %define with_cross_headers 0
 %define with_tools 0
 %define with_perf 0
+%define with_debug 0
 %define all_arch_configs kernel-%{version}-*.config
 %endif
 
@@ -202,7 +209,7 @@ Version: %{rpmversion}
 Release: %{pkg_release}
 # DO NOT CHANGE THE 'ExclusiveArch' LINE TO TEMPORARILY EXCLUDE AN ARCHITECTURE BUILD.
 # SET %%nobuildarches (ABOVE) INSTEAD
-ExclusiveArch: i686 x86_64 s390x aarch64 ppc64le
+ExclusiveArch: noarch i686 x86_64 s390x aarch64 ppc64le
 ExclusiveOS: Linux
 %ifnarch %{nobuildarches}
 Requires: kernel-core-uname-r = %{KVERREL}%{?variant}
@@ -216,7 +223,7 @@ Requires: kernel-modules-uname-r = %{KVERREL}%{?variant}
 BuildRequires: kmod, patch, bash, sh-utils, tar, git
 BuildRequires: bzip2, xz, findutils, gzip, m4, perl-interpreter, perl-Carp, perl-devel, perl-generators, make, diffutils, gawk
 BuildRequires: gcc, binutils, redhat-rpm-config, hmaccalc
-BuildRequires: net-tools, hostname, bc, elfutils-devel
+BuildRequires: net-tools, hostname, bc, bison, flex, elfutils-devel
 %if %{with_sparse}
 BuildRequires: sparse
 %endif
@@ -289,6 +296,8 @@ Source36: kernel-s390x.config
 Source37: kernel-s390x-debug.config
 Source38: kernel-x86_64.config
 Source39: kernel-x86_64-debug.config
+
+Source300: kernel-abi-whitelists-%{rpmversion}-%{pkgrelease}.tar.bz2
 
 # Sources for kernel-tools
 Source2000: cpupower.service
@@ -475,6 +484,14 @@ This package provides debug information for package kernel-tools.
 
 %endif # with_tools
 
+%package -n kernel-abi-whitelists
+Summary: The Red Hat Enterprise Linux kernel ABI symbol whitelists
+Group: System Environment/Kernel
+AutoReqProv: no
+%description -n kernel-abi-whitelists
+The kABI package contains information pertaining to the Red Hat Enterprise
+Linux kernel ABI, including lists of kernel symbols that are needed by
+external Linux kernel modules, and a yum plugin to aid enforcement.
 
 #
 # This macro creates a kernel-<subpackage>-debuginfo package.
@@ -1213,6 +1230,15 @@ done
 rm -rf $RPM_BUILD_ROOT/usr/tmp-headers
 %endif
 
+%if %{with_kernel_abi_whitelists}
+# kabi directory
+INSTALL_KABI_PATH=$RPM_BUILD_ROOT/lib/modules/
+mkdir -p $INSTALL_KABI_PATH
+
+# install kabi releases directories
+tar xjvf %{SOURCE300} -C $INSTALL_KABI_PATH
+%endif  # with_kernel_abi_whitelists
+
 %if %{with_perf}
 # perf tool binary and supporting scripts/binaries
 %{perf_make} DESTDIR=$RPM_BUILD_ROOT lib=%{_lib} install-bin install-traceevent-plugins
@@ -1406,6 +1432,12 @@ fi
 %defattr(-,root,root)
 /usr/sbin/*
 %{_libdir}/kernel-wrapper
+%endif
+
+%if %{with_kernel_abi_whitelists}
+%files -n kernel-abi-whitelists
+%defattr(-,root,root,-)
+/lib/modules/kabi-*
 %endif
 
 %if %{with_perf}
