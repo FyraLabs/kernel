@@ -1,1 +1,1 @@
-CONFIG_FCOE=m
+# CONFIG_FCOE is not set
