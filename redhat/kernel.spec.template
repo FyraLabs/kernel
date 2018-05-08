@@ -229,7 +229,7 @@ BuildRequires: sparse
 %endif
 %if %{with_perf}
 BuildRequires: zlib-devel binutils-devel newt-devel python-devel perl(ExtUtils::Embed) bison flex xz-devel
-BuildRequires: audit-libs-devel
+BuildRequires: audit-libs-devel python3-devel
 %ifnarch s390x
 BuildRequires: numactl-devel
 %endif
@@ -709,6 +709,28 @@ chmod +x scripts/checkpatch.pl
 
 # This Prevents scripts/setlocalversion from mucking with our version numbers.
 touch .scmversion
+
+# Do not use "ambiguous" python shebangs. RHEL 8 now has a new script
+# (/usr/lib/rpm/redhat/brp-mangle-shebangs), which forces us to specify a
+# "non-ambiguous" python shebang for scripts we ship in buildroot. This
+# script throws an error like below:
+# *** ERROR: ambiguous python shebang in /usr/bin/kvm_stat: #!/usr/bin/python. Change it to python3 (or python2) explicitly.
+# We patch all sources below for which we got a report/error.
+sed -i '1s=^#![[:space:]]*/usr/bin/\(python\|env python\)=#!%{__python3}=' \
+	tools/kvm/kvm_stat/kvm_stat \
+	scripts/show_delta \
+	scripts/diffconfig \
+	scripts/bloat-o-meter
+# FIXME: while RHEL 8 is supposed to not have python 2, scripts below are
+# not compatible looking at 2to3 output from python3-devel. For now, we just
+# patch them to so we can get kernel builds going again without failures from
+# brp-mangle-shebangs, however we must look into either fixing the scripts or
+# not ship them
+sed -i '1s=^#![[:space:]]*/usr/bin/\(python\|env python\)=#!%{__python2}=' \
+	scripts/tracing/draw_functrace.py \
+	tools/perf/tests/attr.py \
+	tools/perf/scripts/python/stat-cpi.py \
+	tools/perf/scripts/python/sched-migration.py
 
 # only deal with configs if we are going to build for the arch
 %ifnarch %nobuildarches
