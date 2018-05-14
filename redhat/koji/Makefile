@@ -5,7 +5,7 @@
 #When Brew launches a build with a commit on the end of the brew uri,
 #it runs the BuildSRPMFromSCM task first, which clones the requested
 #git tree, resets to the requested commit, cd's to the directory, and runs
-#'make sources'.  That make targetis responsible for creating an SRPM 
+#'make sources'.  That make target is responsible for creating an SRPM
 #that the next brew task will then build.
 #
 #Other targets in this makefile
@@ -14,7 +14,7 @@
 #
 #buildid: This sets the BUILDID varible, which allows a brew scratch build
 #	  To have a unique buildid as set by the developer.
-#	  set it with - git notes --ref buildid -m".buildid" HEAD
+#	  set it with - git notes --ref buildid -m ".buildid" HEAD
 ######################################################################
 
 include ../Makefile.common
