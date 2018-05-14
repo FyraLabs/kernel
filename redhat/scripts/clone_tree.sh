@@ -11,6 +11,7 @@ local="$2";
 tmp_dir="$3";
 package_name="$4";
 rhel_major="$5";
+rhpkg_bin="$6";
 
 function die
 {
@@ -34,8 +35,8 @@ if [ -n "$repo" -a -n "$local" ]; then
 		done
 	fi
 else
-	echo "No local repo, cloning using rhpkg" >&2;
-	rhpkg clone $package_name >/dev/null || die "Unable to clone using rhpkg";
+	echo "No local repo, cloning using $rhpkg_bin" >&2;
+	$rhpkg_bin clone $package_name >/dev/null || die "Unable to clone using $rhpkg_bin";
 fi
 
 echo $tmp;
