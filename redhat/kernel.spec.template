@@ -7,6 +7,8 @@ Summary: The Linux kernel
 # For internal testing builds during development, it should be 0.
 %global released_kernel %%RELEASED_KERNEL%%
 
+%global distro_build %%DISTRO_BUILD%%
+
 # Sign modules on x86.  Make sure the config files match this setting if more
 # architectures are added.
 %ifarch x86_64
@@ -297,7 +299,7 @@ Source37: kernel-s390x-debug.config
 Source38: kernel-x86_64.config
 Source39: kernel-x86_64-debug.config
 
-Source300: kernel-abi-whitelists-%{rpmversion}-%{pkgrelease}.tar.bz2
+Source300: kernel-abi-whitelists-%{rpmversion}-%{distro_build}.tar.bz2
 
 # Sources for kernel-tools
 Source2000: cpupower.service
