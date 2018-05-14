@@ -19,6 +19,7 @@ rhdistgit_kabi_tarball=$6;
 rhdistgit_zstream_flag=$7;
 package_name=$8;
 rhel_major=$9;
+rhpkg_bin=${10};
 
 redhat=$(dirname $0)/..;
 topdir=$redhat/..;
@@ -32,15 +33,7 @@ function die
 function upload()
 {
 	[ -n "$RH_DIST_GIT_TEST" ] && return
-	rhpkg upload $1 >/dev/null || die "uploading $1 tarball";
-}
-
-function upload_kabi_tarball()
-{
-	echo "Uploading kernel-abi-whitelists tarball"
-	sed -i "/kernel-abi-whitelist.*.tar.bz2/d" $tmpdir/$package_name/sources;
-	sed -i "/kernel-abi-whitelist.*.tar.bz2/d" $tmpdir/$package_name/.gitignore;
-	upload $rhdistgit_kabi_tarball
+	$rhpkg_bin upload "$@" >/dev/null || die "uploading $@";
 }
 
 if [ -z "$rhdistgit_branch" ]; then
@@ -50,12 +43,12 @@ fi
 
 echo "Cloning the repository"
 # clone the dist-git, considering cache
-tmpdir=$($redhat/scripts/clone_tree.sh "$rhdistgit_server" "$rhdistgit_cache" "$rhdistgit_tmp" "$package_name" "$rhel_major");
+tmpdir=$($redhat/scripts/clone_tree.sh "$rhdistgit_server" "$rhdistgit_cache" "$rhdistgit_tmp" "$package_name" "$rhel_major" "$rhpkg_bin");
 
 echo "Switching the branch"
 # change in the correct branch
 cd $tmpdir/$package_name;
-rhpkg switch-branch $rhdistgit_branch || die "switching to branch $rhdistgit_branch";
+$rhpkg_bin switch-branch $rhdistgit_branch || die "switching to branch $rhdistgit_branch";
 
 echo "Copying updated files"
 # copy the required files (redhat/git/files)
@@ -63,16 +56,18 @@ $redhat/scripts/copy_files.sh "$topdir" "$tmpdir" "$package_name";
 
 echo "Uploading new tarballs"
 # upload tarballs
-sed -i "/linux-.*.tar.xz/d" $tmpdir/$package_name/sources;
-sed -i "/linux-.*.tar.xz/d" $tmpdir/$package_name/.gitignore;
-upload $rhdistgit_tarball
+sed -i "/linux-.*.tar.xz/d" $tmpdir/$package_name/{sources,.gitignore};
+upload_list="$rhdistgit_tarball"
 
 # Only upload kernel-abi-whitelists tarball if its release counter changed.
 if [ "$rhdistgit_zstream_flag" == "no" ]; then
-	whitelists_file="$(awk '/kernel-abi-whitelists/ {print $2}' $tmpdir/$package_name/sources)"
-	new_whitelists_file="$(basename $rhdistgit_kabi_tarball)"
-	[ "$whitelists_file" = "$new_whitelists_file" ] || upload_kabi_tarball;
+	if ! grep -q "$rhdistgit_kabi_tarball" $tmpdir/$package_name/sources; then
+		sed -i "/kernel-abi-whitelists.*.tar.bz2/d" $tmpdir/$package_name/{sources,.gitignore};
+		upload_list="$upload_list $rhdistgit_kabi_tarball"
+	fi
 fi
+
+upload $upload_list
 
 echo "Creating diff for review ($tmpdir/diff) and changelog"
 # diff the result (redhat/cvs/dontdiff). note: diff reuturns 1 if
