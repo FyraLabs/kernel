@@ -12,7 +12,7 @@ RPMVERSION:=4.16.0
 # marker is git tag which we base off of for exporting patches
 MARKER:=v4.16
 PREBUILD:=
-BUILD:=3
+BUILD:=4
 DIST:=.elrdy
 PACKAGE_NAME:=kernel
 SPECFILE:=$(PACKAGE_NAME).spec
