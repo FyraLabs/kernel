@@ -192,6 +192,7 @@ rh-brew rh-koji: rh-%: rh-srpm
 rhg-brew rhg-koji: rhg-%:
 	$* build $(BUILD_FLAGS) $(BUILD_TARGET) "$(RHGITURL)?redhat/koji#$(RHGITCOMMIT)"
 
+.PHONY: $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec
 $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec:
 	@echo "rh-sources"
 	@$(MAKE) rh-sources
