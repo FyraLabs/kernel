@@ -1536,7 +1536,7 @@ fi
 %endif # with_perf
 
 # empty meta-package
-%ifnarch %nobuildarches
+%ifnarch %nobuildarches noarch
 %files
 %defattr(-,root,root)
 %endif
