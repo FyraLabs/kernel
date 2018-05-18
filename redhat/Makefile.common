@@ -56,3 +56,9 @@ KABI_TARBALL:=$(REDHAT)/rpm/SOURCES/$(KABI_TARFILE)
 
 RHELMAJOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MAJOR | sed -e s/RHEL_MAJOR\ =\ //)
 RHELMINOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MINOR | sed -e s/RHEL_MINOR\ =\ //)
+
+ifeq ("$(DIST)", ".elrdy")
+  RHPRODUCT:=rhel-ready
+else
+  RHPRODUCT:=rhel-$(RHELMAJOR).$(RHELMINOR)
+endif
