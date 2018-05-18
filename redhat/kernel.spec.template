@@ -706,6 +706,7 @@ cd linux-%{KVERREL}
 # Any further pre-build tree manipulations happen here.
 
 chmod +x scripts/checkpatch.pl
+mv COPYING COPYING-%{version}
 
 # This Prevents scripts/setlocalversion from mucking with our version numbers.
 touch .scmversion
@@ -1554,7 +1555,7 @@ fi
 %{expand:%%files -f kernel-%{?3:%{3}-}core.list %{?3:%{3}-}core}\
 %defattr(-,root,root)\
 %{!?_licensedir:%global license %%doc}\
-%license linux-%{KVERREL}/COPYING\
+%license linux-%{KVERREL}/COPYING-%{version}\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/%{?-k:%{-k*}}%{!?-k:vmlinuz}\
 %ghost /%{image_install_path}/%{?-k:%{-k*}}%{!?-k:vmlinuz}-%{KVERREL}%{?3:+%{3}}\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/.vmlinuz.hmac \
