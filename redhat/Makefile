@@ -3,8 +3,14 @@ include Makefile.rhpkg
 include Makefile.test
 
 LANG=C
-BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
-BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
+
+ifeq ("$(DIST)", ".elrdy")
+  BUILD_DEFAULT_TARGET = temp-ark-rhel-8-test
+  BUILD_SCRATCH_TARGET = temp-ark-rhel-8-test
+else
+  BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
+  BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
+endif
 
 ifeq ("$(ZSTREAM)", "yes")
   ifeq ("$(origin RHDISTGIT_BRANCH)", "command line")
@@ -59,13 +65,18 @@ rh-check-kabi: rh-kabi
 	@$(REDHAT)/kabi/check-kabi -k $(REDHAT)/kabi/Module.kabi_$(MACH) \
 	 -s $(_OUTPUT)/Module.symvers
 
-rh-configs:
-	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME)
+rh-configs: rh-configs-prep
+	cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh; \
+	./process_configs.sh $(PACKAGE_NAME) $(KVERSION)
 
-rh-configs-prep: rh-configs
+rh-configs-check: rh-configs-prep
+	cd $(REDHAT)/configs; ./process_configs.sh -t $(PACKAGE_NAME)
 
-rh-configs-arch-prep:
-	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME) $(MACH)
+rh-configs-prep: rh-clean-configs
+	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME) $(ARCH_MACH)
+
+rh-configs-arch: ARCH_MACH = $(MACH)
+rh-configs-arch: rh-configs
 
 rh-clean-configs:
 	cd $(REDHAT)/configs; rm -f kernel-*.config
@@ -125,13 +136,13 @@ sources-rh: $(TARBALL)
 	@(if [ ! -f keys/extra_certificates ]; then \
 		touch keys/extra_certificates; \
 	fi)
-	@cp cpupower.* x509.genkey keys/rhel*.x509 keys/extra_certificates Makefile.common kabi/check-kabi configs/$(PACKAGE_NAME)-*.config rhpkg/Makefile keys/*.cer filter-*.sh mod-extra.* mod-sign.sh $(SOURCES)/
+	@cp cpupower.* x509.genkey keys/rhel*.x509 keys/extra_certificates Makefile.common kabi/check-kabi configs/$(PACKAGE_NAME)-*.config rhpkg/Makefile keys/*.cer filter-*.sh mod-extra.* mod-sign.sh configs/generate_all_configs.sh configs/process_configs.sh $(SOURCES)/
 	@for KABIARCH in $(ARCH_LIST); do \
 		cp kabi/Module.kabi_$$KABIARCH $(SOURCES)/; \
 	done
 	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHELMAJOR)* kabi-current)
 
-rh-sources: setup-source rh-configs rh-kabi sources-rh
+rh-sources: setup-source rh-configs-check rh-kabi sources-rh
 
 rh-test-patch:
 	@git diff --no-renames HEAD > $(TESTPATCH);
@@ -186,6 +197,7 @@ rh-brew rh-koji: rh-%: rh-srpm
 rhg-brew rhg-koji: rhg-%:
 	$* build $(BUILD_FLAGS) $(BUILD_TARGET) "$(RHGITURL)?redhat/koji#$(RHGITCOMMIT)"
 
+.PHONY: $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec
 $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec:
 	@echo "rh-sources"
 	@$(MAKE) rh-sources

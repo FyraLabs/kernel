@@ -3,15 +3,22 @@ RPMBUILD := $(shell if [ -x "/usr/bin/rpmbuild" ]; then echo rpmbuild; \
 REDHAT:=$(shell pwd)
 TOPDIR:=$(shell dirname $(REDHAT))
 MACH :=  $(shell uname -m)
-RPMKVERSION:=4
-RPMKPATCHLEVEL:=16
-RPMKSUBLEVEL:=0
-KVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)
+RPMKVERSION:=$(shell git show HEAD:Makefile | grep ^VERSION | sed -e s/VERSION\ =\ //)
+RPMKPATCHLEVEL:=$(shell git show HEAD:Makefile | grep ^PATCHLEVEL | sed -e s/PATCHLEVEL\ =\ //)
+RPMKSUBLEVEL:=$(shell git show HEAD:Makefile | grep ^SUBLEVEL | sed -e s/SUBLEVEL\ =\ //)
+RPMKEXTRAVERSION:=$(shell git show HEAD:Makefile | grep ^EXTRAVERSION | sed -e s/EXTRAVERSION\ =\ *//)
+_KVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL)
+KVERSION:=$(_KVERSION).$(RPMKSUBLEVEL)
 GITID:= $(shell git log --max-count=1 --pretty=format:%H)
-RPMVERSION:=4.16.0
+RPMVERSION:=$(KVERSION)
 # marker is git tag which we base off of for exporting patches
-MARKER:=v4.16
-PREBUILD:=
+MARKER:=v$(_KVERSION)$(RPMKEXTRAVERSION)
+ifneq ($(RPMKEXTRAVERSION),)
+  KEXTRAVERSION:=$(shell echo $(RPMKEXTRAVERSION) | sed -e s/-/./)
+  PREBUILD:=0$(KEXTRAVERSION).
+else
+  PREBUILD:=
+endif
 BUILD:=0
 DIST:=.el8
 PACKAGE_NAME:=kernel
@@ -56,3 +63,9 @@ KABI_TARBALL:=$(REDHAT)/rpm/SOURCES/$(KABI_TARFILE)
 
 RHELMAJOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MAJOR | sed -e s/RHEL_MAJOR\ =\ //)
 RHELMINOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MINOR | sed -e s/RHEL_MINOR\ =\ //)
+
+ifeq ("$(DIST)", ".elrdy")
+  RHPRODUCT:=rhel-ready
+else
+  RHPRODUCT:=rhel-$(RHELMAJOR).$(RHELMINOR)
+endif
