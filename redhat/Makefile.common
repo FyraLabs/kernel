@@ -7,11 +7,12 @@ RPMKVERSION:=$(shell git show HEAD:Makefile | grep ^VERSION | sed -e s/VERSION\ 
 RPMKPATCHLEVEL:=$(shell git show HEAD:Makefile | grep ^PATCHLEVEL | sed -e s/PATCHLEVEL\ =\ //)
 RPMKSUBLEVEL:=$(shell git show HEAD:Makefile | grep ^SUBLEVEL | sed -e s/SUBLEVEL\ =\ //)
 RPMKEXTRAVERSION:=$(shell git show HEAD:Makefile | grep ^EXTRAVERSION | sed -e s/EXTRAVERSION\ =\ *//)
-KVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)
+_KVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL)
+KVERSION:=$(_KVERSION).$(RPMKSUBLEVEL)
 GITID:= $(shell git log --max-count=1 --pretty=format:%H)
 RPMVERSION:=$(KVERSION)
 # marker is git tag which we base off of for exporting patches
-MARKER:=v$(KVERSION)$(RPMKEXTRAVERSION)
+MARKER:=v$(_KVERSION)$(RPMKEXTRAVERSION)
 ifneq ($(RPMKEXTRAVERSION),)
   KEXTRAVERSION:=$(shell echo $(RPMKEXTRAVERSION) | sed -e s/-/./)
   PREBUILD:=0$(KEXTRAVERSION).
