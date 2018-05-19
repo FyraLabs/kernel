@@ -298,6 +298,11 @@ Source36: kernel-s390x.config
 Source37: kernel-s390x-debug.config
 Source38: kernel-x86_64.config
 Source39: kernel-x86_64-debug.config
+Source40: generate_all_configs.sh
+
+Source42: process_configs.sh
+
+
 
 Source300: kernel-abi-whitelists-%{rpmversion}-%{distro_build}.tar.bz2
 
@@ -696,13 +701,6 @@ mv linux-%{rpmversion}-%{pkgrelease} linux-%{KVERREL}
 
 cd linux-%{KVERREL}
 
-# Drop some necessary files from the source dir into the buildroot
-cp $RPM_SOURCE_DIR/kernel-*.config .
-for i in kernel-*.config; do
-	NEW=kernel-%{version}-`echo $i | cut -d - -f2-`
-	mv $i $NEW
-done
-
 # END OF PATCH APPLICATIONS
 
 # Any further pre-build tree manipulations happen here.
@@ -741,22 +739,23 @@ if [ -L configs ]; then
 	rm -f configs
 fi
 mkdir configs
+cd configs
+
+# Drop some necessary files from the source dir into the buildroot
+cp $RPM_SOURCE_DIR/kernel-*.config .
+cp %{SOURCE40} .
+VERSION=%{version} ./generate_all_configs.sh
 
 %define make make %{?cross_opts}
 
-# now run oldconfig over all the config files
-for i in *.config
-do
-  cat $i > temp-$i
-  mv $i .config
-  Arch=`head -1 .config | cut -b 3-`
-  make ARCH=$Arch oldnoconfig
-  echo "# $Arch" > configs/$i
-  cat .config >> configs/$i
-  rm temp-$i
-done
+cp %{SOURCE42} .
+./process_configs.sh kernel %{rpmversion}
+
 # end of kernel config
 %endif
+
+cd ..
+# # End of Configs stuff
 
 # get rid of unwanted files resulting from patch fuzz
 find . \( -name "*.orig" -o -name "*~" \) -exec rm -f {} \; >/dev/null
