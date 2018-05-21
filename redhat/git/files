@@ -17,6 +17,7 @@ filter-modules.sh
 filter-ppc64le.sh
 filter-s390x.sh
 filter-x86_64.sh
+generate_all_configs.sh
 mod-extra.list
 mod-extra.sh
 mod-sign.sh
@@ -33,3 +34,4 @@ kernel-s390x-debug.config
 kernel-s390x-kdump.config
 kernel-x86_64-debug.config
 kernel-x86_64.config
+process_configs.sh
