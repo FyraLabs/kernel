@@ -14,7 +14,7 @@ MARKER=${11}
 RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
-HIDE_REDHAT=0;
+HIDE_REDHAT=1;
 # hide entries for unsupported arches
 HIDE_UNSUPPORTED_ARCH=1;
 # override LC_TIME to avoid date conflicts when building the srpm
