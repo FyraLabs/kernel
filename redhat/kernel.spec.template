@@ -55,6 +55,8 @@ Summary: The Linux kernel
 %define with_perf      %{?_without_perf:      0} %{?!_without_perf:      1}
 # tools
 %define with_tools     %{?_without_tools:     0} %{?!_without_tools:     1}
+# bpf tool
+%define with_bpftool   %{?_without_bpftool:   0} %{?!_without_bpftool:   1}
 # kernel-debuginfo
 %define with_debuginfo %{?_without_debuginfo: 0} %{?!_without_debuginfo: 1}
 # kernel-bootwrapper (for creating zImages from kernel + initrd)
@@ -109,6 +111,7 @@ Summary: The Linux kernel
 %define with_up 0
 %define with_tools 0
 %define with_perf 0
+%define with_bpftool 0
 %endif
 
 %ifnarch noarch
@@ -124,6 +127,7 @@ Summary: The Linux kernel
 %define with_cross_headers 0
 %define with_tools 0
 %define with_perf 0
+%define with_bpftool 0
 %define with_debug 0
 %define all_arch_configs kernel-%{version}-*.config
 %endif
@@ -188,6 +192,7 @@ Summary: The Linux kernel
 %define with_debuginfo 0
 %define with_perf 0
 %define with_tools 0
+%define with_bpftool 0
 %define _enable_debug_packages 0
 %endif
 
@@ -238,6 +243,9 @@ BuildRequires: numactl-devel
 %endif
 %if %{with_tools}
 BuildRequires: pciutils-devel gettext ncurses-devel
+%endif
+%if %{with_bpftool}
+BuildRequires: python-docutils
 %endif
 BuildConflicts: rhbuildsys(DiskFree) < 500Mb
 %if %{with_debuginfo}
@@ -490,6 +498,17 @@ This package provides debug information for package kernel-tools.
 %{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} -p '.*%%{_bindir}/centrino-decode(\.debug)?|.*%%{_bindir}/powernow-k8-decode(\.debug)?|.*%%{_bindir}/cpupower(\.debug)?|.*%%{_libdir}/libcpupower.*|.*%%{_bindir}/turbostat(\.debug)?|.*%%{_bindir}/x86_energy_perf_policy(\.debug)?|.*%%{_bindir}/tmon(\.debug)?|.*%%{_bindir}/lsgpio(\.debug)?|.*%%{_bindir}/gpio-hammer(\.debug)?|.*%%{_bindir}/gpio-event-mon(\.debug)?|.*%%{_bindir}/iio_event_monitor(\.debug)?|.*%%{_bindir}/iio_generic_buffer(\.debug)?|.*%%{_bindir}/lsiio(\.debug)?|XXX' -o kernel-tools-debuginfo.list}
 
 %endif # with_tools
+
+%if %{with_bpftool}
+
+%package -n bpftool
+Summary: Inspection and simple manipulation of eBPF programs and maps
+License: GPLv2
+%description -n bpftool
+This package contains the bpftool, which allows inspection and simple
+manipulation of eBPF programs and maps.
+
+%endif # with_bpftool
 
 %package -n kernel-abi-whitelists
 Summary: The Red Hat Enterprise Linux kernel ABI symbol whitelists
@@ -1152,6 +1171,12 @@ pushd tools/gpio/
 popd
 %endif
 
+%if %{with_bpftool}
+pushd tools/bpf/bpftool
+make
+popd
+%endif
+
 # In the modsign case, we do 3 things.  1) We check the "flavour" and hard
 # code the value in the following invocations.  This is somewhat sub-optimal
 # but we're doing this inside of an RPM macro and it isn't as easy as it
@@ -1317,6 +1342,12 @@ popd
 pushd tools/kvm/kvm_stat
 make INSTALL_ROOT=%{buildroot} install-tools
 make INSTALL_ROOT=%{buildroot} install-man
+popd
+%endif
+
+%if %{with_bpftool}
+pushd tools/bpf/bpftool
+make DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix} bash_compdir=%{_sysconfdir}/bash_completion.d/ mandir=%{_mandir} install doc-install
 popd
 %endif
 
@@ -1534,6 +1565,16 @@ fi
 %{_includedir}/cpufreq.h
 %endif
 %endif # with_perf
+
+%if %{with_bpftool}
+%files -n bpftool
+%{_sbindir}/bpftool
+%{_sysconfdir}/bash_completion.d/bpftool
+%{_mandir}/man8/bpftool-cgroup.8.gz
+%{_mandir}/man8/bpftool-map.8.gz
+%{_mandir}/man8/bpftool-prog.8.gz
+%{_mandir}/man8/bpftool.8.gz
+%endif
 
 # empty meta-package
 %ifnarch %nobuildarches noarch
