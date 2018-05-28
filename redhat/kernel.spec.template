@@ -1611,6 +1611,35 @@ fi
 #
 %changelog
 %%CHANGELOG%%
+* Mon May 28 2018 Jakub Racek <jracek@redhat.com> [4.17.0-0.rc6.2.elrdy]
+- [scripts] kconfig: extend output of 'listnewconfig' (Don Zickus)
+- [rpmspec] fix conflicts with COPYING file while installing newer 4.17 kernel ("Herton R. Krzesinski") [1579563]
+- [arm64] lse: Add early clobbers to some input/output asm operands (Will Deacon)
+- [arm64] acpi: prefer booting with ACPI over DTS (Mark Salter) [1576869]
+- [acpi] aarch64: acpi scan: Fix regression related to X-Gene UARTs (Mark Salter) [1519554]
+- [acpi] ACPI / irq: Workaround firmware issue on X-Gene based m400 (Mark Salter) [1519554]
+- Revert "[redhat] configs: New config in init" (Jakub Racek)
+- [x86] add rh_check_supported (David Arcari) [1565717]
+- [scsi] qla2xxx: Remove PCI IDs of deprecated adapter (Himanshu Madhani) [1572233]
+- [scsi] be2iscsi: remove unsupported device IDs (Chris Leech) [1574502]
+- [scsi] Removing Obsolete hba pci-ids from rhel8 (Dick Kennedy) [1572321]
+- [scsi] hpsa: modify hpsa driver version (Joseph Szczypek) [1471185]
+- [scsi] hpsa: remove old cciss-based smartarray pci ids (Joseph Szczypek) [1471185]
+- [kernel] rh_taint: add support for marking driver as unsupported (Jonathan Toppins) [1565704]
+- [kernel] rh_taint: add support (David Arcari) [1565704]
+- [scsi] qla4xxx: Remove deprecated PCI IDs from RHEL 8 (Chad Dupuis) [1518874]
+- [scsi] aacraid: Remove depreciated device and vendor PCI id's (Raghava Aditya Renukunta) [1495307]
+- [scsi] megaraid_sas: remove deprecated pci-ids (Tomas Henzl) [1509329]
+- [scsi] mpt*: remove certain deprecated pci-ids (Tomas Henzl) [1511953]
+- [kernel] modules: add rhelversion MODULE_INFO tag (Prarit Bhargava) [1544999]
+- [acpi] ACPI: APEI: arm64: Ignore broken HPE moonshot APEI support (Al Stone) [1518076]
+- [scripts] kconfig: extend output of 'listnewconfig' (Don Zickus)
+- [rpmspec] fix conflicts with COPYING file while installing newer 4.17 kernel ("Herton R. Krzesinski") [1579563]
+- [rpmspec] do not build kernel meta-package on noarch ("Herton R. Krzesinski") [1579512]
+- [kernel] Makefile: Move RHEL definitions down (Jakub Racek) [1576568]
+- [rpmspec] spec: Add new arch/powerpc/kernel/module.lds file to kernel-devel rpm (Steve Best) [1572553]
+- [kernel] put RHEL info into generated headers (Prarit Bhargava) [1544999]
+
 * Mon May 28 2018 Jakub Racek <jracek@redhat.com> [4.17.0-0.rc6.1.elrdy]
 - [scripts] kconfig: extend output of 'listnewconfig' (Don Zickus)
 - [rpmspec] fix conflicts with COPYING file while installing newer 4.17 kernel ("Herton R. Krzesinski") [1579563]
