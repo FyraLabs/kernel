@@ -182,6 +182,7 @@ M:	Lenny Szubowicz <lszubowi@redhat.com>
 M:	Prarit Bhargava <prarit@redhat.com>
 
 BLOCK LAYER
+M:	Ming Lei <minlei@redhat.com>
 M:	Jeff Moyer <jmoyer@redhat.com>
 M:	Vivek Goyal <vgoyal@redhat.com>
 S:	Maintained
@@ -301,6 +302,11 @@ EDAC/HERM
 M:	Aristeu Rozanski <aris@redhat.com>
 S:	Maintained
 F:	drivers/edac/
+
+EMULEX FC DRIVER
+M:	Dick Kennedy <dkennedy@redhat.com>
+S:	Maintained
+F:	drivers/scsi/lpfc
 
 ETHERNET BRIDGE
 M:	Ivan Vecera <cera@redhat.com>
@@ -502,6 +508,7 @@ S:	Maintained
 F:	arch/x86/include/asm/mshyperv.h
 F:	arch/x86/include/uapi/asm/hyperv.h
 F:	arch/x86/kernel/cpu/mshyperv.c
+F:	arch/x86/hyperv
 F:	drivers/hid/hid-hyperv.c
 F:	drivers/hv/
 F:	drivers/input/serio/hyperv-keyboard.c
@@ -509,6 +516,7 @@ F:	drivers/net/hyperv/
 F:	drivers/pci/pci-hyperv.c
 F:	drivers/scsi/storvsc_drv.c
 F:	drivers/video/hyperv_fb.c
+F:	drivers/uio/uio_hv_generic.c
 F:	include/linux/hyperv.h
 F:	tools/hv/
 
@@ -566,6 +574,11 @@ M:	Prarit Bhargava <prarit@redhat.com>
 S:	Maintained
 F:	arch/x86/kernel/cpu/mcheck/
 
+MELLANOX ETHERNET SWITCH DRIVERS
+M:      Ivan Vecera <ivecera@redhat.com>
+S:      Maintained
+F:      drivers/net/ethernet/mellanox/mlxsw/
+
 MEMORY MANAGEMENT
 M:	Larry Woodman <lwoodman@redhat.com>
 S:	Maintained
@@ -583,13 +596,15 @@ F:	drivers/block/mtip32xx/mtip32xx.c
 F:	drivers/block/mtip32xx/mtip32xx.h
 
 MLX4 ETHERNET DRIVER (mlx4)
-M:	Kamal Heib <kheib@redhat.com>
+M:	Erez Alfasi <ealfasi@redhat.com>
+M:	Alaa Hleihel <ahleihel@redhat.com>
 M:	Slava Shwartsman <sshwarts@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/mellanox/mlx4/
 
 MLX5 ETHERNET DRIVER (mlx5)
-M:	Kamal Heib <kheib@redhat.com>
+M:	Erez Alfasi <ealfasi@redhat.com>
+M:	Alaa Hleihel <ahleihel@redhat.com>
 M:	Slava Shwartsman <sshwarts@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/mellanox/mlx5/
@@ -748,7 +763,7 @@ F:	drivers/ptp/
 F:	include/linux/ptp_cl*
 
 QLOGIC QLA2XXX FC-SCSI DRIVER
-M:	Chad Dupuis <cdupuis@redhat.com>
+M:	Himanshu Madhani <hmadhani@redhat.com>
 S:	Maintained
 F:	drivers/scsi/qla2xxx/
 
@@ -788,13 +803,18 @@ F:	drivers/s390/cio/vfio_ccw*
 F:	Documentation/s390/vfio-ccw.txt
 F:	include/uapi/linux/vfio_ccw.h
 
+ROCKER DRIVER
+M:	Ivan Vecera <ivecera@redhat.com>
+S:	Maintained
+F:	drivers/net/ethernet/rocker/
+
 SCSI CORE SUBSYSTEM (NOT INDIVIDUAL DRIVERS)
 M:	David Milburn <dmilburn@redhat.com>
 S:	Maintained
 F:	drivers/scsi/
 
 SCSI TARGET (LIO)
-M:	Andy Grover <agrover@redhat.com>
+M:	Maurizio Lombardi <mlombard@redhat.com>
 S:	Maintained
 F:	drivers/target/
 F:	include/target/
@@ -863,6 +883,13 @@ SUSPEND/RESUME
 M:	Al Stone <ahs3@redhat.com>
 M:	Lenny Szubowicz <lszubowi@redhat.com>
 S:	Maintained
+
+SWITCHDEV
+M:	Ivan Vecera <ivecera@redhat.com>
+S:	Maintained
+F:	Documentation/networking/switchdev.txt
+F:	include/net/switchdev.h
+F:	net/switchdev/
 
 X86 ARCHITECTURE
 M:	Prarit Bhargava <prarit@redhat.com>
