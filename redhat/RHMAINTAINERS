@@ -53,7 +53,7 @@ Red Hat Maintainers List (try to look for most precise areas first)
 		-----------------------------------
 
 Kernel Maintainer
-M:	"Herton R. Krzesinski" <herton@redhat.com>
+M:	Jakub Racek <jracek@redhat.com>
 S:	Maintained
 F:	redhat/
 
