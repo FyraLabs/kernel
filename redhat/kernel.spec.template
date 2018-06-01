@@ -1652,6 +1652,11 @@ fi
 #
 %changelog
 %%CHANGELOG%%
+* Fri Jun 01 2018 Jakub Racek <jracek@redhat.com> [4.17.0-0.rc7.2.elrdy]
+- [rpmspec] eBPF: Add bpftool package to spec file (Jerome Marchand) [1559607]
+- [scripts] tags.sh: Ignore redhat/rpm (Prarit Bhargava) [1582586]
+- [scripts] kconfig: extend output of 'listnewconfig' (Don Zickus)
+
 * Wed May 30 2018 Jakub Racek <jracek@redhat.com> [4.17.0-0.rc7.1.elrdy]
 - [arm64] acpi: prefer booting with ACPI over DTS (Mark Salter) [1576869]
 - [acpi] aarch64: acpi scan: Fix regression related to X-Gene UARTs (Mark Salter) [1519554]
