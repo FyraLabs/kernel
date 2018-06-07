@@ -2,7 +2,17 @@
 #
 # This script takes the merged config files and processes them through oldconfig
 # and listnewconfig
+#
 
+usage()
+{
+	echo "process_configs.sh [ -n|-c|-t ] package_name kernel_version"
+	echo "     -n: error on unset config options"
+	echo "     -c: error on mismatched config options"
+	echo "     -t: test run, do not overwrite original config"
+	echo "     -w: error on misconfigured config options"
+	exit 1
+}
 
 die()
 {
@@ -76,8 +86,8 @@ function process_configs()
 
 		echo -n "Processing $cfg ... "
 
-		# an empty grep is good but leaves a return value, so use # 'true' to bypass
-		make ARCH=$arch KCONFIG_CONFIG=$cfgorig listnewconfig | grep -E 'CONFIG_' > .newoptions || true
+		make ARCH=$arch KCONFIG_CONFIG=$cfgorig listnewconfig >& .listnewconfig
+		grep -E 'CONFIG_' .listnewconfig > .newoptions
 		if test -n "$NEWOPTIONS" && test -s .newoptions
 		then
 			echo "Found unset config items, please set them to an appropriate value"
@@ -86,6 +96,18 @@ function process_configs()
 			exit 1
 		fi
 		rm .newoptions
+
+		grep -E 'warning' .listnewconfig > .warnings
+		if test -n "$CHECKWARNINGS" && test -s .warnings
+		then
+			echo "Found misconfigured config items, please set them to an appropriate value"
+			cat .warnings
+			rm .warnings
+			exit 1
+		fi
+		rm .warnings
+
+		rm .listnewconfig
 
 		make ARCH=$arch KCONFIG_CONFIG=$cfgorig oldnoconfig > /dev/null || exit 1
 		echo "# $arch" > ${cfgtmp}
@@ -112,12 +134,16 @@ function process_configs()
 
 NEWOPTIONS=""
 CHECKOPTIONS=""
+CHECKWARNINGS=""
 TESTRUN=""
 
 while [[ $# -gt 0 ]]
 do
 	key="$1"
 	case $key in
+		-h)
+			usage
+			;;
 		-n)
 			NEWOPTIONS="x"
 			;;
@@ -126,6 +152,9 @@ do
 			;;
 		-t)
 			TESTRUN="x"
+			;;
+		-w)
+			CHECKWARNINGS="x"
 			;;
 		*)
 			break;;
