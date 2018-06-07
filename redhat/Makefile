@@ -67,7 +67,7 @@ rh-check-kabi: rh-kabi
 
 rh-configs: rh-configs-prep
 	cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh; \
-	./process_configs.sh $(PACKAGE_NAME) $(KVERSION)
+	./process_configs.sh -w $(PACKAGE_NAME) $(KVERSION)
 
 rh-configs-check: rh-configs-prep
 	cd $(REDHAT)/configs; ./process_configs.sh -t $(PACKAGE_NAME)
