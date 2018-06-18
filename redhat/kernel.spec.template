@@ -1652,6 +1652,28 @@ fi
 #
 %changelog
 %%CHANGELOG%%
+* Mon Jun 18 2018 Jakub Racek <jracek@redhat.com> [4.17.0-5.elrdy]
+- [crypto] testmgr - Allow different compression results (Robert Richter) [1501663]
+- [crypto] cavium - Fix smp_processor_id() warnings (Robert Richter) [1501663]
+- [crypto] cavium - Fix statistics pending request value (Robert Richter) [1501663]
+- [crypto] cavium - Prevent division by zero (Robert Richter) [1501663]
+- [crypto] cavium - Limit result reading attempts (Robert Richter) [1501663]
+- [crypto] cavium - Fix fallout from CONFIG_VMAP_STACK (Robert Richter) [1501663]
+- [scsi] scsi: lpfc: update driver version to 12.0.0.2 (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Correct missing remoteport registration during link bounces (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Fix NULL pointer reference when resetting adapter (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Fix nvme remoteport registration race conditions (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Fix driver not recovering NVME rports during target link faults (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Fix WQ/CQ creation for older asic's (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Fix NULL pointer access in lpfc_nvme_info_show (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Fix lingering lpfc_wq resource after driver unload (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Fix Abort request WQ selection (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Enlarge nvmet asynchronous receive buffer counts (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Add per io channel NVME IO statistics (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Correct target queue depth application changes (Dick Kennedy) [1497822]
+- [scsi] scsi: lpfc: Fix multiple PRLI completion error path (Dick Kennedy) [1497822]
+- [kernel] kdump: fix a grammar issue in a kernel message (Dave Young) [1507353]
+
 * Wed Jun 13 2018 Jakub Racek <jracek@redhat.com> [4.17.0-1.elrdy]
 - [scripts] tags.sh: Ignore redhat/rpm (Prarit Bhargava) [1582586]
 - [kernel] put RHEL info into generated headers (Prarit Bhargava) [1544999]
