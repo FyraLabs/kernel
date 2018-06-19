@@ -740,7 +740,8 @@ sed -i '1s=^#![[:space:]]*/usr/bin/\(python\|env python\)=#!%{__python3}=' \
 	tools/kvm/kvm_stat/kvm_stat \
 	scripts/show_delta \
 	scripts/diffconfig \
-	scripts/bloat-o-meter
+	scripts/bloat-o-meter \
+	scripts/spdxcheck.py
 # FIXME: while RHEL 8 is supposed to not have python 2, scripts below are
 # not compatible looking at 2to3 output from python3-devel. For now, we just
 # patch them to so we can get kernel builds going again without failures from
