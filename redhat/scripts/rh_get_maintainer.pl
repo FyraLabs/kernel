@@ -37,6 +37,7 @@ my $output_multiline = 1;
 my $output_separator = ", ";
 my $scm = 0;
 my $web = 0;
+my $rh_only = 0;
 my $subsystem = 0;
 my $status = 0;
 my $keywords = 1;
@@ -44,6 +45,7 @@ my $from_filename = 0;
 my $pattern_depth = 0;
 my $version = 0;
 my $help = 0;
+my $nonrh_tag = "\\(([\\s\\w]+)\\)";
 
 my $exit = 0;
 
@@ -75,6 +77,7 @@ if (!GetOptions(
 		'f|file' => \$from_filename,
 		'v|version' => \$version,
 		'h|help' => \$help,
+		'rh-only!' => \$rh_only,
 		)) {
     usage();
     die "$P: invalid argument\n";
@@ -126,7 +129,7 @@ open(MAINT, "<${lk_path}/redhat/RHMAINTAINERS") || die "$P: Can't open redhat/RH
 while (<MAINT>) {
     my $line = $_;
 
-    if ($line =~ m/^(\C):\s*(.*)/) {
+    if ($line =~ m/^(\w):\s*(.*)/) {
 	my $type = $1;
 	my $value = $2;
 
@@ -251,7 +254,7 @@ foreach my $file (@files) {
 
     my $exclude = 0;
     foreach my $line (@typevalue) {
-	if ($line =~ m/^(\C):\s*(.*)/) {
+	if ($line =~ m/^(\w):\s*(.*)/) {
 	    my $type = $1;
 	    my $value = $2;
 	    if ($type eq 'X') {
@@ -267,7 +270,7 @@ foreach my $file (@files) {
 	my $tvi = 0;
 	my %hash;
 	foreach my $line (@typevalue) {
-	    if ($line =~ m/^(\C):\s*(.*)/) {
+	    if ($line =~ m/^(\w):\s*(.*)/) {
 		my $type = $1;
 		my $value = $2;
 		if ($type eq 'F') {
@@ -495,7 +498,7 @@ sub find_starting_index {
 
     while ($index > 0) {
 	my $tv = $typevalue[$index];
-	if (!($tv =~ m/^(\C):\s*(.*)/)) {
+	if (!($tv =~ m/^(\w):\s*(.*)/)) {
 	    last;
 	}
 	$index--;
@@ -509,7 +512,7 @@ sub find_ending_index {
 
     while ($index < @typevalue) {
 	my $tv = $typevalue[$index];
-	if (!($tv =~ m/^(\C):\s*(.*)/)) {
+	if (!($tv =~ m/^(\w):\s*(.*)/)) {
 	    last;
 	}
 	$index++;
@@ -529,7 +532,7 @@ sub add_categories {
 
     for ($i = $start + 1; $i < $end; $i++) {
 	my $tv = $typevalue[$i];
-	if ($tv =~ m/^(\C):\s*(.*)/) {
+	if ($tv =~ m/^(\w):\s*(.*)/) {
 	    my $ptype = $1;
 	    my $pvalue = $2;
 	    if ($ptype eq "L") {
@@ -553,7 +556,7 @@ sub add_categories {
 		if ($name eq "") {
 		    if ($i > 0) {
 			my $tv = $typevalue[$i - 1];
-			if ($tv =~ m/^(\C):\s*(.*)/) {
+			if ($tv =~ m/^(\w):\s*(.*)/) {
 			    if ($1 eq "P") {
 				$name = $2;
 				$pvalue = format_email($name, $address);
@@ -599,6 +602,10 @@ sub push_email_address {
 
     # to avoid confusion, only print redhat.com email addresses
     if ($line !~ /\@redhat\.com/) {
+	return 0;
+    }
+
+    if (($rh_only) && ($line =~ m/$nonrh_tag/)) {
 	return 0;
     }
 
