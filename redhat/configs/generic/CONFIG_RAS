@@ -1,1 +1,1 @@
-# CONFIG_RAS is not set
+CONFIG_RAS=y
