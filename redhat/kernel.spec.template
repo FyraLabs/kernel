@@ -229,14 +229,14 @@ Requires: kernel-modules-uname-r = %{KVERREL}%{?variant}
 #
 BuildRequires: kmod, patch, bash, sh-utils, tar, git
 BuildRequires: bzip2, xz, findutils, gzip, m4, perl-interpreter, perl-Carp, perl-devel, perl-generators, make, diffutils, gawk
-BuildRequires: gcc, binutils, redhat-rpm-config, hmaccalc
+BuildRequires: gcc, binutils, redhat-rpm-config, hmaccalc, python3-devel
 BuildRequires: net-tools, hostname, bc, bison, flex, elfutils-devel
 %if %{with_sparse}
 BuildRequires: sparse
 %endif
 %if %{with_perf}
-BuildRequires: zlib-devel binutils-devel newt-devel python-devel perl(ExtUtils::Embed) bison flex xz-devel
-BuildRequires: audit-libs-devel python3-devel
+BuildRequires: zlib-devel binutils-devel newt-devel perl(ExtUtils::Embed) bison flex xz-devel
+BuildRequires: audit-libs-devel
 %ifnarch s390x
 BuildRequires: numactl-devel
 %endif
@@ -245,7 +245,7 @@ BuildRequires: numactl-devel
 BuildRequires: pciutils-devel gettext ncurses-devel
 %endif
 %if %{with_bpftool}
-BuildRequires: python-docutils
+BuildRequires: python3-docutils
 %endif
 BuildConflicts: rhbuildsys(DiskFree) < 500Mb
 %if %{with_debuginfo}
@@ -420,26 +420,24 @@ This package provides debug information for the perf package.
 # of matching the pattern against the symlinks file.
 %{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} -p '.*%%{_bindir}/perf(\.debug)?|.*%%{_libexecdir}/perf-core/.*|.*%%{_libdir}/traceevent/plugins/.*|XXX' -o perf-debuginfo.list}
 
-%package -n python-perf
+%package -n python3-perf
 Summary: Python bindings for apps which will manipulate perf events
 Group: Development/Libraries
-%description -n python-perf
-The python-perf package contains a module that permits applications
+%description -n python3-perf
+The python3-perf package contains a module that permits applications
 written in the Python programming language to use the interface
 to manipulate perf events.
 
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-
-%package -n python-perf-debuginfo
+%package -n python3-perf-debuginfo
 Summary: Debug information for package perf python bindings
 Group: Development/Debug
 Requires: %{name}-debuginfo-common-%{_target_cpu} = %{version}-%{release}
 AutoReqProv: no
-%description -n python-perf-debuginfo
+%description -n python3-perf-debuginfo
 This package provides debug information for the perf python bindings.
 
 # the python_sitearch macro should already be defined from above
-%{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} -p '.*%%{python_sitearch}/perf.so(\.debug)?|XXX' -o python-perf-debuginfo.list}
+%{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} -p '.*%%{python3_sitearch}/perf.*so(\.debug)?|XXX' -o python3-perf-debuginfo.list}
 
 
 %endif # with_perf
@@ -736,18 +734,11 @@ touch .scmversion
 # script throws an error like below:
 # *** ERROR: ambiguous python shebang in /usr/bin/kvm_stat: #!/usr/bin/python. Change it to python3 (or python2) explicitly.
 # We patch all sources below for which we got a report/error.
-sed -i '1s=^#![[:space:]]*/usr/bin/\(python\|env python\)=#!%{__python3}=' \
+pathfix.py -i %{__python3} -p -n \
 	tools/kvm/kvm_stat/kvm_stat \
 	scripts/show_delta \
 	scripts/diffconfig \
-	scripts/bloat-o-meter
-# FIXME: while RHEL 8 is supposed to not have python 2, scripts below are
-# not compatible looking at 2to3 output from python3-devel. For now, we just
-# patch them to so we can get kernel builds going again without failures from
-# brp-mangle-shebangs, however we must look into either fixing the scripts or
-# not ship them
-sed -i '1s=^#![[:space:]]*/usr/bin/\(python\|env python\)=#!%{__python2}=' \
-	scripts/tracing/draw_functrace.py \
+	scripts/bloat-o-meter \
 	tools/perf/tests/attr.py \
 	tools/perf/scripts/python/stat-cpi.py \
 	tools/perf/scripts/python/sched-migration.py
@@ -929,6 +920,7 @@ BuildKernel() {
     rm -rf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/include
     cp .config $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp -a scripts $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
+    rm -rf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts/tracing
     if [ -f tools/objtool/objtool ]; then
       cp -a tools/objtool/objtool $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/tools/objtool/ || :
     fi
@@ -1132,7 +1124,7 @@ BuildKernel %make_target %kernel_image %{with_vdso_install}
 %endif
 
 %global perf_make \
-  make -s EXTRA_CFLAGS="${RPM_OPT_FLAGS}" LDFLAGS="%{__global_ldflags}" %{?cross_opts} -C tools/perf V=1 NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 WERROR=0 NO_LIBUNWIND=1 HAVE_CPLUS_DEMANGLE=1 NO_GTK2=1 NO_STRLCPY=1 NO_BIONIC=1 NO_JVMTI=1 prefix=%{_prefix}
+  make -s EXTRA_CFLAGS="${RPM_OPT_FLAGS}" LDFLAGS="%{__global_ldflags}" %{?cross_opts} -C tools/perf V=1 NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 WERROR=0 NO_LIBUNWIND=1 HAVE_CPLUS_DEMANGLE=1 NO_GTK2=1 NO_STRLCPY=1 NO_BIONIC=1 NO_JVMTI=1 prefix=%{_prefix} PYTHON=%{__python3}
 %if %{with_perf}
 # perf
 # make sure check-headers.sh is executable
@@ -1347,6 +1339,8 @@ popd
 
 %if %{with_bpftool}
 pushd tools/bpf/bpftool
+function rst2man { rst2man-3 "$@"; }
+export -f rst2man
 make DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix} bash_compdir=%{_sysconfdir}/bash_completion.d/ mandir=%{_mandir} install doc-install
 popd
 %endif
@@ -1508,15 +1502,15 @@ fi
 %{_sysconfdir}/bash_completion.d/perf
 %doc linux-%{KVERREL}/tools/perf/Documentation/examples.txt
 
-%files -n python-perf
+%files -n python3-perf
 %defattr(-,root,root)
-%{python_sitearch}
+%{python3_sitearch}/*
 
 %if %{with_debuginfo}
 %files -f perf-debuginfo.list -n perf-debuginfo
 %defattr(-,root,root)
 
-%files -f python-perf-debuginfo.list -n python-perf-debuginfo
+%files -f python3-perf-debuginfo.list -n python3-perf-debuginfo
 %defattr(-,root,root)
 %endif
 %endif # with_perf
