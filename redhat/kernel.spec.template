@@ -922,6 +922,7 @@ BuildKernel() {
     cp .config $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp -a scripts $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     rm -rf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts/tracing
+    rm -f $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts/spdxcheck.py
     if [ -f tools/objtool/objtool ]; then
       cp -a tools/objtool/objtool $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/tools/objtool/ || :
     fi
@@ -1288,6 +1289,15 @@ tar xjvf %{SOURCE300} -C $INSTALL_KABI_PATH
 rm -f %{buildroot}%{_bindir}/trace
 # remove the perf-tips
 rm -rf %{buildroot}%{_docdir}/perf-tip
+
+# For both of the below, yes, this should be using a macro but right now
+# it's hard coded and we don't actually want it anyway right now.
+# Whoever wants examples can fix it up!
+
+# remove examples
+rm -rf %{buildroot}/usr/lib/examples/perf
+# remove the stray header file that somehow got packaged in examples
+rm -rf %{buildroot}/usr/lib/include/perf/bpf/bpf.h
 
 # python-perf extension
 %{perf_make} DESTDIR=$RPM_BUILD_ROOT install-python_ext
