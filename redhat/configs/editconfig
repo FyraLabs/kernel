@@ -51,6 +51,8 @@ usage()
 	echo ""
 	echo "    editconfig (no options) provides a menu to run"
 	echo "    verification tests on all CONFIG options."
+	echo ""
+	echo "See redhat/docs/editing_CONFIGS.txt for more information"
 }
 
 read_file() # $1 is the full file path
@@ -189,7 +191,7 @@ call_evaluate_configs()
 		1) usage_text=$(usage)
 		   dialog --clear --backtitle "$BACKTITLE" \
 			  --title "editconfig help" \
-			  --no-collapse --msgbox "$usage_text" 15 60
+			  --no-collapse --msgbox "$usage_text" 20 60
 		   STATUS="loop"
 		   ;;
 		2) $DIR/evaluate_configs -b;;
