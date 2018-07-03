@@ -60,6 +60,8 @@ usage()
 	echo "	-d : enable debug"
 	echo "	-s : check CONFIGs syntax"
 	echo "	-f : find dead CONFIGs"
+	echo ""
+	echo "See redhat/docs/editing_CONFIGS.txt for more information"
 	exit 1
 }
 
