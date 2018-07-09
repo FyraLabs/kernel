@@ -340,7 +340,7 @@ balance_check() # $1 is CONFIG, $2 is generic or debug arch string,
 	# be safe than sorry.
 	level=$(read_file $DIR/$_path/$CONFIG)
 	if [ "$mnxy" != "$level" ]; then
-		echo "balancing $CONFIG"
+		[ "$DEBUG" ] && echo "balancing $CONFIG"
 		[ "$DEBUG" ] && echo "$CONFIG (mnxy=$mnxy)"
 		[ "$DEBUG" ] && echo "OLD:"
 		[ "$DEBUG" ] && get_config_files $CONFIG
