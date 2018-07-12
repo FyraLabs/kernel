@@ -1657,6 +1657,10 @@ fi
 #
 %changelog
 %%CHANGELOG%%
+* Fri Jul 13 2018 Jakub Racek <jracek@redhat.com> [4.18.0-0.rc4.2.elrdy]
+- [scsi] be2iscsi: remove BE3 family support (Maurizio Lombardi) [1598366]
+- [x86] update rh_check_supported processor list (David Arcari) [1595918]
+
 * Wed Jul 11 2018 Jakub Racek <jracek@redhat.com> [4.18.0-0.rc4.1.elrdy]
 - [kernel] kABI: Add generic kABI macros to use for kABI workarounds (Myron Stowe) [1546831]
 - [pci] add pci_hw_vendor_status() (Maurizio Lombardi) [1590829]
