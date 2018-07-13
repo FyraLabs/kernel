@@ -2,10 +2,7 @@
 configs/kernel*.config
 configs/*-merged
 
-kabi/Module.kabi_aarch64
-kabi/Module.kabi_ppc64le
-kabi/Module.kabi_s390x
-kabi/Module.kabi_x86_64
+kabi/Module.kabi_*
 kabi/kabi-current
 kabi/kabi-rhel8?
 kabi/kabi-rhel8?/*
