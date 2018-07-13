@@ -72,6 +72,8 @@ Summary: The Linux kernel
 %define with_baseonly  %{?_with_baseonly:     1} %{?!_with_baseonly:     0}
 # Only build the debug kernel (--with dbgonly):
 %define with_dbgonly   %{?_with_dbgonly:      1} %{?!_with_dbgonly:      0}
+# Control whether we perform a compat. check against published ABI.
+%define with_kabichk   %{?_without_kabichk:   0} %{?!_without_kabichk:   1}
 #
 # should we do C=1 builds with sparse
 %define with_sparse    %{?_with_sparse:       1} %{?!_with_sparse:       0}
@@ -310,7 +312,12 @@ Source40: generate_all_configs.sh
 
 Source42: process_configs.sh
 
+Source200: check-kabi
 
+Source201: Module.kabi_aarch64
+Source202: Module.kabi_ppc64le
+Source203: Module.kabi_s390x
+Source204: Module.kabi_x86_64
 
 Source300: kernel-abi-whitelists-%{rpmversion}-%{distro_build}.tar.bz2
 
@@ -914,6 +921,27 @@ BuildKernel() {
     if [ -s Module.markers ]; then
       cp Module.markers $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     fi
+
+    # create the kABI metadata for use in packaging
+    # NOTENOTE: the name symvers is used by the rpm backend
+    # NOTENOTE: to discover and run the /usr/lib/rpm/fileattrs/kabi.attr
+    # NOTENOTE: script which dynamically adds exported kernel symbol
+    # NOTENOTE: checksums to the rpm metadata provides list.
+    # NOTENOTE: if you change the symvers name, update the backend too
+    echo "**** GENERATING kernel ABI metadata ****"
+    gzip -c9 < Module.symvers > $RPM_BUILD_ROOT/boot/symvers-$KernelVer.gz
+
+%if %{with_kabichk}
+    echo "**** kABI checking is enabled in kernel SPEC file. ****"
+    chmod 0755 $RPM_SOURCE_DIR/check-kabi
+    if [ -e $RPM_SOURCE_DIR/Module.kabi_%{_target_cpu}$Flavour ]; then
+        cp $RPM_SOURCE_DIR/Module.kabi_%{_target_cpu}$Flavour $RPM_BUILD_ROOT/Module.kabi
+        $RPM_SOURCE_DIR/check-kabi -k $RPM_BUILD_ROOT/Module.kabi -s Module.symvers || exit 1
+        rm $RPM_BUILD_ROOT/Module.kabi # for now, don't keep it around.
+    else
+        echo "**** NOTE: Cannot find reference Module.kabi file. ****"
+    fi
+%endif
     # then drop all but the needed Makefiles/Kconfig files
     rm -rf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/Documentation
     rm -rf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts
@@ -1600,6 +1628,7 @@ fi
 %attr(600,root,root) /lib/modules/%{KVERREL}%{?3:+%{3}}/System.map\
 %ghost /boot/System.map-%{KVERREL}%{?3:+%{3}}\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/config\
+%ghost /boot/symvers-%{KVERREL}%{?3:+%{3}}.gz\
 %ghost /boot/config-%{KVERREL}%{?3:+%{3}}\
 %ghost /boot/initramfs-%{KVERREL}%{?3:+%{3}}.img\
 %dir /lib/modules\
