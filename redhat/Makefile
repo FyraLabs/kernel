@@ -18,8 +18,10 @@ ifeq ("$(ZSTREAM)", "yes")
   else
     __ZSTREAM = yes
   endif
+  KABIDUPCHK ?= yes
 else
   __ZSTREAM = no
+  KABIDUPCHK ?= no
 endif
 
 #ifeq ($(shell git diff --quiet HEAD && git describe --exact-match 2>/dev/null && echo ok),)
@@ -57,6 +59,16 @@ rh-kabi:
 	done;
 	@(cd $(REDHAT)/kabi/ && ln -Tsf kabi-rhel$(RHELMAJOR)$(RHELMINOR) kabi-current)
 
+rh-kabi-dup:
+	@for KABIARCH in $(ARCH_LIST); do \
+		touch $(REDHAT)/kabi/Module.kabi_dup_$$KABIARCH;\
+		if [ -d $(REDHAT)/kabi/kabi-dup-module/kabi_$$KABIARCH ]; then \
+			$(REDHAT)/kabi/show-kabi -k $(REDHAT)/kabi/kabi-dup-module/ -m \
+				-a $$KABIARCH -r $(RHELMAJOR).$(RHELMINOR) > \
+				$(REDHAT)/kabi/Module.kabi_dup_$$KABIARCH;\
+		fi \
+	done;
+
 rh-check-kabi: rh-kabi
 	@if [ ! -e $(_OUTPUT)/Module.symvers ]; then \
 		echo "ERROR: You must compile the kernel and modules first";\
@@ -64,6 +76,14 @@ rh-check-kabi: rh-kabi
 	fi
 	@$(REDHAT)/kabi/check-kabi -k $(REDHAT)/kabi/Module.kabi_$(MACH) \
 	 -s $(_OUTPUT)/Module.symvers
+
+rh-check-kabi-dup: rh-kabi-dup
+	@if [ ! -e $(_OUTPUT)/Module.symvers ]; then \
+		echo "ERROR: You must compile the kernel and modules first";\
+		exit 1;\
+	fi
+	@$(REDHAT)/kabi/check-kabi -k $(REDHAT)/kabi/Module.kabi_dup_$(MACH) \
+	-s $(_OUTPUT)/Module.symvers
 
 rh-configs: rh-configs-prep
 	cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh; \
@@ -113,7 +133,7 @@ $(KABI_TARBALL):
 
 setup-source: rh-clean-sources
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
-	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(DISTRO_BUILD) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) $(MARKER)
+	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(DISTRO_BUILD) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) $(KABIDUPCHK) $(MARKER)
 	@cp $(SOURCES)/$(SPECFILE) $(SOURCES)/../SPECS/
 
 sources-rh: $(TARBALL)
@@ -139,10 +159,11 @@ sources-rh: $(TARBALL)
 	@cp cpupower.* x509.genkey keys/rhel*.x509 keys/extra_certificates Makefile.common kabi/check-kabi configs/$(PACKAGE_NAME)-*.config rhpkg/Makefile keys/*.cer filter-*.sh mod-extra.* mod-sign.sh configs/generate_all_configs.sh configs/process_configs.sh $(SOURCES)/
 	@for KABIARCH in $(ARCH_LIST); do \
 		cp kabi/Module.kabi_$$KABIARCH $(SOURCES)/; \
+		cp kabi/Module.kabi_dup_$$KABIARCH $(SOURCES)/; \
 	done
 	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHELMAJOR)* kabi-current)
 
-rh-sources: setup-source rh-configs-check rh-kabi sources-rh
+rh-sources: setup-source rh-configs-check rh-kabi rh-kabi-dup sources-rh
 
 rh-test-patch:
 	@git diff --no-renames HEAD > $(TESTPATCH);
@@ -178,6 +199,7 @@ rh-release-finish: setup-source
 	@git commit -s ../Makefile Makefile.common $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(DIST)$(BUILDID)"
 	@$(MAKE) rh-configs
 	@$(MAKE) rh-kabi
+	@$(MAKE) rh-kabi-dup
 	@$(MAKE) sources-rh
 rh-release: rh-clean-sources
 	@$(REDHAT)/scripts/new_release.sh $(REDHAT) $(__ZSTREAM)
@@ -253,8 +275,10 @@ rh-help:
 	@echo  '  rh-prep	- Setup the redhat/rpm/BUILD/ directory with the kernel source'
 	@echo  '  rh-test-patch - Create a diff against HEAD and put it in linux-kernel-test.patch.'
 	@echo  '                  Then linux-kernel-test.patch will be added to the kernel build'
-	@echo  '  rh-kabi - Merge kabi structure into simple files'
+	@echo  '  rh-kabi       - Merge kabi structure into simple files'
+	@echo  '  rh-kabi-dup   - Merge kabi DUP structure into simple files'
 	@echo  '  rh-check-kabi - Run check-kabi script on a pre-compiled tree.'
+	@echo  '  rh-check-kabi-dup - Run check-kabi script on a pre-compiled tree for DUP.
 	@echo  '  rh-stub-key	- Use pre generated keys to speed local test builds'
 	@echo  '  rh-cross-download - [x86_64 only] download cross compiler rpms'
 	@echo  '  rh-cross-all-builds - [x86_64 only] execute "rpmbuild -bc" for i686, s390x,'

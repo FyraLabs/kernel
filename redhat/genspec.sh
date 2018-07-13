@@ -191,5 +191,9 @@ test -n "$SPECFILE" &&
 	s/%%DISTRO_BUILD%%/$DISTRO_BUILD/
 	s/%%RELEASED_KERNEL%%/$RELEASED_KERNEL/" $SPECFILE
 
+if [ "$KABIDUPCHK" = "yes" ]; then \
+	sed -i 's/%define with_kabidupchk %.*/%define with_kabidupchk 1/' $SPECFILE
+fi
+
 rm -f $clogf{,.rev,.stripped};
 
