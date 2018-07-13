@@ -74,6 +74,8 @@ Summary: The Linux kernel
 %define with_dbgonly   %{?_with_dbgonly:      1} %{?!_with_dbgonly:      0}
 # Control whether we perform a compat. check against published ABI.
 %define with_kabichk   %{?_without_kabichk:   0} %{?!_without_kabichk:   1}
+# Control whether we perform a compat. check against DUP ABI.
+%define with_kabidupchk %{?_with_kabidupchk:  1} %{?!_with_kabidupchk:   0}
 #
 # should we do C=1 builds with sparse
 %define with_sparse    %{?_with_sparse:       1} %{?!_with_sparse:       0}
@@ -114,6 +116,11 @@ Summary: The Linux kernel
 %define with_tools 0
 %define with_perf 0
 %define with_bpftool 0
+%endif
+
+# turn off kABI DUP check if kABI check is disabled
+%if !%{with_kabichk}
+%define with_kabidupchk 0
 %endif
 
 %ifnarch noarch
@@ -318,6 +325,11 @@ Source201: Module.kabi_aarch64
 Source202: Module.kabi_ppc64le
 Source203: Module.kabi_s390x
 Source204: Module.kabi_x86_64
+
+Source210: Module.kabi_dup_aarch64
+Source211: Module.kabi_dup_ppc64le
+Source212: Module.kabi_dup_s390x
+Source213: Module.kabi_dup_x86_64
 
 Source300: kernel-abi-whitelists-%{rpmversion}-%{distro_build}.tar.bz2
 
@@ -942,6 +954,18 @@ BuildKernel() {
         echo "**** NOTE: Cannot find reference Module.kabi file. ****"
     fi
 %endif
+
+%if %{with_kabidupchk}
+    echo "**** kABI DUP checking is enabled in kernel SPEC file. ****"
+    if [ -e $RPM_SOURCE_DIR/Module.kabi_dup_%{_target_cpu}$Flavour ]; then
+        cp $RPM_SOURCE_DIR/Module.kabi_dup_%{_target_cpu}$Flavour $RPM_BUILD_ROOT/Module.kabi
+        $RPM_SOURCE_DIR/check-kabi -k $RPM_BUILD_ROOT/Module.kabi -s Module.symvers || exit 1
+        rm $RPM_BUILD_ROOT/Module.kabi # for now, don't keep it around.
+    else
+        echo "**** NOTE: Cannot find DUP reference Module.kabi file. ****"
+    fi
+%endif
+
     # then drop all but the needed Makefiles/Kconfig files
     rm -rf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/Documentation
     rm -rf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts
