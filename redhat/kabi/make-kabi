@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # make-kabi - Red Hat kABI reference module generation tool
 #
@@ -12,7 +12,8 @@
 # General Public License (GPL).
 
 # Changelog:
-# 
+#
+# 2018/06/01 - Update for python3 by Petr Oros.
 # 2014/10/05 - Update for new kabi structure by Petr Oros.
 # 2007/06/13 - Initial rewrite in python by Jon Masters.
 
@@ -31,6 +32,7 @@ import sys
 true = 1
 false = 0
 
+
 def load_symvers(symvers, filename):
     """Load a reference Module.symvers file."""
 
@@ -42,15 +44,17 @@ def load_symvers(symvers, filename):
             break
         if in_line == "\n":
             continue
-        checksum, symbol, directory, ctype = string.split(in_line)
+        checksum, symbol, directory, ctype = in_line.split()
 
         symvers[symbol] = in_line[0:-1]
+
 
 def load_whitelist(whitelist, order, filename):
     if os.path.isfile(filename):
         load_whitelist_file(whitelist, order, filename)
     else:
         load_whitelist_dir(whitelist, order, filename)
+
 
 def load_whitelist_file(whitelist, order, filename):
     """Load a reference whitelist file."""
@@ -63,7 +67,7 @@ def load_whitelist_file(whitelist, order, filename):
             break
         if in_line == "\n":
             continue
-        string.split(in_line)
+        in_line.split()
         if in_line[0] == "[":
             continue
         symbol = in_line[1:-1]
@@ -72,6 +76,7 @@ def load_whitelist_file(whitelist, order, filename):
         order.append(symbol)
 
     order.sort()
+
 
 def load_whitelist_dir(whitelist, order, dirname):
     """Load a reference whitelist directory."""
@@ -85,27 +90,29 @@ def load_whitelist_dir(whitelist, order, dirname):
         line.append(kabi_file.readline())
         kabi_file.close()
         if re.match("#[0-9]+-[0-9]+", line[0]):
-            print "Symbol " + symbol + " is currently removed, ignoring"
+            print("Symbol {} is currently removed, ignoring".format(symbol))
             continue
         whitelist[symbol] = line
         order.append(symbol)
 
     order.sort()
 
+
 def make_kabi_file(filename, symvers, order):
     """Munge together whitelist and Module.symvers file."""
 
     if os.path.isfile(filename):
-        print filename + " already exists"
+        print("{} already exists".format(filename))
         sys.exit(1)
 
     kabi_file = open(filename, "w")
 
     for symbol in order:
-        if symvers.has_key(symbol):
+        if symbol in symvers:
             kabi_file.write(symvers[symbol] + "\n")
 
     kabi_file.close()
+
 
 def make_kabi_dir(dirname, symvers, whitelist):
     """Munge together whitelist and Module.symvers file."""
@@ -114,7 +121,7 @@ def make_kabi_dir(dirname, symvers, whitelist):
     os.chdir(dirname)
 
     for symbol in whitelist:
-        if symvers.has_key(symbol):
+        if symbol in symvers:
             kabi_file = open(symbol, "w")
             kabi_file.write(whitelist[symbol][0])
             kabi_file.write(symvers[symbol] + "\n")
@@ -122,8 +129,9 @@ def make_kabi_dir(dirname, symvers, whitelist):
 
     os.chdir(current_dir)
 
+
 def usage():
-    print """make-kabi: process Module.symvers into reference Module.kabi output file/directory using
+    print("""make-kabi: process Module.symvers into reference Module.kabi output file/directory using
            the kabi whitelist provided as a set of symbols to filer on.
 
     make-kabi [ -k Module.kabi or -d (kabi-module dir) ] [ -s Module.symvers ] [ -w kabi_whitelist ]
@@ -133,7 +141,8 @@ def usage():
             make-kabi -s Module.symvers -w kabi-module/kabi_x86_64/ -d
 
         create Module.kabi ( old style ) witch checksums
-            make-kabi -s Module.symvers -w kabi-module/kabi_x86_64/ -k Module.kabi"""
+            make-kabi -s Module.symvers -w kabi-module/kabi_x86_64/ -k Module.kabi""")
+
 
 if __name__ == "__main__":
 
