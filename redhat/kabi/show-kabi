@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # show-kabi - Red Hat kABI reference module extraction tool
 #
@@ -10,6 +10,10 @@
 # This software may be freely redistributed under the terms of the GNU
 # General Public License (GPL).
 
+# Changelog:
+#
+# 2018/06/01 - Update for python3 by Petr Oros.
+
 __author__ = "Petr Oros <poros@redhat.com>"
 __version__ = "1.0"
 __date__ = "2014/09/05"
@@ -19,6 +23,7 @@ __license__ = "GPL"
 import getopt
 import os
 import sys
+
 
 def load_kabi(dirname, kabi, order, arch):
     """Load a reference whitelist content."""
@@ -46,17 +51,17 @@ def load_kabi(dirname, kabi, order, arch):
                     continue
                 kabi_file = open(dirname + "/kabi_" + arch + "/" + symbol, "r")
                 line = []
-                #store version metadata
+                # store version metadata
                 line.append(kabi_file.readline())
-                #store content ( no empty line is bad state )
+                # store content ( no empty line is bad state )
                 line.append(kabi_file.readline().rstrip('\n'))
                 kabi[arch][symbol] = line
                 order[arch].append(symbol)
                 kabi_file.close()
             order[arch].sort()
     except OSError as err:
-        print "Invalid arch: " + str(arch)
-        print str(err)
+        print("Invalid arch: {}".format(arch))
+        print(str(err))
         sys.exit(1)
 
 
@@ -71,49 +76,52 @@ def check_struct(dirname):
                     return -1
         return match_files
     except OSError:
-        print "Invalid kabi-module/ root directory"
-        print "Use -k param to specify right path"
+        print("Invalid kabi-module/ root directory")
+        print("Use -k param to specify right path")
         sys.exit(1)
+
 
 def show_kabi(kabi, order, release, fmt, show_head):
     rhel_minor = release.split('.', 1)[-1]
     if rhel_minor == "":
-        rhel_minor = sys.maxint
+        rhel_minor = sys.maxsize
     else:
         rhel_minor = int(rhel_minor)
     for current_arch in kabi:
         if show_head and (fmt == "whitelist"):
-            print "[rhel8_" + current_arch + "_whitelist]"
+            print("[rhel8_{}_whitelist]".format(current_arch))
         for sym in order[current_arch]:
             if kabi[current_arch][sym][0][0] != "#":
-                print "Invalid metadata format: " + kabi[current_arch][sym][0]
+                print("Invalid metadata format: {}".format(kabi[current_arch][sym][0]))
                 sys.exit(1)
             minor_range = kabi[current_arch][sym][0][1:-1].split("-", 2)
             minor_range[0] = int(minor_range[0])
             if minor_range[1] == "":
-                minor_range[1] = sys.maxint
+                minor_range[1] = sys.maxsize
             else:
                 minor_range[1] = int(minor_range[1])
             if minor_range[0] > rhel_minor:
                 continue
-            if (minor_range[1] <= rhel_minor) and (minor_range[1] != sys.maxint):
+            if (minor_range[1] <= rhel_minor) and (minor_range[1] != sys.maxsize):
                 continue
             # format Module.kabi_$arch styled file
             if fmt == "module":
-                print kabi[current_arch][sym][1]
+                print(kabi[current_arch][sym][1])
             # format kabi_whitelist_$arch styled file
             else:
-                print "\t" + sym
+                print("\t{}".format(sym))
+
 
 def usage():
-    print """show-kabi:
+    print("""show-kabi:
     -a arch        architecture, ( default all archs )
     -k dir        kabi-module root directory ( default ./kabi-module )
     -m        output Module.kabi_$(arch) styled file
             default output kabi_whitelist_$(arch) styled file
     -r release    release, for example 8.1 ( default latest )
     -s        show header ( no headers like [rhel8_x86_64_whitelist] )
-    -h         this help"""
+    -h         this help""")
+
 
 if __name__ == "__main__":
 
@@ -143,9 +151,9 @@ if __name__ == "__main__":
             sys.exit(0)
 
     if check_struct(kabi_dir) < 0:
-        print "Invalid directory structure!!!"
-        print "kabi-module/ specified as root must contain"
-        print "arch specific directories like kabi_ppc64..."
+        print("Invalid directory structure!!!")
+        print("kabi-module/ specified as root must contain")
+        print("arch specific directories like kabi_ppc64...")
         sys.exit(1)
 
     load_kabi(kabi_dir, kabi, kabi_order, arch)
