@@ -32,6 +32,7 @@
 #include <linux/moduleparam.h>
 #include <linux/workqueue.h>
 #include <linux/uuid.h>
+#include <linux/dmi.h>
 
 #define IPMI_DRIVER_VERSION "39.2"
 
@@ -5050,6 +5051,20 @@ static int ipmi_init_msghandler(void)
 
 static int __init ipmi_init_msghandler_mod(void)
 {
+#ifdef CONFIG_ARM64
+	/* RHEL-only
+	 * If this is ARM-based HPE m400, return now, because that platform
+	 * reports the host-side ipmi address as intel port-io space, which
+	 * does not exist in the ARM architecture.
+	 */
+	const char *dmistr = dmi_get_system_info(DMI_PRODUCT_NAME);
+
+	if (dmistr && (strcmp("ProLiant m400 Server", dmistr) == 0)) {
+		pr_debug("%s does not support host ipmi\n", dmistr);
+		return -ENOSYS;
+	}
+	/* END RHEL-only */
+#endif
 	ipmi_init_msghandler();
 	return 0;
 }
