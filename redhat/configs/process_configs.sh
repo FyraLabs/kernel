@@ -97,7 +97,7 @@ function process_configs()
 		fi
 		rm .newoptions
 
-		grep -E 'warning' .listnewconfig > .warnings
+		grep -E 'config.*warning' .listnewconfig > .warnings
 		if test -n "$CHECKWARNINGS" && test -s .warnings
 		then
 			echo "Found misconfigured config items, please set them to an appropriate value"
