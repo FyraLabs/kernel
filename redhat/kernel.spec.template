@@ -760,7 +760,7 @@ VERSION=%{version} ./generate_all_configs.sh
 %define make make %{?cross_opts}
 
 cp %{SOURCE42} .
-./process_configs.sh kernel %{rpmversion}
+./process_configs.sh -w kernel %{rpmversion}
 
 # end of kernel config
 %endif
