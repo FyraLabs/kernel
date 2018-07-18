@@ -1339,8 +1339,6 @@ popd
 
 %if %{with_bpftool}
 pushd tools/bpf/bpftool
-function rst2man { rst2man-3 "$@"; }
-export -f rst2man
 make DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix} bash_compdir=%{_sysconfdir}/bash_completion.d/ mandir=%{_mandir} install doc-install
 popd
 %endif
