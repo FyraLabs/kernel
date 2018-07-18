@@ -86,7 +86,7 @@ rh-check-kabi-dup: rh-kabi-dup
 	-s $(_OUTPUT)/Module.symvers
 
 rh-configs: rh-configs-prep
-	cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh; \
+	@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh; \
 	./process_configs.sh -w $(PACKAGE_NAME) $(KVERSION)
 
 rh-configs-check: rh-configs-prep

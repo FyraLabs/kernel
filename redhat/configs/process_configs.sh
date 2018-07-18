@@ -75,7 +75,7 @@ checkoptions()
 function process_configs()
 {
 	# assume we are in $source_tree/configs, need to get to top level
-	pushd $(switch_to_toplevel)
+	pushd $(switch_to_toplevel) &>/dev/null
 
 	for cfg in $SCRIPT_DIR/${PACKAGE_NAME}${KVERREL}${SUBARCH}*.config
 	do
