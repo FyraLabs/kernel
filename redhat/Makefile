@@ -294,9 +294,10 @@ rh-help:
 	@echo  ''
 	@echo  'Configuration targets:'
 	@echo
-	@echo  '  rh-configs  - Creates config files for RHEL 7 architectures, cleans them'
+	@echo  '  rh-configs  - Creates config files for RHEL $(RHELMAJOR) architectures, cleans them'
 	@echo  '		by running make nonint_oldconfig, and copies them to'
 	@echo  '		redhat/configs/ directory. This is the target to use for a config!'
 	@echo  '		Copy the config file you want from the redhat/configs/ directory'
 	@echo  '		to .config'
+	@echo  '  rh-configs-arch  - Same as rh-configs but for single architecture only'
 	@echo  ''
