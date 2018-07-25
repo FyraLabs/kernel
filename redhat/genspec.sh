@@ -10,7 +10,8 @@ DISTRO_BUILD=$7
 RELEASED_KERNEL=$8
 SPECRELEASE=$9
 ZSTREAM_FLAG=${10}
-MARKER=${11}
+KABIDUPCHK=${11}
+MARKER=${12}
 RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
@@ -190,6 +191,10 @@ test -n "$SPECFILE" &&
 	s/%%SPECRELEASE%%/$SPECRELEASE/
 	s/%%DISTRO_BUILD%%/$DISTRO_BUILD/
 	s/%%RELEASED_KERNEL%%/$RELEASED_KERNEL/" $SPECFILE
+
+if [ "$KABIDUPCHK" = "yes" ]; then \
+	sed -i 's/%define with_kabidupchk %.*/%define with_kabidupchk 1/' $SPECFILE
+fi
 
 rm -f $clogf{,.rev,.stripped};
 
