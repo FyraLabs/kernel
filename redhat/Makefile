@@ -278,7 +278,7 @@ rh-help:
 	@echo  '  rh-kabi       - Merge kabi structure into simple files'
 	@echo  '  rh-kabi-dup   - Merge kabi DUP structure into simple files'
 	@echo  '  rh-check-kabi - Run check-kabi script on a pre-compiled tree.'
-	@echo  '  rh-check-kabi-dup - Run check-kabi script on a pre-compiled tree for DUP.
+	@echo  '  rh-check-kabi-dup - Run check-kabi script on a pre-compiled tree for DUP.'
 	@echo  '  rh-stub-key	- Use pre generated keys to speed local test builds'
 	@echo  '  rh-cross-download - [x86_64 only] download cross compiler rpms'
 	@echo  '  rh-cross-all-builds - [x86_64 only] execute "rpmbuild -bc" for i686, s390x,'
