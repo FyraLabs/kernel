@@ -204,12 +204,8 @@ call_evaluate_configs()
 
 check_dialog()
 {
-	if [ "$(whoami)" != "root" ]; then
-		echo "Checking for dialog ... if this fails run 'yum -y install dialog' as root."
-	fi
-
 	rpm -q dialog >& /dev/null
-	[ $? -ne 0 ] && yum -y install dialog && [ $? -ne 0 ] && exit 1
+	[ $? -ne 0 ] && echo "Run 'yum -y install dialog'." && exit 1
 }
 
 # where am i?
