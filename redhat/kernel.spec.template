@@ -942,6 +942,7 @@ BuildKernel() {
     # NOTENOTE: if you change the symvers name, update the backend too
     echo "**** GENERATING kernel ABI metadata ****"
     gzip -c9 < Module.symvers > $RPM_BUILD_ROOT/boot/symvers-$KernelVer.gz
+    cp $RPM_BUILD_ROOT/boot/symvers-$KernelVer.gz $RPM_BUILD_ROOT/lib/modules/$KernelVer/symvers.gz
 
 %if %{with_kabichk}
     echo "**** kABI checking is enabled in kernel SPEC file. ****"
@@ -1651,6 +1652,7 @@ fi
 %endif\
 %attr(600,root,root) /lib/modules/%{KVERREL}%{?3:+%{3}}/System.map\
 %ghost /boot/System.map-%{KVERREL}%{?3:+%{3}}\
+/lib/modules/%{KVERREL}%{?3:+%{3}}/symvers.gz\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/config\
 %ghost /boot/symvers-%{KVERREL}%{?3:+%{3}}.gz\
 %ghost /boot/config-%{KVERREL}%{?3:+%{3}}\
