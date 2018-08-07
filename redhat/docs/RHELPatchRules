@@ -318,12 +318,24 @@ upstream commit satisfies this requirement.
     Linus' linux.git is considered to be the tree referred to when the term
 "upstream" is used.  If the patch is not in the linux.git tree, please specify
 what tree the patch came from, or a URL to the patch posting on a mailing list,
-or explain why the patch is RHEL only.
+or explain why the patch is unique to RHEL.
 
     If a complete URL for the source git tree is not provided, then
 'git.kernel.org/pub/scm' is assumed to be the location of the git tree being
 referenced.  Since there are many trees with the same name on sites like
 kernel.org and github.org, care should be taken to reference a particular tree.
+
+    The upstream status must be "RHEL only" if a patch is unique to RHEL
+and applies to future RHEL versions.  If the patch applies to a specific RHEL
+version, either "RHELX only" or "RHELX.Y only" must be used to specify the
+upstream status.
+
+Good examples of Upstream Status for patches that are not in Linux' linux.git:
+
+	Upstream Status: https://github.com/prarit/kernel-tree.git
+	Upstream Status: kernel/git/davem/net-next.git
+	Upstream Status: RHEL only
+	Upstream Status: RHEL7 only
 
 c) Build info:
 [Required] The patch(es) must compile on all architectures.
