@@ -18,7 +18,7 @@ Summary: The Linux kernel
 %else
 %global signkernel 0
 %global signmodules 1
-%global zipmodules 0
+%global zipmodules 1
 %endif
 
 %if %{zipmodules}
