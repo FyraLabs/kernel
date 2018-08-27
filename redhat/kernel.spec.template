@@ -1380,9 +1380,10 @@ rm -rf %{buildroot}%{_docdir}/perf-tip
 # Whoever wants examples can fix it up!
 
 # remove examples
-rm -rf %{buildroot}/usr/lib/examples/perf
-# remove the stray header file that somehow got packaged in examples
-rm -rf %{buildroot}/usr/lib/include/perf/bpf/bpf.h
+rm -rf %{buildroot}/usr/lib/perf/examples
+# remove the stray files that somehow got packaged
+rm -rf %{buildroot}/usr/lib/perf/include/bpf/bpf.h
+rm -rf %{buildroot}/usr/lib/perf/include/bpf/stdio.h
 
 # python-perf extension
 %{perf_make} DESTDIR=$RPM_BUILD_ROOT install-python_ext
@@ -1675,6 +1676,7 @@ fi
 %{_mandir}/man8/bpftool-prog.8.gz
 %{_mandir}/man8/bpftool-perf.8.gz
 %{_mandir}/man8/bpftool.8.gz
+%{_mandir}/man7/bpf-helpers.7.gz
 %endif
 
 # empty meta-package
