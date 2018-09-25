@@ -810,6 +810,11 @@ F:	Documentation/ptp/
 F:	drivers/ptp/
 F:	include/linux/ptp_cl*
 
+PTP KVM
+M:	Marcelo Tosatti <mtosatti@redhat.com>
+S:	Maintained
+F:	drivers/ptp/ptp_kvm.c
+
 QLOGIC QLA2XXX FC-SCSI DRIVER
 M:	Himanshu Madhani <hmadhani@redhat.com>
 S:	Maintained
