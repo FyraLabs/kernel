@@ -193,6 +193,10 @@ rh-prep: rh-sources
 rh-perf: rh-sources
 	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --without up --without smp --without kdump --without debug --without doc --without headers --without  --without doc --without debuginfo --target $(MACH) -bb $(RPM)/SOURCES/$(PACKAGE_NAME).spec
 
+rh-rpm-baseonly: rh-sources
+	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --target $(MACH) --without debug --without debuginfo --without vdso_install --without bpftool --without perf --without tools -bb $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+
+
 # unless you know what you're doing, you don't want to use the next three ones
 rh-release-finish: setup-source
 	@$(REDHAT)/scripts/update_changelog.sh $(REDHAT) "$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(DIST)$(BUILDID)" $(PACKAGE_NAME)
@@ -268,6 +272,7 @@ rh-help:
 	@echo  '		  see output for possible override options (USER_ID,DISTRO,FAMILY,..)'
 	@echo  '  rh-brew-test  - Calls rh-brew and passes the task number into an RHTS test. See rh-test for more'
 	@echo  '  rh-rpms	- Create the binary RPMS for the kernel'
+	@echo  '  rh-rpm-baseonly	- Create the binary RPMS for the kernel and modules only (no userspace tools or debuginfo)'
 	@echo  '  rh-kernel-<type> - Create  binary RPMS for a particular kernel type'
 	@echo  '                   - <type> can be: baseonly or dbgonly'
 
