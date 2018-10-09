@@ -256,6 +256,12 @@ M:	Red Hat NFS Team <nfs-team@redhat.com>
 S:	Maintained
 F:	fs/cifs/
 
+CISCO FCOE HBA (fnic)
+M:	Govindarajulu Varadarajan <gvaradar@redhat.com>
+M:	Chris Leech <cleech@redhat.com>
+S:	Maintained
+F:	drivers/scsi/fnic/
+
 CISCO VIC ETHERNET NIC DRIVER
 M:	Stefan Assmann <sassmann@redhat.com>
 S:	Maintained
@@ -327,11 +333,17 @@ S:	Maintained
 F:	net/bridge/
 F:	include/linux/if_bridge.h
 
-FCOE STACK (Software libfc/fcoe)
-M:     Neil Horman <nhorman@redhat.com>
-S:     Maintained
-F:     drivers/scsi/libfc/
-F:     drivers/scsi/fcoe/
+FCOE (libfc, libfcoe)
+M:	Chris Leech <cleech@redhat.com>
+S:	Maintained
+F:	drivers/scsi/libfc/
+F:	drivers/scsi/fcoe/
+X:	drivers/scsi/fcoe/fcoe.c
+F:	include/scsi/libfc.h
+F:	include/scsi/libfcoe.h
+F:	include/scsi/fcoe_*.h
+F:	include/scsi/fc_*.h
+F:	include/scsi/fc/
 
 FORCEDETH ETHERNET DRIVER (forcedeth)
 M:	Ivan Vecera <ivecera@redhat.com>
@@ -450,6 +462,12 @@ INTEL QUICK ASSIST TECHNOLOGY (QAT)
 M:	Neil Horman <nhorman@redhat.com>
 S:	Maintained
 F:	drivers/crypto/qat/*
+
+ISCSI (iscsi_tcp, libiscsi, libiscsi_tcp, scsi_transport_iscsi)
+M:	Chris Leech <cleech@redhat.com>
+S:	Maintained
+F:	drivers/scsi/*iscsi*
+F:	include/scsi/*iscsi*
 
 KERNEL VIRTUAL MACHINE (KVM)
 M:	Paolo Bonzini <pbonzini@redhat.com>
@@ -830,6 +848,18 @@ QLOGIC QLGE 10Gb ETHERNET DRIVER
 M:	Chad Dupuis <cdupuis@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/qlogic/qlge/
+
+QLOGIC QL41xxx ISCSI DRIVER
+M:	Chad Dupuis <cdupuis@redhat.com>
+M:	Chris Leech <cleech@redhat.com>
+S:	Maintained
+F:	drivers/scsi/qedi/
+
+QLOGIC QL41xxx FCOE DRIVER
+M:	Chad Dupuis <cdupuis@redhat.com>
+M:	Chris Leech <cleech@redhat.com>
+S:	Maintained
+F:	drivers/scsi/qedf/
 
 RALINK RT2X00 WIRELESS LAN DRIVER
 M:	Stanislaw Gruszka <sgruszka@redhat.com>
