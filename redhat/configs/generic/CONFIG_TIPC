@@ -1,1 +1,1 @@
-# CONFIG_TIPC is not set
+CONFIG_TIPC=m
