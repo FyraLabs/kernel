@@ -354,6 +354,19 @@ M:	Tomas Henzl <thenzl@redhat.com>
 S:	Maintained
 F:	drivers/message/fusion/
 
+I2C SUBSYSTEM
+M:	Gopal Tiwari <gtiwari@redhat.com>
+M:	David Arcari <darcari@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/i2c/
+F:	Documentation/i2c/
+F:	drivers/i2c/
+F:	drivers/i2c/*/
+F:	include/linux/i2c.h
+F:	include/linux/i2c-*.h
+F:	include/uapi/linux/i2c.h
+F:	include/uapi/linux/i2c-*.h
+
 INTEL E1000E ETHERNET DRIVER (e1000e)
 M:	David Arcari <darcari@redhat.com>
 S:	Maintained
