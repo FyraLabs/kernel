@@ -354,6 +354,13 @@ M:	Tomas Henzl <thenzl@redhat.com>
 S:	Maintained
 F:	drivers/message/fusion/
 
+HID CORE LAYER
+M:	Benjamin Tissoires <benjamin.tissoires@redhat.com>
+S:	Maintained
+F:	drivers/hid/
+F:	include/linux/hid*
+F:	include/uapi/linux/hid*
+
 I2C SUBSYSTEM
 M:	Gopal Tiwari <gtiwari@redhat.com>
 M:	David Arcari <darcari@redhat.com>
