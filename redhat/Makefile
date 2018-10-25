@@ -244,7 +244,7 @@ rh-rtg: rh-release
 # RH_LATEST returns the value of the latest "known good" kernel from brew.
 # This should not be confused with the latest top-of-tree development tag.
 rh-get-latest:
-	$(eval RH_LATEST:=$(shell brew latest-pkg --quiet rhel-${RHELMAJOR}.${RHELMINOR}-candidate kernel | awk ' { print $$1 } '))
+	$(eval RH_LATEST:=$(shell brew latest-pkg --quiet rhel-${RHELMAJOR}.${RHELMINOR}.0-candidate kernel | awk ' { print $$1 } '))
 	@echo "The latest kernel package tag is ${RH_LATEST}."
 
 rh-help:
@@ -307,7 +307,6 @@ rh-full-help:
 	@echo  '		      ppc64, x86_64 using RHEL cross compiler'
 	@echo  '  rh-cross-[ARCH]-rpm - [x86_64 only] execute rpm builds for specified'
 	@echo  '			ARCH using RHEL cross compiler'
-	@echo  '  rh-get-latest - returns latest-pkg tag from brew'
 
 	@echo  ''
 	@echo  'kABI targets:'
@@ -329,4 +328,9 @@ rh-full-help:
 	@echo  '		Copy the config file you want from the redhat/configs/ directory'
 	@echo  '		to .config'
 	@echo  '  rh-configs-arch  - Same as rh-configs but for single architecture only'
+
+	@echo  ''
+	@echo  'Misc targets:'
+	@echo  '  rh-get-latest - Returns the latest "known good" kernel from brew. This should not'
+	@echo  '                  be confused with the latest top-of-tree development tag.'
 	@echo  ''
