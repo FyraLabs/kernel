@@ -1,1 +1,1 @@
-CONFIG_HID_ALPS=n
+# CONFIG_HID_ALPS is not set

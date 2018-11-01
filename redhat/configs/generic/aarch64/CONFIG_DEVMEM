@@ -1,1 +1,1 @@
-CONFIG_DEVMEM=n
+# CONFIG_DEVMEM is not set

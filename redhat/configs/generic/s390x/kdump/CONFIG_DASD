@@ -1,1 +1,1 @@
-CONFIG_DASD=n
+# CONFIG_DASD is not set

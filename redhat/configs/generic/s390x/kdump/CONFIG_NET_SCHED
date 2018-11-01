@@ -1,1 +1,1 @@
-CONFIG_NET_SCHED=n
+# CONFIG_NET_SCHED is not set

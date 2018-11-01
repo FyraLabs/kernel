@@ -1,1 +1,1 @@
-CONFIG_TEST_LKM=n
+# CONFIG_TEST_LKM is not set

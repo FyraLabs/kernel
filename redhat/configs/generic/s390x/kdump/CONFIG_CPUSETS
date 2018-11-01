@@ -1,1 +1,1 @@
-CONFIG_CPUSETS=n
+# CONFIG_CPUSETS is not set

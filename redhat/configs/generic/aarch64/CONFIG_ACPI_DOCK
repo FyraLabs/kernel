@@ -1,1 +1,1 @@
-CONFIG_ACPI_DOCK=n
+# CONFIG_ACPI_DOCK is not set

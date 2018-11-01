@@ -1,1 +1,1 @@
-CONFIG_WATCHDOG=n
+# CONFIG_WATCHDOG is not set

@@ -1,1 +1,1 @@
-CONFIG_CRC32=n
+# CONFIG_CRC32 is not set

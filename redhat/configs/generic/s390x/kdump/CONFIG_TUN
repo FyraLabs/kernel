@@ -1,1 +1,1 @@
-CONFIG_TUN=n
+# CONFIG_TUN is not set

@@ -1,1 +1,1 @@
-CONFIG_CRYPTO=n
+# CONFIG_CRYPTO is not set

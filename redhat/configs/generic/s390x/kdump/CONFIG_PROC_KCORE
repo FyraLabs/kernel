@@ -1,1 +1,1 @@
-CONFIG_PROC_KCORE=n
+# CONFIG_PROC_KCORE is not set

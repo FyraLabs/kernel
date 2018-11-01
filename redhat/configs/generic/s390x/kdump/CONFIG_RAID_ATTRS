@@ -1,1 +1,1 @@
-CONFIG_RAID_ATTRS=n
+# CONFIG_RAID_ATTRS is not set

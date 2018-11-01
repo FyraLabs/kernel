@@ -1,1 +1,1 @@
-CONFIG_NVMEM=n
+# CONFIG_NVMEM is not set

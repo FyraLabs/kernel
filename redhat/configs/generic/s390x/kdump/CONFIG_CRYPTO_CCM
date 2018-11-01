@@ -1,1 +1,1 @@
-CONFIG_CRYPTO_CCM=n
+# CONFIG_CRYPTO_CCM is not set

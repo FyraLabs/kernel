@@ -1,1 +1,1 @@
-CONFIG_SYSVIPC=n
+# CONFIG_SYSVIPC is not set
