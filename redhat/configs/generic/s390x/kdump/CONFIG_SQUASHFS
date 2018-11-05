@@ -1,1 +1,1 @@
-CONFIG_SQUASHFS=n
+# CONFIG_SQUASHFS is not set

@@ -1,1 +1,1 @@
-CONFIG_KCOV=n
+# CONFIG_KCOV is not set

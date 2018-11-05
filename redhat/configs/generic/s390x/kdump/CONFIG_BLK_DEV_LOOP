@@ -1,1 +1,1 @@
-CONFIG_BLK_DEV_LOOP=n
+# CONFIG_BLK_DEV_LOOP is not set

@@ -1,1 +1,1 @@
-CONFIG_PACKET=n
+# CONFIG_PACKET is not set

@@ -1,1 +1,1 @@
-CONFIG_INET=n
+# CONFIG_INET is not set
