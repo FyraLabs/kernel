@@ -1,1 +1,1 @@
-CONFIG_RELAY=n
+# CONFIG_RELAY is not set

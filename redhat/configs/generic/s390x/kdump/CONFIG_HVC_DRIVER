@@ -1,1 +1,1 @@
-CONFIG_HVC_DRIVER=n
+# CONFIG_HVC_DRIVER is not set

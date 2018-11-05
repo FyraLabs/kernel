@@ -1,1 +1,1 @@
-CONFIG_PFAULT=n
+# CONFIG_PFAULT is not set

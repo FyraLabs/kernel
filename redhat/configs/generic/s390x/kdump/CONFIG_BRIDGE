@@ -1,1 +1,1 @@
-CONFIG_BRIDGE=n
+# CONFIG_BRIDGE is not set
