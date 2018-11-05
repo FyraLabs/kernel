@@ -109,7 +109,7 @@ function process_configs()
 
 		rm .listnewconfig
 
-		make ARCH=$arch KCONFIG_CONFIG=$cfgorig oldnoconfig > /dev/null || exit 1
+		make ARCH=$arch KCONFIG_CONFIG=$cfgorig olddefconfig > /dev/null || exit 1
 		echo "# $arch" > ${cfgtmp}
 		cat "${cfgorig}" >> ${cfgtmp}
 		if test -n "$CHECKOPTIONS"

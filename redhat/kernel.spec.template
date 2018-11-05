@@ -872,7 +872,7 @@ BuildKernel() {
     Arch=`head -1 .config | cut -b 3-`
     echo USING ARCH=$Arch
 
-    make -s ARCH=$Arch oldnoconfig >/dev/null
+    make -s ARCH=$Arch olddefconfig >/dev/null
     %{make} -s ARCH=$Arch V=1 %{?_smp_mflags} WITH_GCOV="%{?with_gcov}" $MakeTarget %{?sparse_mflags} %{?kernel_mflags}
     %{make} -s ARCH=$Arch V=1 %{?_smp_mflags} WITH_GCOV="%{?with_gcov}" modules %{?sparse_mflags} || exit 1
 
