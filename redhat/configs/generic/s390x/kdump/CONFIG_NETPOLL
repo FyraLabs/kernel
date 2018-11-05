@@ -1,1 +1,1 @@
-CONFIG_NETPOLL=n
+# CONFIG_NETPOLL is not set

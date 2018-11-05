@@ -1,1 +1,1 @@
-CONFIG_TEST_BPF=n
+# CONFIG_TEST_BPF is not set

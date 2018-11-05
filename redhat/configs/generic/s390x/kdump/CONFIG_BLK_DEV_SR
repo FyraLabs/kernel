@@ -1,1 +1,1 @@
-CONFIG_BLK_DEV_SR=n
+# CONFIG_BLK_DEV_SR is not set

@@ -1,1 +1,1 @@
-CONFIG_DECNET=n
+# CONFIG_DECNET is not set

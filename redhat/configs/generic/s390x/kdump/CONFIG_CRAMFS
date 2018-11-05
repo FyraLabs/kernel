@@ -1,1 +1,1 @@
-CONFIG_CRAMFS=n
+# CONFIG_CRAMFS is not set
