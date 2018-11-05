@@ -17,10 +17,9 @@ ifeq ("$(ZSTREAM)", "yes")
   else
     __ZSTREAM = yes
   endif
-  KABIDUPCHK ?= yes
+  BUILDOPTS += +kabidupchk
 else
   __ZSTREAM = no
-  KABIDUPCHK ?= no
 endif
 
 #ifeq ($(shell git diff --quiet HEAD && git describe --exact-match 2>/dev/null && echo ok),)
@@ -132,7 +131,7 @@ $(KABI_TARBALL):
 
 setup-source: rh-clean-sources
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
-	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(DISTRO_BUILD) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) $(KABIDUPCHK) $(MARKER)
+	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(DISTRO_BUILD) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) "$(BUILDOPTS)" $(MARKER)
 	@cp $(SOURCES)/$(SPECFILE) $(SOURCES)/../SPECS/
 
 sources-rh: $(TARBALL)
@@ -176,8 +175,7 @@ rh-srpm: rh-sources
 	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --nodeps -bs $(RPM)/SOURCES/$(PACKAGE_NAME).spec
 
 rh-srpm-gcov:
-	make rh-sources BUILDID=".gcov"
-	sed -i 's/%define with_gcov.*/%define with_gcov 1/' $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+	make rh-sources BUILDID=".gcov" BUILDOPTS="+gcov"
 	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --nodeps -bs $(RPM)/SOURCES/$(PACKAGE_NAME).spec
 
 rh-rpms: rh-sources
@@ -274,10 +272,17 @@ rh-full-help:
 	@echo  ' All RPM/SRPM files will be put under the redhat/rpm/ directory.'
 	@echo  ''
 	@echo  '  rh-srpm       - Create a source RPM and put it into the redhat/rpm/SRPMS/ directory.'
+	@echo  '                  See the rh-brew target for available options.'
 	@echo  '  rh-srpm-gcov  - Create a source RPM with gcov enabled and put it into the'
 	@echo  '                  redhat/rpm/SRPMS/ directory.'
 	@echo  '  rh-brew       - Create a kernel SRPM and then call brew to build the created SRPM.'
+	@echo  '                  Add BUILDOPTS="+<opt> -<opt> [...]" to enable/disable build options.'
+	@echo  '                  Available <opt>s and their default values:' \
+		$$(sed -n -e 's/^%define with_\([^ \t]*\).*\?_without_.*/+\1/p' \
+		          -e 's/^%define with_\([^ \t]*\).*\?_with_.*/-\1/p' kernel.spec.template | \
+		grep -v 'only$$') | fmt -90
 	@echo  '  rh-koji       - Create a kernel SRPM and then call koji to build the created SRPM.'
+	@echo  '                  See the rh-brew target for available options.'
 	@echo  '  rhg-brew      - Pass HEAD of the current git branch to brew to build an RPM set.'
 	@echo  '                  Do not forget to push to the remote repository first.'
 	@echo  '                  Preceed make command by RHGITCOMMIT=<commitID> to specify commit ID'
@@ -287,6 +292,7 @@ rh-full-help:
 	@echo  '                  Do not forget to push to the remote repository first.'
 	@echo  '                  See the rhg-brew target for options and configuration.'
 	@echo  '  rh-rpms       - Create the binary RPMS for the kernel.'
+	@echo  '                  See the rh-brew target for available options.'
 	@echo  '  rh-rpm-baseonly  - Create the binary RPMS for the kernel and modules only (no'
 	@echo  '                     userspace tools or debuginfo).'
 	@echo  '  rh-kernel-<type> - Create  binary RPMS for a particular kernel type.'
@@ -294,7 +300,9 @@ rh-full-help:
 		$$(sed -n 's/^%define with_\([^ ]*only\).*/\1/p' kernel.spec.template)
 
 	@echo  '  rh-all-rpms   - Create the binary RPMS and the SRPM for the kernel.'
+	@echo  '                  See the rh-brew target for available options.'
 	@echo  '  rh-prep       - Setup the redhat/rpm/BUILD/ directory with the kernel source.'
+	@echo  '                  See the rh-brew target for available options.'
 	@echo  '  rh-test-patch - Create a diff against HEAD and put it in linux-kernel-test.patch.'
 	@echo  '                  Then linux-kernel-test.patch will be added to the kernel build.'
 	@echo  '  rh-stub-key   - Use pre generated keys to speed local test builds.'

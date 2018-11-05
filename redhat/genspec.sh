@@ -10,7 +10,7 @@ DISTRO_BUILD=$7
 RELEASED_KERNEL=$8
 SPECRELEASE=$9
 ZSTREAM_FLAG=${10}
-KABIDUPCHK=${11}
+BUILDOPTS=${11}
 MARKER=${12}
 RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
 clogf="$SOURCES/changelog"
@@ -192,9 +192,12 @@ test -n "$SPECFILE" &&
 	s/%%DISTRO_BUILD%%/$DISTRO_BUILD/
 	s/%%RELEASED_KERNEL%%/$RELEASED_KERNEL/" $SPECFILE
 
-if [ "$KABIDUPCHK" = "yes" ]; then \
-	sed -i 's/%define with_kabidupchk %.*/%define with_kabidupchk 1/' $SPECFILE
-fi
+for opt in $BUILDOPTS; do
+	add_opt=
+	[ -z "${opt##+*}" ] && add_opt="_with_${opt#?}"
+	[ -z "${opt##-*}" ] && add_opt="_without_${opt#?}"
+	[ -n "$add_opt" ] && sed -i "s/^\\(# The following build options\\)/%define $add_opt 1\\n\\1/" $SPECFILE
+done
 
 rm -f $clogf{,.rev,.stripped};
 
