@@ -1385,6 +1385,7 @@ rm -rf %{buildroot}/usr/lib/perf/examples
 # remove the stray files that somehow got packaged
 rm -rf %{buildroot}/usr/lib/perf/include/bpf/bpf.h
 rm -rf %{buildroot}/usr/lib/perf/include/bpf/stdio.h
+rm -rf %{buildroot}/usr/lib/perf/include/bpf/linux/socket.h
 
 # python-perf extension
 %{perf_make} DESTDIR=$RPM_BUILD_ROOT install-python_ext
@@ -1686,6 +1687,7 @@ fi
 %{_mandir}/man8/bpftool-perf.8.gz
 %{_mandir}/man8/bpftool.8.gz
 %{_mandir}/man7/bpf-helpers.7.gz
+%{_mandir}/man8/bpftool-net.8.gz
 %endif
 
 # empty meta-package
