@@ -983,6 +983,17 @@ F:	Documentation/networking/switchdev.txt
 F:	include/net/switchdev.h
 F:	net/switchdev/
 
+TIPC PROTOCOL
+M:	Jon Maloy <jmaloy@redhat.com>
+M:	Xin Long <lxin@redhat.com>
+S:	Tech Preview
+F:	net/tipc/
+F:	include/net/tipc.h
+F:	include/uapi/linux/tipc.h
+F:	include/uapi/linux/tipc_netlink.h
+F:	include/uapi/linux/tipc_config.h
+F:	include/uapi/linux/tipc_socket_diag.h
+
 X86 ARCHITECTURE
 M:	Prarit Bhargava <prarit@redhat.com>
 S:	Maintained
