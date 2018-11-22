@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/libexec/platform-python
 #
 # show-kabi - Red Hat kABI reference module extraction tool
 #

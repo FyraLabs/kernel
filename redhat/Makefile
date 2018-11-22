@@ -45,7 +45,19 @@ include Makefile.cross
 
 default: rh-help
 
-rh-kabi:
+rh-python-check:
+	@if [ ! -f /usr/libexec/platform-python ]; then \
+		if ! which python3 > /dev/null 2>&1; then \
+			echo "ERROR: Python 3 is needed." ; \
+			exit 1; \
+		fi; \
+		echo "ERROR: your build environment is not compatible with RHEL8."; \
+		echo "To fix this, run:"; \
+		echo "ln -s `which python3` /usr/libexec/platform-python"; \
+		exit 1; \
+	fi
+
+rh-kabi: rh-python-check
 	@for KABIARCH in $(ARCH_LIST); do \
 		$(REDHAT)/kabi/show-kabi -k $(REDHAT)/kabi/kabi-module/ -m \
 			-a $$KABIARCH -r $(RHELMAJOR).$(RHELMINOR) > $(REDHAT)/kabi/Module.kabi_$$KABIARCH;\
@@ -57,7 +69,7 @@ rh-kabi:
 	done;
 	@(cd $(REDHAT)/kabi/ && ln -Tsf kabi-rhel$(RHELMAJOR)$(RHELMINOR) kabi-current)
 
-rh-kabi-dup:
+rh-kabi-dup: rh-python-check
 	@for KABIARCH in $(ARCH_LIST); do \
 		touch $(REDHAT)/kabi/Module.kabi_dup_$$KABIARCH;\
 		if [ -d $(REDHAT)/kabi/kabi-dup-module/kabi_$$KABIARCH ]; then \
