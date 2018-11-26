@@ -7,8 +7,8 @@ ifeq ("$(DIST)", ".elrdy")
   BUILD_DEFAULT_TARGET = temp-ark-rhel-8-test
   BUILD_SCRATCH_TARGET = temp-ark-rhel-8-test
 else
-  BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
-  BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR)-test-pesign
+  BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR).0-test-pesign
+  BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR).0-test-pesign
 endif
 
 ifeq ("$(ZSTREAM)", "yes")

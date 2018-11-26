@@ -66,5 +66,5 @@ RHELMINOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MINOR | sed -e s/RHEL_MIN
 ifeq ("$(DIST)", ".elrdy")
   RHPRODUCT:=rhel-ready
 else
-  RHPRODUCT:=rhel-$(RHELMAJOR).$(RHELMINOR)
+  RHPRODUCT:=rhel-$(RHELMAJOR).$(RHELMINOR).0
 endif
