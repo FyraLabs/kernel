@@ -6,9 +6,12 @@
 
 usage()
 {
-	echo "process_configs.sh [ -n|-c|-t ] package_name kernel_version"
-	echo "     -n: error on unset config options"
+	# alphabetical order please
+	echo "process_configs.sh [ options ] package_name kernel_version"
+	echo "     -a: report all errors, equivalent to [-c -n -w -i]"
 	echo "     -c: error on mismatched config options"
+	echo "     -i: continue on error"
+	echo "     -n: error on unset config options"
 	echo "     -t: test run, do not overwrite original config"
 	echo "     -w: error on misconfigured config options"
 	exit 1
@@ -68,7 +71,8 @@ checkoptions()
 	then
 		echo "Error: Mismatches found in configuration files"
 		cat .mismatches
-		exit 1
+		RETURNCODE=1
+		[ "$CONTINUEONERROR" ] || exit 1
 	fi
 }
 
@@ -93,7 +97,8 @@ function process_configs()
 			echo "Found unset config items, please set them to an appropriate value"
 			cat .newoptions
 			rm .newoptions
-			exit 1
+			RETURNCODE=1
+			[ "$CONTINUEONERROR" ] || exit 1
 		fi
 		rm .newoptions
 
@@ -103,7 +108,8 @@ function process_configs()
 			echo "Found misconfigured config items, please set them to an appropriate value"
 			cat .warnings
 			rm .warnings
-			exit 1
+			RETURNCODE=1
+			[ "$CONTINUEONERROR" ] || exit 1
 		fi
 		rm .warnings
 
@@ -132,23 +138,35 @@ function process_configs()
 	echo "Processed config files are in $SCRIPT_DIR"
 }
 
-NEWOPTIONS=""
 CHECKOPTIONS=""
-CHECKWARNINGS=""
+CONTINUEONERROR=""
+NEWOPTIONS=""
 TESTRUN=""
+CHECKWARNINGS=""
+
+RETURNCODE=0
 
 while [[ $# -gt 0 ]]
 do
 	key="$1"
 	case $key in
-		-h)
-			usage
-			;;
-		-n)
+		-a)
+			CHECKOPTIONS="x"
+			CONTINUEONERROR="x"
 			NEWOPTIONS="x"
+			CHECKWARNINGS="x"
 			;;
 		-c)
 			CHECKOPTIONS="x"
+			;;
+		-h)
+			usage
+			;;
+		-i)
+			CONTINUEONERROR="x"
+			;;
+		-n)
+			NEWOPTIONS="x"
 			;;
 		-t)
 			TESTRUN="x"
@@ -173,3 +191,4 @@ SCRIPT_DIR="$(dirname $SCRIPT)"
 cd $SCRIPT_DIR
 
 process_configs
+exit $RETURNCODE
