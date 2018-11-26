@@ -243,7 +243,7 @@ syntax_check() # $1 is the config filename
 #
 check_overrides()
 {
-	CONFIG=$(basename $1)
+	local CONFIG=$1
 	config_data=$(get_config_files $CONFIG)
 
 	# some examples of rules
@@ -317,9 +317,9 @@ check_overrides()
 balance_check() # $1 is CONFIG, $2 is generic or debug arch string,
 		# $3 is the y-axis (ie, generic arch(2) or debug arch(0))
 {
-	CONFIG=$1
-	_arch=$2
-	_yaxis=$3
+	local CONFIG=$1
+	local _arch=$2
+	local _yaxis=$3
 
 	# if this is a character setting then return
 	echo $_arch | grep c >& /dev/null
@@ -415,20 +415,20 @@ fi
 
 if [ "$CHECKOVERRIDES" ]; then
 	rm -f $DIR/.strlist
-	find ./ -name CONFIG* > .configlist
+	# only look for CONFIGs that are defined in multiple locations
+	find $DIR -name CONFIG* -exec basename {} \; | sort | uniq -c | grep -v ' 1 '|sed 's/.*CONFIG/CONFIG/' > .configlist
 	while [ $(cat .configlist | wc -l) -ne 0 ]
 	do
 		[ "$DEBUG" ] && cat .configlist | wc -l
-		CONFIGFILE=$(head -1 .configlist)
+		CONFIG=$(head -1 .configlist)
 		ret=1
 		while [ $ret -eq 1 ]
 		do
-			check_overrides $CONFIGFILE
+			check_overrides $CONFIG
 			ret=$?
 		done
-		remove=$(basename $CONFIGFILE)
 		# this has to be "exact" pattern
-		sed -i "/\<$remove\>/d" .configlist
+		sed -i "/\<$CONFIG\>/d" .configlist
 	done
 fi
 
@@ -470,13 +470,12 @@ if [ "$BALANCECHECK" ] && [ "$1" ]; then
 fi
 
 if [ "$BALANCECHECK" ]; then
-	find $DIR -name CONFIG* > .configlist
+	# only look for CONFIGs that are defined in multiple locations
+	find $DIR -name CONFIG* -exec basename {} \; | sort | uniq -c | grep -v ' 1 '|sed 's/.*CONFIG/CONFIG/' > .configlist
 	while [ $(cat .configlist | wc -l) -ne 0 ]
 	do
 		[ "$DEBUG" ] && cat .configlist | wc -l
-		CONFIGFILE=$(head -1 .configlist)
-
-		CONFIG=$(basename $CONFIGFILE)
+		CONFIG=$(head -1 .configlist)
 
 		debug_arch=$(get_arch_files debug $CONFIG)
 		# trim off s390x: It is handled in CHECKOVERRIDES
