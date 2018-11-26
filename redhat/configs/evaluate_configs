@@ -13,10 +13,10 @@
 # ex) Consider CONFIG_MLX4_EN
 # which is set as
 #					     s390x
-#	arch	aarch64	ppc64le	s390x x86_64 kdump
+#	arch	aarch64	ppc64le	s390x x86_64 zfcpd
 #
-#	d_a	  x	  x	  x      x     x   <<< generic/s390x/kdump
-#	debug     x       x       x      x     |   <<< noop for s390/kdump
+#	d_a	  x	  x	  x      x     x   <<< generic/s390x/zfcpdump
+#	debug     x       x       x      x     |   <<< noop for s390/zfcpdump
 #	gen_a     m       m       m      m     m   <<< same as s390x
 #	gen       n       n       n      n     n
 #
@@ -96,11 +96,11 @@ read_file() # $1 is the full file path
 # For example, 'get_arch_files generic CONFIG_FOO' would read
 # the generic/aarch64/CONFIG_FOO, generic/powerpc64le/CONFIG_FOO, etc.
 # and return a string like 'xynnn'.  Note that the last character
-# is the s390x/kdump entry.
+# is the s390x/zfcpdump entry.
 #
 get_arch_files() # $1 is directory, $2 is CONFIG
 {
-	# The second s390x entry is really s390x/kdump
+	# The second s390x entry is really s390x/zfcpdump
 	for arch in "aarch64" "powerpc64le" "s390x" "x86_64" "s390x"
 	do
 		# Need to special case generic powerpc64 & powerpc64le
@@ -119,10 +119,10 @@ get_arch_files() # $1 is directory, $2 is CONFIG
 # ex) Consider CONFIG_MLX4_EN
 # which is set as
 #					     s390x
-#	arch	aarch64	ppc64le	s390x x86_64 kdump
+#	arch	aarch64	ppc64le	s390x x86_64 zfcpd
 #
-#	d_a	  x	  x	  x      x     x   <<< generic/s390x/kdump
-#	debug     x       x       x      x     |   <<< noop for s390/kdump
+#	d_a	  x	  x	  x      x     x   <<< generic/s390x/zfcpdump
+#	debug     x       x       x      x     |   <<< noop for s390/zfcpdump
 #	gen_a     m       m       m      m     m   <<< same as s390x
 #	gen       n       n       n      n     n
 #
@@ -139,11 +139,11 @@ get_config_files() # $1 is CONFIG
 	generic_arch=$(get_arch_files generic $1)
 	debug=$(read_file $DIR/debug/$1)
 	debug_arch=$(get_arch_files debug $1)
-	kdump=$(read_file $DIR/generic/s390x/kdump/$1)
+	zfcpdump=$(read_file $DIR/generic/s390x/zfcpdump/$1)
 
 	# debug/arch
-	echo "${debug_arch::-1}$kdump"
-	# debug, the 'x' at the end is for s390x/kdump
+	echo "${debug_arch::-1}$zfcpdump"
+	# debug, the 'x' at the end is for s390x/zfcpdump
 	echo "${debug}${debug}${debug}${debug}x"
 	# generic/arch
 	echo $generic_arch
@@ -158,15 +158,15 @@ get_config_files() # $1 is CONFIG
 reconstruct_file() # $1 is CONFIG, $2 a x-coordinate  $3 is the y-coordinate
 {
 	_dir=$3
-	# X-axis: "aarch64" "powerpc64le" "s390x" "x86_64" "s390x kdump"
+	# X-axis: "aarch64" "powerpc64le" "s390x" "x86_64" "s390x zfcpdump"
 	case $2 in
 	0)	arch="aarch64";;
 	1)	arch="powerpc64le";;
 	2)	arch="s390x";;
 	3)	arch="x86_64";;
 	4)
-		arch="s390x/kdump"
-		#(4,0) is interpreted as generic/s390x/kdump (4,2)
+		arch="s390x/zfcpdump"
+		#(4,0) is interpreted as generic/s390x/zfcpdump (4,2)
 		[ $_dir -eq 0 ] && _dir=2
 		;;
 	esac

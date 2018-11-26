@@ -35,7 +35,7 @@ kernel-ppc64le-debug.config
 kernel-ppc64le.config
 kernel-s390x.config
 kernel-s390x-debug.config
-kernel-s390x-kdump.config
+kernel-s390x-zfcpdump.config
 kernel-x86_64-debug.config
 kernel-x86_64.config
 process_configs.sh

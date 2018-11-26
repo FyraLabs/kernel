@@ -25,7 +25,7 @@ Legend:
        m module
        n is not set
        c numeric/text setting (currently unsupported)
-       - s390/kdump is not affected at this level
+       - s390/zfcpdump is not affected at this level
 
 note: The generic term is confusing for some engineers; "generic" is what is
 used to form the "base" kernel or "non-debug" kernel.  It is a directory
@@ -34,19 +34,19 @@ name only.
 All the data for the CONFIG option is displayed above.  The veritical
 indicates the architecture settings and the y-axis indicates the kernel config
 directories.  The priority for each level is inherited from the level
-below (see s390x-kdump note below).   In the example above the CONFIG is set
-to m for all kernels, is set to y for debug kernels, and on s390x-kdump, the
+below (see s390x-zfcpdump note below).   In the example above the CONFIG is set
+to m for all kernels, is set to y for debug kernels, and on s390x-zfcpdump, the
 CONFIG is overridden to n.
 
 The config settings can be read on each arch column.  For example, the
 resulting x86_64 configs will have the CONFIG option set to m in
 kernel-x86_64.config, and set to y in the kernel-x86_64-debug.config.
 
-s390x-dump: The configuration files for s390x-kdump are different from
-the other architectures.  s390x & s390x-kdump are the same for the
-generic and generic/arch level.  There is no s390x-kdump-debug kernel,
-and the entry at the debug/arch level is really the generic/s390x/kdump
-entry.  s390x kdump has been displayed this way for ease of coding.
+s390x-dump: The configuration files for s390x-zfcpdump are different from
+the other architectures.  s390x & s390x-zfcpdump are the same for the
+generic and generic/arch level.  There is no s390x-zfcpdump-debug kernel,
+and the entry at the debug/arch level is really the generic/s390x/zfcpdump
+entry.  s390x zfcpdump has been displayed this way for ease of coding.
 
 As mentioned there are two utilities that have been introduced to aid in the
 setting of CONFIG options.  Most engineers will only use the editconfig menu

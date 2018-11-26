@@ -48,10 +48,10 @@ generic/ < generic/s390x/
 s390x-debug:
 generic/ < generic/s390x/     < debug/ < debug/s390x/
 
-s390x-kdump:
-generic/ < generic/s390x/ < generic/s390x/kdump/
+s390x-zfcpdump:
+generic/ < generic/s390x/ < generic/s390x/zfcpdump/
 
-If you want to make a change that applies to all RHEL7 kernels, debug and
+If you want to make a change that applies to all RHEL8 kernels, debug and
 non-debug alike, add a config option file under generic/. If it should
 only apply to all debug kernels, add it under debug/. Arch-specific
 options go under generic/<arch>/ and so on. Each layer's individual config
