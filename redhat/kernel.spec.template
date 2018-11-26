@@ -30,7 +30,7 @@ Summary: The Linux kernel
 %define rpmversion %%KVERSION%%.%%KPATCHLEVEL%%.%%KSUBLEVEL%%
 %define pkgrelease %%PKGRELEASE%%
 
-# allow pkg_release to have configurable %{?dist} tag
+# allow pkg_release to have configurable %%{?dist} tag
 %define specrelease %%SPECRELEASE%%
 
 %define pkg_release %{specrelease}%{?buildid}
@@ -63,6 +63,8 @@ Summary: The Linux kernel
 %define with_bootwrapper %{?_without_bootwrapper: 0} %{?!_without_bootwrapper: 1}
 # Want to build a the vsdo directories installed
 %define with_vdso_install %{?_without_vdso_install: 0} %{?!_without_vdso_install: 1}
+# kernel-zfcpdump (s390 specific kernel for zfcpdump)
+%define with_zfcpdump  %{?_without_zfcpdump:  0} %{?!_without_zfcpdump:  1}
 # kernel-abi-whitelists
 %define with_kernel_abi_whitelists %{?_without_kernel_abi_whitelists: 0} %{?!_without_kernel_abi_whitelists: 1}
 #
@@ -155,6 +157,11 @@ Summary: The Linux kernel
 %ifnarch ppc64le
 %define with_bootwrapper 0
 %define with_sparse 0
+%endif
+
+# zfcpdump mechanism is s390 only
+%ifnarch s390x
+%define with_zfcpdump 0
 %endif
 
 # Per-arch tweaks
@@ -322,9 +329,10 @@ Source32: kernel-ppc64le.config
 Source33: kernel-ppc64le-debug.config
 Source36: kernel-s390x.config
 Source37: kernel-s390x-debug.config
-Source38: kernel-x86_64.config
-Source39: kernel-x86_64-debug.config
-Source40: generate_all_configs.sh
+Source38: kernel-s390x-zfcpdump.config
+Source39: kernel-x86_64.config
+Source40: kernel-x86_64-debug.config
+Source41: generate_all_configs.sh
 
 Source42: process_configs.sh
 
@@ -671,6 +679,14 @@ Provides: installonlypkg(kernel)\
 
 # Now, each variant package.
 
+%if %{with_zfcpdump}
+%define variant_summary The Linux kernel compiled for zfcpdump usage
+%kernel_variant_package zfcpdump
+%description zfcpdump-core
+The kernel package contains the Linux kernel (vmlinuz) for use by the
+zfcpdump infrastructure.
+%endif # with_zfcpdump
+
 %define variant_summary The Linux kernel compiled with extra debugging enabled
 %kernel_variant_package debug
 %description debug-core
@@ -790,7 +806,7 @@ cd configs
 
 # Drop some necessary files from the source dir into the buildroot
 cp $RPM_SOURCE_DIR/kernel-*.config .
-cp %{SOURCE40} .
+cp %{SOURCE41} .
 VERSION=%{version} ./generate_all_configs.sh
 
 %define make make %{?cross_opts}
@@ -842,6 +858,11 @@ BuildKernel() {
     Flav=${Flavour:++${Flavour}}
     InstallName=${5:-vmlinuz}
 
+    DoModules=1
+    if [ "$Flavour" = "zfcpdump" ]; then
+	    DoModules=0
+    fi
+
     # Pick the right config file for the kernel we're building
     Config=kernel-%{version}-%{_target_cpu}${Flavour:+-${Flavour}}.config
     DevelDir=/usr/src/kernels/%{KVERREL}${Flav}
@@ -874,7 +895,9 @@ BuildKernel() {
 
     make -s ARCH=$Arch olddefconfig >/dev/null
     %{make} -s ARCH=$Arch V=1 %{?_smp_mflags} WITH_GCOV="%{?with_gcov}" $MakeTarget %{?sparse_mflags} %{?kernel_mflags}
-    %{make} -s ARCH=$Arch V=1 %{?_smp_mflags} WITH_GCOV="%{?with_gcov}" modules %{?sparse_mflags} || exit 1
+    if [ $DoModules -eq 1 ]; then
+	%{make} -s ARCH=$Arch V=1 %{?_smp_mflags} WITH_GCOV="%{?with_gcov}" modules %{?sparse_mflags} || exit 1
+    fi
 
     mkdir -p $RPM_BUILD_ROOT/%{image_install_path}
     mkdir -p $RPM_BUILD_ROOT/lib/modules/$KernelVer
@@ -922,9 +945,11 @@ BuildKernel() {
     sha512hmac $RPM_BUILD_ROOT/%{image_install_path}/$InstallName-$KernelVer | sed -e "s,$RPM_BUILD_ROOT,," > $RPM_BUILD_ROOT/%{image_install_path}/.vmlinuz-$KernelVer.hmac;
     cp $RPM_BUILD_ROOT/%{image_install_path}/.vmlinuz-$KernelVer.hmac $RPM_BUILD_ROOT/lib/modules/$KernelVer/.vmlinuz.hmac
 
-    # Override $(mod-fw) because we don't want it to install any firmware
-    # we'll get it from the linux-firmware package and we don't want conflicts
-    %{make} -s ARCH=$Arch INSTALL_MOD_PATH=$RPM_BUILD_ROOT modules_install KERNELRELEASE=$KernelVer mod-fw=
+    if [ $DoModules -eq 1 ]; then
+	# Override $(mod-fw) because we don't want it to install any firmware
+	# we'll get it from the linux-firmware package and we don't want conflicts
+	%{make} -s ARCH=$Arch INSTALL_MOD_PATH=$RPM_BUILD_ROOT modules_install KERNELRELEASE=$KernelVer mod-fw=
+    fi
 
 %if %{with_gcov}
     # install gcov-needed files to $BUILDROOT/$BUILD/...:
@@ -1129,22 +1154,35 @@ BuildKernel() {
     # don't include anything going into k-m-e in the file lists
     rm -rf lib/modules/$KernelVer/extra
 
-    # Find all the module files and filter them out into the core and modules
-    # lists.  This actually removes anything going into -modules from the dir.
-    find lib/modules/$KernelVer/kernel -name *.ko | sort -n > modules.list
-    cp $RPM_SOURCE_DIR/filter-*.sh .
-    %{SOURCE99} modules.list %{_target_cpu}
-    rm filter-*.sh
+    if [ $DoModules -eq 1 ]; then
+	# Find all the module files and filter them out into the core and
+	# modules lists.  This actually removes anything going into -modules
+	# from the dir.
+	find lib/modules/$KernelVer/kernel -name *.ko | sort -n > modules.list
+	cp $RPM_SOURCE_DIR/filter-*.sh .
+	%{SOURCE99} modules.list %{_target_cpu}
+	rm filter-*.sh
 
-    # Run depmod on the resulting module tree and make sure it isn't broken
-    depmod -b . -aeF ./System.map $KernelVer &> depmod.out
-    if [ -s depmod.out ]; then
-        echo "Depmod failure"
-        cat depmod.out
-        exit 1
+	# Run depmod on the resulting module tree and make sure it isn't broken
+	depmod -b . -aeF ./System.map $KernelVer &> depmod.out
+	if [ -s depmod.out ]; then
+	    echo "Depmod failure"
+	    cat depmod.out
+	    exit 1
+	else
+	    rm depmod.out
+	fi
     else
-        rm depmod.out
+	# Ensure important files/directories exist to let the packaging succeed
+	echo '%%defattr(-,-,-)' > modules.list
+	echo '%%defattr(-,-,-)' > k-d.list
+	mkdir -p lib/modules/$KernelVer/kernel
+	# Add files usually created by make modules, needed to prevent errors
+	# thrown by depmod during package installation
+	touch lib/modules/$KernelVer/modules.order
+	touch lib/modules/$KernelVer/modules.builtin
     fi
+
     # remove files that will be auto generated by depmod at rpm -i time
     pushd $RPM_BUILD_ROOT/lib/modules/$KernelVer/
         rm -f modules.{alias*,builtin.bin,dep*,*map,symbols*,devname,softdep}
@@ -1172,9 +1210,11 @@ BuildKernel() {
     rm -f $RPM_BUILD_ROOT/module-dirs.list
 
 %if %{signmodules}
-    # Save the signing keys so we can sign the modules in __modsign_install_post
-    cp certs/signing_key.pem certs/signing_key.pem.sign${Flav}
-    cp certs/signing_key.x509 certs/signing_key.x509.sign${Flav}
+    if [ $DoModules -eq 1 ]; then
+	# Save the signing keys so we can sign the modules in __modsign_install_post
+	cp certs/signing_key.pem certs/signing_key.pem.sign${Flav}
+	cp certs/signing_key.x509 certs/signing_key.x509.sign${Flav}
+    fi
 %endif
 
     # Move the devel headers out of the root file system
@@ -1205,6 +1245,10 @@ cd linux-%{KVERREL}
 
 %if %{with_debug}
 BuildKernel %make_target %kernel_image %{with_vdso_install} debug
+%endif
+
+%if %{with_zfcpdump}
+BuildKernel %make_target %kernel_image %{with_vdso_install} zfcpdump
 %endif
 
 %if %{with_up}
@@ -1267,6 +1311,8 @@ popd
 #
 # We have to do all of those things _after_ find-debuginfo runs, otherwise
 # that will strip the signature off of the modules.
+#
+# Don't sign modules for the zfcpdump flavour as it is monolithic.
 
 %define __modsign_install_post \
   if [ "%{signmodules}" -eq "1" ]; then \
@@ -1572,6 +1618,11 @@ fi\
 %kernel_variant_preun debug
 %kernel_variant_post -v debug
 
+%if %{with_zfcpdump}
+%kernel_variant_preun zfcpdump
+%kernel_variant_post -v zfcpdump
+%endif
+
 if [ -x /sbin/ldconfig ]
 then
     /sbin/ldconfig -X || exit $?
@@ -1770,6 +1821,7 @@ fi
 
 %kernel_variant_files  %{with_vdso_install} %{with_up}
 %kernel_variant_files  %{with_vdso_install} %{with_debug} debug
+%kernel_variant_files  %{with_vdso_install} %{with_zfcpdump} zfcpdump
 
 # plz don't put in a version string unless you're going to tag
 # and build.
