@@ -56,6 +56,7 @@ Kernel Maintainer
 M:	Jakub Racek <jracek@redhat.com>
 S:	Maintained
 F:	redhat/
+F:	certs/
 
 3ware 9000 Storage Controller Linux Driver (3w-9xxx)
 M:	Tomas Henzl <thenzl@redhat.com>
