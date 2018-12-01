@@ -252,6 +252,11 @@ S:	Maintained
 F:	drivers/net/bonding/
 F:	include/linux/if_bonding.h
 
+BUS DEVICES
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/bus
+
 CIFS FILESYSTEM
 M:	Red Hat NFS Team <nfs-team@redhat.com>
 S:	Maintained
@@ -268,6 +273,15 @@ M:	Stefan Assmann <sassmann@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/cisco/enic/
 
+COMMON CLK FRAMEWORK
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/clock/
+F:	drivers/clk/
+F:	include/linux/clk-pr*
+F:	include/linux/clk/
+F:	include/linux/of_clk.h
+
 CPU FREQUENCY DRIVERS
 M:	Al Stone <ahs3@redhat.com>
 M:	Lenny Szubowicz <lszubowi@redhat.com>
@@ -275,6 +289,12 @@ M:	Prarit Bhargava <prarit@redhat.com>
 S:	Maintained
 F:	drivers/cpufreq/
 F:	arch/x86/kernel/cpu/cpufreq/
+
+CPUIDLE DRIVERS
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/cpuidle/*
+F:	include/linux/cpuidle.h
 
 CXGB3 ETHERNET DRIVER (cxgb3)
 M:	Sai Vemuri <svemuri@redhat.com>
@@ -334,6 +354,15 @@ S:	Maintained
 F:	net/bridge/
 F:	include/linux/if_bridge.h
 
+EXTERNAL CONNECTOR SUBSYSTEM (EXTCON)
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/extcon/
+F:	include/linux/extcon/
+F:	include/linux/extcon.h
+F:	Documentation/extcon/
+F:	Documentation/devicetree/bindings/extcon/
+
 FCOE (libfc, libfcoe)
 M:	Chris Leech <cleech@redhat.com>
 S:	Maintained
@@ -372,6 +401,22 @@ Fusion MPT SAS Host driver (mptsas)
 M:	Tomas Henzl <thenzl@redhat.com>
 S:	Maintained
 F:	drivers/message/fusion/
+
+GPIO SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/gpio/
+F:	Documentation/driver-api/gpio/
+F:	Documentation/gpio/
+F:	Documentation/ABI/testing/gpio-cdev
+F:	Documentation/ABI/obsolete/sysfs-gpio
+F:	drivers/gpio/
+F:	include/linux/gpio/
+F:	include/linux/gpio.h
+F:	include/linux/of_gpio.h
+F:	include/asm-generic/gpio.h
+F:	include/uapi/linux/gpio.h
+F:	tools/gpio/
 
 HID CORE LAYER
 M:	Benjamin Tissoires <benjamin.tissoires@redhat.com>
@@ -580,6 +625,18 @@ F:	drivers/infiniband/
 F:	include/rdma/
 F:	include/uapi/rdma/
 
+INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN) DRIVERS
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/input/
+F:	include/linux/input.h
+F:	include/uapi/linux/input.h
+F:	include/uapi/linux/input-event-codes.h
+F:	include/linux/input/
+F:	Documentation/devicetree/bindings/input/
+F:	Documentation/devicetree/bindings/serio/
+F:	Documentation/input/
+
 IOMMU DRIVERS
 M:	Myron Stowe <myron.stowe@redhat.com>
 M:	Alex Williamson <alex.williamson@redhat.com>
@@ -595,6 +652,19 @@ ISMT SMBUS DRIVER
 M:	Neil Horman <nhorman@redhat.com>
 S:	Maintained
 F:	drivers/i2c/busses/i2c-ismt.c
+
+LED SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/leds/
+F:	drivers/leds/
+F:	include/linux/leds.h
+
+LINUX FOR POWER MACINTOSH
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	arch/powerpc/platforms/powermac/
+F:	drivers/macintosh/
 
 Lenovo Hardware Support
 M:	Ocean He <ohe@redhat.com>
@@ -641,6 +711,11 @@ MEMORY HOTPLUG
 M:	Prarit Bhargava <prarit@redhat.com>
 S:	Maintained
 
+MEMORYSTICK DRIVERS
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/memstick
+
 MICRON PCIe SSD DRIVER (mtip32xx)
 M:	David Milburn <dmilburn@redhat.com>
 S:	Maintained
@@ -660,6 +735,22 @@ M:	Alaa Hleihel <ahleihel@redhat.com>
 M:	Slava Shwartsman <sshwarts@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/mellanox/mlx5/
+
+MULTIFUNCTION DEVICES (MFD)
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/mfd/
+F:	drivers/mfd/
+F:	include/linux/mfd/
+F:	include/dt-bindings/mfd/
+
+MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND SDIO SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/mmc/
+F:	drivers/mmc/
+F:	include/linux/mmc/
+F:	include/uapi/linux/mmc/
 
 MYRICOM MYRI-10G 10GbE DRIVER (MYRI10GE)
 M:	Stanislaw Gruszka <sgruszka@redhat.com>
@@ -773,6 +864,15 @@ F:	drivers/block/nvme-scsi.c
 F:	include/linux/nvme.h
 F:	include/uapi/linux/nvme.h
 
+NVMEM FRAMEWORK
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/nvmem/
+F:	Documentation/devicetree/bindings/nvmem/
+F:	Documentation/ABI/stable/sysfs-bus-nvmem
+F:	include/linux/nvmem-consumer.h
+F:	include/linux/nvmem-provider.h
+
 OMNI-PATH ARCHITECTURE (opa)
 M:	Alexander Estrin <aestrin@redhat.com>
 S:	Maintained
@@ -834,6 +934,18 @@ M:	Marcelo Tosatti <mtosatti@redhat.com>
 S:	Maintained
 F:	drivers/ptp/ptp_kvm.c
 
+PWM SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/pwm.txt
+F:	Documentation/devicetree/bindings/pwm/
+F:	include/linux/pwm.h
+F:	drivers/pwm/
+F:	drivers/video/backlight/pwm_bl.c
+F:	include/linux/pwm_backlight.h
+F:	drivers/gpio/gpio-mvebu.c
+F:	Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+
 QLOGIC QLA2XXX FC-SCSI DRIVER
 M:	Himanshu Madhani <hmadhani@redhat.com>
 S:	Maintained
@@ -867,11 +979,40 @@ M:	Stanislaw Gruszka <sgruszka@redhat.com>
 S:	Maintained
 F:	drivers/net/wireless/rt2x00/
 
+REAL TIME CLOCK (RTC) SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/rtc/
+F:	Documentation/rtc.txt
+F:	drivers/rtc/
+F:	include/linux/rtc.h
+F:	include/uapi/linux/rtc.h
+F:	include/linux/rtc/
+F:	include/linux/platform_data/rtc-*
+F:	tools/testing/selftests/rtc/
+
 REALTEK WIRELESS LAN DRIVERS
 M:	Stanislaw Gruszka <sgruszka@redhat.com>
 M:	John Linville <linville@redhat.com>
 S:	Maintained
 F:	drivers/net/wireless/rtl818x
+
+RESET CONTROLLER FRAMEWORK
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/reset/
+F:	Documentation/devicetree/bindings/reset/
+F:	include/dt-bindings/reset/
+F:	include/linux/reset.h
+F:	include/linux/reset-controller.h
+
+REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/rpmsg/
+F:	Documentation/rpmsg.txt
+F:	include/linux/rpmsg.h
+F:	include/linux/rpmsg/
 
 RFKILL
 M:	John Linville <linville@redhat.com>
@@ -932,6 +1073,13 @@ M:	Neil Horman <nhorman@redhat.com>
 S:	Maintained
 F:	drivers/net/usb/sierra_net.c
 
+SIOX
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/siox/*
+F:	drivers/gpio/gpio-siox.c
+F:	include/trace/events/siox.h
+
 SFC NETWORK DRIVER
 M:	Jarod Wilson <jarod@redhat.com>
 S:	Maintained
@@ -962,10 +1110,45 @@ M:	Jeremy Linton <jlinton@redhat.com>
 S:	Odd Fixes
 F:	drivers/net/ethernet/marvell/sky2.*
 
+SOUND
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/sound/
+F:	include/sound/
+F:	include/uapi/sound/
+F:	sound/
+
+SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEMENT (ASoC)
+M:	John Linville <linville@redhat.com>
+S:	Supported
+F:	Documentation/devicetree/bindings/sound/
+F:	Documentation/sound/soc/
+F:	sound/soc/
+F:	include/sound/soc*
+
 SOFTWARE RAID (Multiple Disks, MD) SUPPORT
 M:	Jes Sorensen <Jes.Sorensen@redhat.com>
 S:	Maintained
 F:	drivers/md/
+
+SPI SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/spi/
+F:	Documentation/spi/
+F:	drivers/spi/
+F:	include/linux/spi/
+F:	include/uapi/linux/spi/
+F:	tools/spi/
+
+SPMI SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/spmi/
+F:	drivers/spmi/
+F:	include/dt-bindings/spmi/spmi.h
+F:	include/linux/spmi.h
+F:	include/trace/events/spmi.h
 
 SUN REMOTE PROCEDURE CALL (sunrpc)
 M:	Red Hat NFS Team <nfs-team@redhat.com>
@@ -1000,10 +1183,12 @@ M:	Prarit Bhargava <prarit@redhat.com>
 S:	Maintained
 F:	arch/x86/
 
-UNISYS SPAR FIRMWARE SUPPORT
-M:	Erik Arfvidson <earfvids@redhat.com>
-S:	Maintained
-F:	drivers/staging/unisys
+UNISYS S-PAR DRIVERS
+M:	John Linville <linville@redhat.com>
+S:	Supported
+F:	include/linux/visorbus.h
+F:	drivers/visorbus/
+F:	drivers/staging/unisys/
 
 UNIVERSAL EXTENSIBLE FIRMWARE INTERFACE (UEFI/EFI)
 M:	Al Stone <ahs3@redhat.com>
