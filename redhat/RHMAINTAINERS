@@ -625,6 +625,11 @@ F:	drivers/infiniband/
 F:	include/rdma/
 F:	include/uapi/rdma/
 
+INIT (GENERAL SYSTEM INITIALIZATION)
+M:	Prarit Bhargava <prarit@redhat.com>
+S:	Maintained
+F:	init/
+
 INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN) DRIVERS
 M:	John Linville <linville@redhat.com>
 S:	Maintained
@@ -659,6 +664,11 @@ S:	Maintained
 F:	Documentation/devicetree/bindings/leds/
 F:	drivers/leds/
 F:	include/linux/leds.h
+
+LIB DIRECTORY
+M:	Prarit Bhargava <prarit@redhat.com>
+S:	Maintained
+F:	lib/
 
 LINUX FOR POWER MACINTOSH
 M:	John Linville <linville@redhat.com>
