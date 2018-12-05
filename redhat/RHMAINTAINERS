@@ -257,6 +257,20 @@ M:	John Linville <linville@redhat.com>
 S:	Maintained
 F:	drivers/bus
 
+CEPH COMMON CODE (LIBCEPH)
+M:	Ilya Dryomov <idryomov@redhat.com>
+S:	Maintained
+F:	net/ceph/
+F:	include/linux/ceph/
+F:	include/linux/crush/
+
+CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)
+M:	"Yan, Zheng" <zyan@redhat.com>
+M:	Ilya Dryomov <idryomov@redhat.com>
+S:	Maintained
+F:	Documentation/filesystems/ceph.txt
+F:	fs/ceph/
+
 CIFS FILESYSTEM
 M:	Red Hat NFS Team <nfs-team@redhat.com>
 S:	Maintained
@@ -282,16 +296,11 @@ F:	include/linux/clk-pr*
 F:	include/linux/clk/
 F:	include/linux/of_clk.h
 
-CRYPTO API
-M:	Neil Horman <nhorman@redhat.com>
+CONFIGFS
+M:	Bob Peterson <rpeterso@redhat.com>
 S:	Maintained
-F:	Documentation/crypto/
-F:	Documentation/devicetree/bindings/crypto/
-F:	arch/*/crypto/
-F:	crypto/
-F:	drivers/crypto/
-F:	include/crypto/
-F:	include/linux/crypto*
+F:	fs/configfs/
+F:	include/linux/configfs.h
 
 CPU FREQUENCY DRIVERS
 M:	Al Stone <ahs3@redhat.com>
@@ -306,6 +315,23 @@ M:	John Linville <linville@redhat.com>
 S:	Maintained
 F:	drivers/cpuidle/*
 F:	include/linux/cpuidle.h
+
+CRAMFS FILESYSTEM
+M:	Eric Sandeen <sandeen@redhat.com>
+S:	Maintained
+F:	Documentation/filesystems/cramfs.txt
+F:	fs/cramfs/
+
+CRYPTO API
+M:	Neil Horman <nhorman@redhat.com>
+S:	Maintained
+F:	Documentation/crypto/
+F:	Documentation/devicetree/bindings/crypto/
+F:	arch/*/crypto/
+F:	crypto/
+F:	drivers/crypto/
+F:	include/crypto/
+F:	include/linux/crypto*
 
 CXGB3 ETHERNET DRIVER (cxgb3)
 M:	Sai Vemuri <svemuri@redhat.com>
@@ -343,6 +369,11 @@ Disk Array driver for HP Smart Array SAS controllers (hpsa)
 M:	Tomas Henzl <thenzl@redhat.com>
 S:	Maintained
 F:	drivers/scsi/hpsa*
+
+DISTRIBUTED LOCK MANAGER (DLM)
+M:	David Teigland <teigland@redhat.com>
+S:	Maintained
+F:	fs/dlm/
 
 DMA BUFFER SHARING FRAMEWORK
 M:	Neil Horman <nhorman@redhat.com>
@@ -387,6 +418,12 @@ M:	Ivan Vecera <cera@redhat.com>
 S:	Maintained
 F:	net/bridge/
 F:	include/linux/if_bridge.h
+
+EXT4 FILE SYSTEM
+M:	Lukas Czerner <lczerner@redhat.com>
+S:	Maintained
+F:	Documentation/filesystems/ext4/ext4.rst
+F:	fs/ext4/
 
 EXTERNAL CONNECTOR SUBSYSTEM (EXTCON)
 M:	John Linville <linville@redhat.com>
@@ -435,6 +472,14 @@ Fusion MPT SAS Host driver (mptsas)
 M:	Tomas Henzl <thenzl@redhat.com>
 S:	Maintained
 F:	drivers/message/fusion/
+
+GFS2 FILE SYSTEM
+M:	Bob Peterson <rpeterso@redhat.com>
+M:	Andreas Gruenbacher <agruenba@redhat.com>
+S:	Maintained
+F:	Documentation/filesystems/gfs2*.txt
+F:	fs/gfs2/
+F:	include/uapi/linux/gfs2_ondisk.h
 
 GPIO SUBSYSTEM
 M:	John Linville <linville@redhat.com>
@@ -559,6 +604,12 @@ M:	Chris Leech <cleech@redhat.com>
 S:	Maintained
 F:	drivers/scsi/*iscsi*
 F:	include/scsi/*iscsi*
+
+JOURNALLING LAYER FOR BLOCK DEVICES (JBD2)
+M:	Lukas Czerner <lczerner@redhat.com>
+S:	Maintained
+F:	fs/jbd2/
+F:	include/linux/jbd2.h
 
 KERNEL VIRTUAL MACHINE (KVM)
 M:	Paolo Bonzini <pbonzini@redhat.com>
@@ -976,6 +1027,13 @@ F:	drivers/firmware/psci*.c
 F:	include/linux/psci.h
 F:	include/uapi/linux/psci.h
 
+PSTORE PERSISTENT STORAGE
+M:	Lenny Szubowicz <lszubowi@redhat.com>
+M:	Al Stone <ahs3@redhat.com>
+S:	Maintained
+F:	Documentation/ABI/testing/pstore
+F:	fs/pstore/
+
 PTP HARDWARE CLOCK SUPPORT
 M:	Jiri Benc <jbenc@redhat.com>
 M:	Prarit Bhargava <prarit@redhat.com>
@@ -1028,6 +1086,13 @@ M:	Chad Dupuis <cdupuis@redhat.com>
 M:	Chris Leech <cleech@redhat.com>
 S:	Maintained
 F:	drivers/scsi/qedf/
+
+RADOS BLOCK DEVICE (RBD)
+M:	Ilya Dryomov <idryomov@redhat.com>
+S:	Maintained
+F:	Documentation/ABI/testing/sysfs-bus-rbd
+F:	drivers/block/rbd.c
+F:	drivers/block/rbd_types.h
 
 RALINK RT2X00 WIRELESS LAN DRIVER
 M:	Stanislaw Gruszka <sgruszka@redhat.com>
@@ -1209,6 +1274,12 @@ F:	drivers/spmi/
 F:	include/dt-bindings/spmi/spmi.h
 F:	include/linux/spmi.h
 F:	include/trace/events/spmi.h
+
+SQUASHFS FILE SYSTEM
+M:	Abhijith Das <adas@redhat.com>
+S:	Maintained
+F:	Documentation/filesystems/squashfs.txt
+F:	fs/squashfs/
 
 SUN REMOTE PROCEDURE CALL (sunrpc)
 M:	Red Hat NFS Team <nfs-team@redhat.com>
@@ -1421,6 +1492,13 @@ F:	include/xen/
 F:	arch/x86/include/asm/xen/
 F:	arch/x86/pci/xen.c
 F:	arch/x86/xen/
+
+XFS FILESYSTEM
+M:	Brian Foster <bfoster@redhat.com>
+M:	Carlos Maiolino <cmaiolin@redhat.com>
+S:	Maintained
+F:	Documentation/filesystems/xfs.txt
+F:	fs/xfs/
 
 ZBUD COMPRESSED PAGE ALLOCATOR
 M:	Steve Best <sbest@redhat.com>
