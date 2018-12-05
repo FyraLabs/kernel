@@ -20,6 +20,9 @@ while (<FILE>) {
 
 	if (/\# ([\w]+) is not set/) {
 		$configname = $1;
+	} elsif (/^\#/) {
+		# skip comments
+		next;
 	} elsif (/([\w]+)=/) {
 		$configname = $1;
 	}
@@ -40,6 +43,9 @@ while (<FILE2>) {
 
 	if (/\# ([\w]+) is not set/) {
 		$configname = $1;
+	} elsif (/^\#/) {
+		# skip comments
+		next;
 	} elsif (/([\w]+)=/) {
 		$configname  = $1;
 	}
