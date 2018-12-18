@@ -32,7 +32,7 @@ unexport GREP_OPTIONS
 # Use this spot to avoid future merge conflicts
 RHEL_MAJOR = 8
 RHEL_MINOR = 0
-RHEL_RELEASE = 0
+RHEL_RELEASE = 1
 
 # We are using a recursive build, so we need to do a little thinking
 # to get the ordering right.
