@@ -282,6 +282,17 @@ F:	include/linux/clk-pr*
 F:	include/linux/clk/
 F:	include/linux/of_clk.h
 
+CRYPTO API
+M:	Neil Horman <nhorman@redhat.com>
+S:	Maintained
+F:	Documentation/crypto/
+F:	Documentation/devicetree/bindings/crypto/
+F:	arch/*/crypto/
+F:	crypto/
+F:	drivers/crypto/
+F:	include/crypto/
+F:	include/linux/crypto*
+
 CPU FREQUENCY DRIVERS
 M:	Al Stone <ahs3@redhat.com>
 M:	Lenny Szubowicz <lszubowi@redhat.com>
@@ -332,6 +343,29 @@ Disk Array driver for HP Smart Array SAS controllers (hpsa)
 M:	Tomas Henzl <thenzl@redhat.com>
 S:	Maintained
 F:	drivers/scsi/hpsa*
+
+DMA BUFFER SHARING FRAMEWORK
+M:	Neil Horman <nhorman@redhat.com>
+S:	Maintained
+L:	linux-media@vger.kernel.org
+L:	dri-devel@lists.freedesktop.org
+L:	linaro-mm-sig@lists.linaro.org (moderated for non-subscribers)
+F:	drivers/dma-buf/
+F:	include/linux/dma-buf*
+F:	include/linux/reservation.h
+F:	include/linux/*fence.h
+F:	Documentation/driver-api/dma-buf.rst
+T:	git git://anongit.freedesktop.org/drm/drm-misc
+
+DMA GENERIC OFFLOAD ENGINE SUBSYSTEM
+M:	Neil Horman <nhorman@redhat.com>
+S:	Maintained
+F:	drivers/dma/
+F:	include/linux/dmaengine.h
+F:	include/linux/of_dma.h
+F:	Documentation/devicetree/bindings/dma/
+F:	Documentation/driver-api/dmaengine/
+T:	git git://git.infradead.org/users/vkoul/slave-dma.git
 
 DM-RAID SUPPORT
 M:	Jonathan Brassow <jbrassow@redhat.com>
@@ -418,12 +452,23 @@ F:	include/asm-generic/gpio.h
 F:	include/uapi/linux/gpio.h
 F:	tools/gpio/
 
+HARDWARE TRACING FACILITIES
+M:	Neil Horman <nhorman@redhat.com>
+S:	Maintained
+F:	drivers/hwtracing/
+
 HID CORE LAYER
 M:	Benjamin Tissoires <benjamin.tissoires@redhat.com>
 S:	Maintained
 F:	drivers/hid/
 F:	include/linux/hid*
 F:	include/uapi/linux/hid*
+
+HISILICON NETWORK SUBSYSTEM DRIVER
+M:	Neil Horman <nhorman@redhat.com>
+S:	Maintained
+F:	drivers/net/ethernet/hisilicon/
+F:	Documentation/devicetree/bindings/net/hisilicon*.txt
 
 I2C SUBSYSTEM
 M:	Gopal Tiwari <gtiwari@redhat.com>
@@ -1187,6 +1232,18 @@ F:	include/uapi/linux/tipc.h
 F:	include/uapi/linux/tipc_netlink.h
 F:	include/uapi/linux/tipc_config.h
 F:	include/uapi/linux/tipc_socket_diag.h
+
+TRACING
+M:	Neil Horman <nhorman@redhat.com>
+S:	Maintained
+F:	Documentation/trace/ftrace.rst
+F:	arch/*/*/*/ftrace.h
+F:	arch/*/kernel/ftrace.c
+F:	include/*/ftrace.h
+F:	include/linux/trace*.h
+F:	include/trace/
+F:	kernel/trace/
+F:	tools/testing/selftests/ftrace/
 
 X86 ARCHITECTURE
 M:	Prarit Bhargava <prarit@redhat.com>
