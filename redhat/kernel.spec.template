@@ -831,7 +831,7 @@ done
 %endif
 
 cp %{SOURCE42} .
-./process_configs.sh -w -n kernel %{rpmversion}
+./process_configs.sh kernel %{rpmversion}
 
 # end of kernel config
 %endif
