@@ -1046,6 +1046,11 @@ F:	include/linux/rtc/
 F:	include/linux/platform_data/rtc-*
 F:	tools/testing/selftests/rtc/
 
+RAPIDIO SUBSYSTEM
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	drivers/rapidio/
+
 REALTEK WIRELESS LAN DRIVERS
 M:	Stanislaw Gruszka <sgruszka@redhat.com>
 M:	John Linville <linville@redhat.com>
