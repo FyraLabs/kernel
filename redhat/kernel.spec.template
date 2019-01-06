@@ -804,7 +804,8 @@ pathfix.py -i %{__python3} -p -n \
 	scripts/bloat-o-meter \
 	tools/perf/tests/attr.py \
 	tools/perf/scripts/python/stat-cpi.py \
-	tools/perf/scripts/python/sched-migration.py
+	tools/perf/scripts/python/sched-migration.py \
+	scripts/gen_compile_commands.py
 
 # only deal with configs if we are going to build for the arch
 %ifnarch %nobuildarches
