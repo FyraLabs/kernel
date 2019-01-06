@@ -1703,6 +1703,7 @@ fi
 %ifarch %{cpupowerarchs}
 %files -n kernel-tools -f cpupower.lang
 %{_bindir}/cpupower
+%{_datadir}/bash-completion/completions/cpupower
 %ifarch x86_64
 %{_bindir}/centrino-decode
 %{_bindir}/powernow-k8-decode
