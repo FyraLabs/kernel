@@ -1845,6 +1845,95 @@ fi
 #
 %changelog
 %%CHANGELOG%%
+* Mon Jan 07 2019 Laura Abbott <labbott@redhat.com> [5.0.0-0.rc1.1.elrdy]
+- [vfio] vfio_pci: Add local source directory as include (Laura Abbott)
+- [iommu] iommu/arm-smmu: workaround DMA mode issues (Mark Salter) [1652259]
+- [kernel] rh_taint: correct loaddable module support dependencies (Philipp Rudo) [1652266]
+- [kernel] rh_kabi: introduce RH_KABI_EXCLUDE (Jakub Racek) [1652256]
+- [scsi] scsi: lpfc: Fix sysfs Speed value on CNA ports (Dick Kennedy) [1613913]
+- [x86] mark intel knights landing and knights mill unsupported (David Arcari) [1610493]
+- [x86] mark whiskey-lake processor supported (David Arcari) [1609604]
+- [char] ipmi: do not configure ipmi for HPE m400 (Tony Camuso) [1583537]
+- [infiniband] IB/rxe: Mark Soft-RoCE Transport driver as tech-preview (Don Dutile) [1605216]
+- [scsi] scsi: smartpqi: add inspur advantech ids (Don Brace) [1503736]
+- [netdrv] ice: mark driver as tech-preview (Jonathan Toppins) [1495347]
+- [scsi] be2iscsi: remove BE3 family support (Maurizio Lombardi) [1598366]
+- [x86] update rh_check_supported processor list (David Arcari) [1595918]
+- [kernel] kABI: Add generic kABI macros to use for kABI workarounds (Myron Stowe) [1546831]
+- [pci] add pci_hw_vendor_status() (Maurizio Lombardi) [1590829]
+- [ata] ahci: thunderx2: Fix for errata that affects stop engine (Robert Richter) [1563590]
+- [pci] Vulcan: AHCI PCI bar fix for Broadcom Vulcan early silicon (Robert Richter) [1563590]
+- [kernel] bpf: Add tech preview taint for syscall (Eugene Syromiatnikov) [1559877]
+- [kernel] bpf: set unprivileged_bpf_disabled to 1 by default, add a boot parameter (Eugene Syromiatnikov) [1561171]
+- [kernel] add Red Hat-specific taint flags (Eugene Syromiatnikov) [1559877]
+- [tools] perf scripts python: Add Python 3 support to stat-cpi.py ("Herton R. Krzesinski") [1561505]
+- [kernel] kdump: fix a grammar issue in a kernel message (Dave Young) [1507353]
+- [scripts] tags.sh: Ignore redhat/rpm (Prarit Bhargava) [1582586]
+- [kernel] put RHEL info into generated headers (Prarit Bhargava) [1544999]
+- [kernel] kdump: add support for crashkernel=auto (Dave Young) [1507353]
+- [kernel] kdump: round up the total memory size to 128M for crashkernel reservation (Dave Young) [1507353]
+- [arm64] acpi: prefer booting with ACPI over DTS (Mark Salter) [1576869]
+- [acpi] aarch64: acpi scan: Fix regression related to X-Gene UARTs (Mark Salter) [1519554]
+- [acpi] ACPI / irq: Workaround firmware issue on X-Gene based m400 (Mark Salter) [1519554]
+- [x86] add rh_check_supported (David Arcari) [1565717]
+- [scsi] qla2xxx: Remove PCI IDs of deprecated adapter (Himanshu Madhani) [1572233]
+- [scsi] be2iscsi: remove unsupported device IDs (Chris Leech) [1574502]
+- [scsi] Removing Obsolete hba pci-ids from rhel8 (Dick Kennedy) [1572321]
+- [scsi] hpsa: modify hpsa driver version (Joseph Szczypek) [1471185]
+- [scsi] hpsa: remove old cciss-based smartarray pci ids (Joseph Szczypek) [1471185]
+- [kernel] rh_taint: add support for marking driver as unsupported (Jonathan Toppins) [1565704]
+- [kernel] rh_taint: add support (David Arcari) [1565704]
+- [scsi] qla4xxx: Remove deprecated PCI IDs from RHEL 8 (Chad Dupuis) [1518874]
+- [scsi] aacraid: Remove depreciated device and vendor PCI id's (Raghava Aditya Renukunta) [1495307]
+- [scsi] megaraid_sas: remove deprecated pci-ids (Tomas Henzl) [1509329]
+- [scsi] mpt*: remove certain deprecated pci-ids (Tomas Henzl) [1511953]
+- [kernel] modules: add rhelversion MODULE_INFO tag (Prarit Bhargava) [1544999]
+- [acpi] ACPI: APEI: arm64: Ignore broken HPE moonshot APEI support (Al Stone) [1518076]
+- [rpmspec] kernel.spec: Package bash completion for cpupower (Laura Abbott)
+- [rpmspec] kernel.spec: Remove some more files from kernel-tools (Laura Abbott)
+- [rpmspec] kernel.spec: Fixup another python shebang (Laura Abbott)
+- [rpmspec] kernel.spec: Do not zip modules on noarch builds (Prarit Bhargava) [1646619]
+- [rpmspec] kernel.spec: s390/zfcpdump: add -zfcpdump kernel variant (Philipp Rudo) [1652266]
+- [rpmspec] clean stray bpf files for v4.20-rc1 (Jakub Racek) [1646972]
+- [rpmspec] Forward port weak-modules support from RHEL 7 to ARK ("Herton R. Krzesinski") [1635011]
+- [rpmspec] clean more stray bpf files (Jakub Racek) [1622985]
+- [rpmspec] compute content hash for kernel-headers (Rafael Aquini) [1613003]
+- [rpmspec] compress modules on all architectures ("Herton R. Krzesinski") [1614556]
+- [rpmspec] add gcov rpm packaging support (Jan Stancek) [1601733]
+- [rpmspec] don't ship spdxcheck.py (Jakub Racek)
+- [rpmspec] clean stray bpf files (Jakub Racek) [1593309]
+- [rpmspec] Copy symvers.gz to /lib/modules (Eugene Syromiatnikov) [1609695]
+- [rpmspec] Add kabi-dup related code into specfile (Petr Oros) [1585672]
+- [rpmspec] kernel spec: Add and enable kabi check (Petr Oros) [1585672]
+- [rpmspec] Enable warning checks for configs in rpm build (Prarit Bhargava) [1589858]
+- [rpmspec] remove workaround for rst2man-3 from python3-docutils ("Herton R. Krzesinski") [1602148]
+- [rpmspec] fix dist tag used for hardlink in kernel-devel post ("Herton R. Krzesinski") [1596397]
+- [rpmspec] drop kernel package dependency on python2 ("Herton R. Krzesinski") [1561505]
+- [kernel] Makefile: Move RHEL definitions down (Jakub Racek) [1576568]
+- [rpmspec] eBPF: Add bpftool package to spec file (Jerome Marchand) [1559607]
+- [rpmspec] fix conflicts with COPYING file while installing newer 4.17 kernel ("Herton R. Krzesinski") [1579563]
+- [rpmspec] do not build kernel meta-package on noarch ("Herton R. Krzesinski") [1579512]
+- [rpmspec] kernel spec: remove copy of arch/x86/purgatory/sha256.* ("Herton R. Krzesinski")
+- [rpmspec] spec: Add new arch/powerpc/kernel/module.lds file to kernel-devel rpm (Steve Best) [1572553]
+- [rpmspec] kernel spec: fix recent build errors from brp-mangle-shebangs ("Herton R. Krzesinski") [1575966]
+- [rpmspec] Add i386 to ExclusiveArch to fix noarch package build ("Herton R. Krzesinski") [1575152]
+- [rpmspec] Build kernel-abi-whitelists package (Petr Oros) [1571189]
+- [rpmspec] kernel spec: build bzImage for s390 (Hendrik Brueckner) [1570041]
+- [rpmspec] kernel spec: arm64: package module.lds in kernel-devel (Mark Salter) [1569014]
+- [rpmspec] Re-enable debuginfo packages and fix build with current dist tag ("Herton R. Krzesinski") [1568901]
+- [rpmspec] kernel spec: build kernel-debug on all architectures ("Herton R. Krzesinski") [1567367]
+- [rpmspec] don't build kernel meta-package if we are only building kernel headers ("Herton R. Krzesinski")
+- [rpmspec] remove use_vdso macro ("Herton R. Krzesinski")
+- [rpmspec] build perf and tools man pages instead of relying on a separate tarball ("Herton R. Krzesinski")
+- [rpmspec] disable debug build if arch is in nobuildarches list ("Herton R. Krzesinski")
+- [rpmspec] remove fedora changelog from spec file ("Herton R. Krzesinski")
+- [rpmspec] only support ppc64le builds ("Herton R. Krzesinski")
+- [rpmspec] remove x86 32-bit package support ("Herton R. Krzesinski")
+- [rpmspec] remove arm 32-bit package support ("Herton R. Krzesinski")
+- [rpmspec] remove configuration generation support from kernel spec file ("Herton R. Krzesinski")
+- [rpmspec] remove broken out patches from kernel spec file ("Herton R. Krzesinski")
+- [rpmspec] import kernel spec from rhel8 bootstrap dist-git ("Herton R. Krzesinski")
+
 
 ###
 # The following Emacs magic makes C-c C-e use UTC dates.
