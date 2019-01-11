@@ -891,6 +891,11 @@ F:	include/net/netns/netfilter.h
 F:	include/net/netns/nftables.h
 F:	include/net/netns/x_tables.h
 
+NETRONOME NFP ETHERNET DRIVER
+M:	Pablo Cascón <pablo.cascon@redhat.com>
+S:	Maintained
+F:	drivers/net/ethernet/netronome/nfp/
+
 NETWORKING [GENERAL]
 M:	Jiri Benc <jbenc@redhat.com>
 M:	Rashid Khan <rkhan@redhat.com>
