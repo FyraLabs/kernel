@@ -215,10 +215,9 @@ F:	drivers/net/ethernet/broadcom/bnx2.*
 F:	drivers/net/ethernet/broadcom/bnx2_*
 
 BROADCOM BNX2X GIGABIT ETHERNET DRIVER (bnx2x)
-M:	Michal Schmidt <mschmidt@redhat.com>
+M:	Jonathan Toppins <jtoppins@redhat.com>
 S:	Maintained
-F:	drivers/net/ethernet/broadcom/bnx2x.*
-F:	drivers/net/ethernet/broadcom/bnx2x_*
+F:	drivers/net/ethernet/broadcom/bnx2x/
 
 BROADCOM BNXT_EN 50 GIGABIT ETHERNET DRIVER
 M:	Jonathan Toppins <jtoppins@redhat.com>
