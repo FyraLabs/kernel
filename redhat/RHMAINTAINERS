@@ -1342,6 +1342,11 @@ S:	Maintained
 F:	arch/x86/kernel/efi*
 F:	include/linux/efi.h
 
+USB ETHERNET DRIVERS
+M:	Torez Smith <torez@redhat.com>
+S:	Maintained
+F:	drivers/net/usb/
+
 USB SUBSYSTEM
 M:	Torez Smith <torez@redhat.com>
 M:	Don Zickus <dzickus@redhat.com>
