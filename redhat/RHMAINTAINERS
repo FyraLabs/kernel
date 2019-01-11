@@ -206,11 +206,6 @@ M:	Vivek Goyal <vgoyal@redhat.com>
 S:	Maintained
 F:	block/
 
-BROADCOM B44 10/100 ETHERNET DRIVER
-M:	Stanislaw Gruszka <sgruszka@redhat.com>
-S:	Maintained
-F:	drivers/net/ethernet/broadcom/b44.*
-
 BROADCOM BNX2 GIGABIT ETHERNET DRIVER (bnx2)
 M:	Neil Horman <nhorman@redhat.com>
 S:	Maintained
