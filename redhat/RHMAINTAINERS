@@ -1230,11 +1230,6 @@ F:	arch/x86/include/asm/uv/
 F:	arch/x86/kernel/apic/x2apic_uv_x.c
 F:	arch/x86/platform/uv/
 
-SKGE 10/100/1000 GIGABIT ETHERNET DRIVER
-M:	Michal Schmidt <mschmidt@redhat.com>
-S:	Maintained
-F:	drivers/net/ethernet/marvell/skge.*
-
 SKY2 10/100/1000 GIGABIT ETHERNET DRIVER
 M:	Jeremy Linton <jlinton@redhat.com>
 S:	Odd Fixes
