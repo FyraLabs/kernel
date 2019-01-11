@@ -538,10 +538,10 @@ M:	Stefan Assmann <sassmann@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/intel/i40e/
 
-INTEL I40EVF ETHERNET DRIVERS (i40evf)
+INTEL IAVF ETHERNET DRIVERS (iavf)
 M:	Stefan Assmann <sassmann@redhat.com>
 S:	Maintained
-F:	drivers/net/ethernet/intel/i40evf/
+F:	drivers/net/ethernet/intel/iavf/
 
 INTEL IGB ETHERNET DRIVERS (igb)
 M:	Corinna Vinschen <vinschen@redhat.com>
