@@ -120,6 +120,12 @@ M:	David Arcari <darcari@redhat.com>
 S:	Supported
 F:	drivers/net/ethernet/amd/xgbe/
 
+AQUANTIA ATLANTIC DRIVER
+M:	Igor Russkikh <irusskik@redhat.com>
+M:	David Arcari <darcari@redhat.com>
+S:	Maintained
+F:	drivers/net/ethernet/aquantia/atlantic/
+
 ARECA (ARC11xx/12xx/16xx/1880) SATA/SAS RAID Host Bus Adapter (arcmsr)
 M:	Tomas Henzl <thenzl@redhat.com>
 S:	Maintained
