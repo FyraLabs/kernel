@@ -531,6 +531,12 @@ M:	David Arcari <darcari@redhat.com>
 S:	Maintained
 F:	drivers/net/ethernet/intel/e1000e/
 
+INTEL FM10K ETHERNET DRIVER (fm10k)
+M:	Neil Horman <nhorman@redhat.com>
+S:	Maintained
+F:	drivers/net/ethernet/intel/fm10k
+F:	Documentation/networking/fm10k.rst
+
 INTEL I40E ETHERNET DRIVERS (i40e)
 M:	Stefan Assmann <sassmann@redhat.com>
 S:	Maintained
