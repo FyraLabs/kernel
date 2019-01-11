@@ -460,11 +460,6 @@ F:	include/scsi/fcoe_*.h
 F:	include/scsi/fc_*.h
 F:	include/scsi/fc/
 
-FORCEDETH ETHERNET DRIVER (forcedeth)
-M:	Ivan Vecera <ivecera@redhat.com>
-S:	Maintained
-F:	drivers/net/ethernet/nvidia/forcedeth.c
-
 FIREWIRE SUBSYSTEM
 M:	Neil Horman <nhorman@redhat.com>
 S:	Maintained
