@@ -255,6 +255,16 @@ M:	John Linville <linville@redhat.com>
 S:	Maintained
 F:	drivers/bus
 
+CAN NETWORK DRIVERS
+M:	John Linville <linville@redhat.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/net/can/
+F:	drivers/net/can/
+F:	include/linux/can/dev.h
+F:	include/linux/can/platform/
+F:	include/uapi/linux/can/error.h
+F:	include/uapi/linux/can/netlink.h
+
 CEPH COMMON CODE (LIBCEPH)
 M:	Ilya Dryomov <idryomov@redhat.com>
 S:	Maintained
