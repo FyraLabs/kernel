@@ -160,13 +160,6 @@ F:	drivers/iommu/arm-smmu.c
 F:	drivers/iommu/arm-smmu-v3.c
 F:	drivers/iommu/io-pgtable-arm.c
 
-ATHEROS WIRELESS LAN DRIVERS
-M:	Stanislaw Gruszka <sgruszka@redhat.com>
-M:	John Linville <linville@redhat.com>
-S:	Maintained
-F:	drivers/net/wireless/ath5k
-F:	drivers/net/wireless/ath9k
-
 ATHEROS ETHERNET DRIVERS
 M:	Jarod Wilson <jarod@redhat.com>
 S:	Maintained
@@ -1094,11 +1087,6 @@ F:	Documentation/ABI/testing/sysfs-bus-rbd
 F:	drivers/block/rbd.c
 F:	drivers/block/rbd_types.h
 
-RALINK RT2X00 WIRELESS LAN DRIVER
-M:	Stanislaw Gruszka <sgruszka@redhat.com>
-S:	Maintained
-F:	drivers/net/wireless/rt2x00/
-
 REAL TIME CLOCK (RTC) SUBSYSTEM
 M:	John Linville <linville@redhat.com>
 S:	Maintained
@@ -1115,12 +1103,6 @@ RAPIDIO SUBSYSTEM
 M:	John Linville <linville@redhat.com>
 S:	Maintained
 F:	drivers/rapidio/
-
-REALTEK WIRELESS LAN DRIVERS
-M:	Stanislaw Gruszka <sgruszka@redhat.com>
-M:	John Linville <linville@redhat.com>
-S:	Maintained
-F:	drivers/net/wireless/rtl818x
 
 RESET CONTROLLER FRAMEWORK
 M:	John Linville <linville@redhat.com>
