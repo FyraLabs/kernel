@@ -268,6 +268,9 @@ rh-get-latest:
 	$(eval RH_LATEST:=$(shell brew latest-pkg --quiet rhel-${RHELMAJOR}.${RHELMINOR}.0-candidate kernel | awk ' { print $$1 } '))
 	@echo "The latest kernel package tag is ${RH_LATEST}."
 
+rh-os-version:
+	@echo "OSVERSION: $(RHELMAJOR).$(RHELMINOR)"
+
 rh-help:
 	@echo  'Cleaning targets:'
 	@echo  '  rh-clean          - Clean redhat/configs/ and redhat/rpm/ directories.'
@@ -367,4 +370,6 @@ rh-full-help:
 	@echo  'Misc targets:'
 	@echo  '  rh-get-latest - Returns the latest "known good" kernel from brew. This should not'
 	@echo  '                  be confused with the latest top-of-tree development tag.'
+	@echo  '  rh-os-version - Displays the current Red Hat Enterprise Linux version target used'
+	@echo  '                  by the current branch/tree.'
 	@echo  ''
