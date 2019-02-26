@@ -149,7 +149,12 @@ $(KABI_TARBALL):
 
 setup-source: rh-clean-sources
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
-	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(DISTRO_BUILD) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) "$(BUILDOPTS)" $(MARKER)
+	@if [ ! -e  $(REDHAT)/$(CHANGELOG) ]; then \
+		echo "Creating $(CHANGELOG) as copy of $(CHANGELOG_PREV)"; \
+		cp $(REDHAT)/$(CHANGELOG_PREV) $(REDHAT)/$(CHANGELOG); \
+	fi
+	@cp $(REDHAT)/$(CHANGELOG) $(SOURCES)/$(CHANGELOG)
+	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(SOURCES)/$(CHANGELOG) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(DISTRO_BUILD) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) "$(BUILDOPTS)" $(MARKER)
 	@cp $(SOURCES)/$(SPECFILE) $(SOURCES)/../SPECS/
 
 sources-rh: $(TARBALL)
@@ -214,8 +219,9 @@ rh-rpm-baseonly: rh-sources
 
 # unless you know what you're doing, you don't want to use the next three ones
 rh-release-finish: setup-source
-	@$(REDHAT)/scripts/update_changelog.sh $(REDHAT) "$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(DIST)$(BUILDID)" $(PACKAGE_NAME)
-	@git commit -s ../Makefile.rhelver $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(DIST)$(BUILDID)"
+	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
+	@git add $(REDHAT)/$(CHANGELOG)
+	@git commit -s ../Makefile.rhelver $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(DIST)$(BUILDID)"
 	@$(MAKE) rh-configs
 	@$(MAKE) rh-kabi
 	@$(MAKE) rh-kabi-dup

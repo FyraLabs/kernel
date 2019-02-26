@@ -2,16 +2,17 @@
 
 SOURCES=$1
 SPECFILE=$2
-PKGRELEASE=$3
-KVERSION=$4
-KPATCHLEVEL=$5
-KSUBLEVEL=$6
-DISTRO_BUILD=$7
-RELEASED_KERNEL=$8
-SPECRELEASE=$9
-ZSTREAM_FLAG=${10}
-BUILDOPTS=${11}
-MARKER=${12}
+CHANGELOG=$3
+PKGRELEASE=$4
+KVERSION=$5
+KPATCHLEVEL=$6
+KSUBLEVEL=$7
+DISTRO_BUILD=$8
+RELEASED_KERNEL=$9
+SPECRELEASE=${10}
+ZSTREAM_FLAG=${11}
+BUILDOPTS=${12}
+MARKER=${13}
 RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
@@ -180,9 +181,12 @@ if [ "$LENGTH" = 0 ]; then
 	rm -f $clogf.rev; touch $clogf.rev
 fi
 
+cat $clogf.rev $CHANGELOG > $clogf.full
+mv -f $clogf.full $CHANGELOG
+
 test -n "$SPECFILE" &&
         sed -i -e "
-	/%%CHANGELOG%%/r $clogf.rev
+	/%%CHANGELOG%%/r $CHANGELOG
 	/%%CHANGELOG%%/d
 	s/%%KVERSION%%/$KVERSION/
 	s/%%KPATCHLEVEL%%/$KPATCHLEVEL/

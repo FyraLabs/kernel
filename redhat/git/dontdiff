@@ -18,3 +18,4 @@ branch
 gen-patches
 sources
 Makefile
+kernel*changelog*
