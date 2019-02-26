@@ -1,6 +1,8 @@
+REDHAT:=$(shell pwd)
+include $(REDHAT)/../Makefile.rhelver
+
 RPMBUILD := $(shell if [ -x "/usr/bin/rpmbuild" ]; then echo rpmbuild; \
                    else echo rpm; fi)
-REDHAT:=$(shell pwd)
 TOPDIR:=$(shell dirname $(REDHAT))
 MACH :=  $(shell uname -m)
 RPMKVERSION:=$(shell git show HEAD:Makefile | sed -ne '/^VERSION\ =\ /{s///;p;q}')
@@ -18,7 +20,7 @@ ifneq ($(RPMKEXTRAVERSION),)
 else
   PREBUILD:=
 endif
-BUILD:=0
+BUILD:=$(RHEL_RELEASE)
 DIST:=.elrdy
 PACKAGE_NAME:=kernel
 SPECFILE:=$(PACKAGE_NAME).spec
@@ -60,8 +62,8 @@ DISTRO_BUILD:=$(PREBUILD)$(shell echo $(BUILD) | sed -e 's|\(^[0-9]\{1,4\}\)\..*
 KABI_TARFILE:=kernel-abi-whitelists-$(KVERSION)-$(DISTRO_BUILD).tar.bz2
 KABI_TARBALL:=$(REDHAT)/rpm/SOURCES/$(KABI_TARFILE)
 
-RHELMAJOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MAJOR | sed -e s/RHEL_MAJOR\ =\ //)
-RHELMINOR:=$(shell git show HEAD:Makefile | grep ^RHEL_MINOR | sed -e s/RHEL_MINOR\ =\ //)
+RHELMAJOR:=$(RHEL_MAJOR)
+RHELMINOR:=$(RHEL_MINOR)
 
 ifeq ("$(DIST)", ".elrdy")
   RHPRODUCT:=rhel-ready

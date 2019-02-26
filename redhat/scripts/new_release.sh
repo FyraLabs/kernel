@@ -12,7 +12,7 @@ if [ -s "$RHPATH/linux-kernel-test.patch" ]; then
 	exit 1;
 fi
 
-RELEASE=$(sed -n -e 's/^BUILD:=\(.*\)/\1/p' $RHPATH/Makefile.common);
+RELEASE=$(sed -n -e 's/^RHEL_RELEASE\ =\ \(.*\)/\1/p' $RHPATH/../Makefile.rhelver)
 
 YVER=$(echo $RELEASE | sed -n 's/^\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)$/\1/p')
 YVER=${YVER:=$RELEASE}
@@ -32,8 +32,5 @@ else
 	exit 1;
 fi
 
-sed -i -e "s/^BUILD:=$RELEASE/BUILD:=$NEW_RELEASE/" $RHPATH/Makefile.common;
-
-# update top Makefile
-sed -i -e "s/RHEL_RELEASE\ =.*/RHEL_RELEASE\ =\ $NEW_RELEASE/" $RHPATH/../Makefile;
+sed -i -e "s/RHEL_RELEASE\ =.*/RHEL_RELEASE\ =\ $NEW_RELEASE/" $RHPATH/../Makefile.rhelver;
 

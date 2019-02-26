@@ -31,9 +31,7 @@ unexport GREP_OPTIONS
 
 # Set RHEL variables
 # Use this spot to avoid future merge conflicts
-RHEL_MAJOR = 8
-RHEL_MINOR = 99
-RHEL_RELEASE = 0
+include Makefile.rhelver
 
 # We are using a recursive build, so we need to do a little thinking
 # to get the ordering right.
