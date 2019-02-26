@@ -62,14 +62,11 @@ DISTRO_BUILD:=$(PREBUILD)$(shell echo $(BUILD) | sed -e 's|\(^[0-9]\{1,4\}\)\..*
 KABI_TARFILE:=kernel-abi-whitelists-$(KVERSION)-$(DISTRO_BUILD).tar.bz2
 KABI_TARBALL:=$(REDHAT)/rpm/SOURCES/$(KABI_TARFILE)
 
-RHELMAJOR:=$(RHEL_MAJOR)
-RHELMINOR:=$(RHEL_MINOR)
-
-CHANGELOG:=$(PACKAGE_NAME).changelog-$(RHELMAJOR).$(RHELMINOR)
-CHANGELOG_PREV:=$(PACKAGE_NAME).changelog-$(RHELMAJOR).$(shell expr $(RHELMINOR) - 1)
+CHANGELOG:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(RHEL_MINOR)
+CHANGELOG_PREV:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(shell expr $(RHEL_MINOR) - 1)
 
 ifeq ("$(DIST)", ".elrdy")
   RHPRODUCT:=rhel-ready
 else
-  RHPRODUCT:=rhel-$(RHELMAJOR).$(RHELMINOR).0
+  RHPRODUCT:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
 endif

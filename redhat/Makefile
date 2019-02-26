@@ -7,8 +7,8 @@ ifeq ("$(DIST)", ".elrdy")
   BUILD_DEFAULT_TARGET = temp-ark-rhel-8-test
   BUILD_SCRATCH_TARGET = temp-ark-rhel-8-test
 else
-  BUILD_DEFAULT_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR).0-test-pesign
-  BUILD_SCRATCH_TARGET = rhel-$(RHELMAJOR).$(RHELMINOR).0-test-pesign
+  BUILD_DEFAULT_TARGET = rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
+  BUILD_SCRATCH_TARGET = rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
 endif
 
 ifeq ("$(ZSTREAM)", "yes")
@@ -66,21 +66,21 @@ rh-python-check:
 rh-kabi: rh-python-check
 	@for KABIARCH in $(ARCH_LIST); do \
 		$(REDHAT)/kabi/show-kabi -k $(REDHAT)/kabi/kabi-module/ -m \
-			-a $$KABIARCH -r $(RHELMAJOR).$(RHELMINOR) > $(REDHAT)/kabi/Module.kabi_$$KABIARCH;\
-		for i in {0..$(RHELMINOR)}; do \
-			mkdir -p $(REDHAT)/kabi/kabi-rhel$(RHELMAJOR)$$i/;\
+			-a $$KABIARCH -r $(RHEL_MAJOR).$(RHEL_MINOR) > $(REDHAT)/kabi/Module.kabi_$$KABIARCH;\
+		for i in {0..$(RHEL_MINOR)}; do \
+			mkdir -p $(REDHAT)/kabi/kabi-rhel$(RHEL_MAJOR)$$i/;\
 			$(REDHAT)/kabi/show-kabi -k $(REDHAT)/kabi/kabi-module/ -s -a $$KABIARCH \
-			-r $(RHELMAJOR).$$i > $(REDHAT)/kabi/kabi-rhel$(RHELMAJOR)$$i/kabi_whitelist_$$KABIARCH;\
+			-r $(RHEL_MAJOR).$$i > $(REDHAT)/kabi/kabi-rhel$(RHEL_MAJOR)$$i/kabi_whitelist_$$KABIARCH;\
 		done;\
 	done;
-	@(cd $(REDHAT)/kabi/ && ln -Tsf kabi-rhel$(RHELMAJOR)$(RHELMINOR) kabi-current)
+	@(cd $(REDHAT)/kabi/ && ln -Tsf kabi-rhel$(RHEL_MAJOR)$(RHEL_MINOR) kabi-current)
 
 rh-kabi-dup: rh-python-check
 	@for KABIARCH in $(ARCH_LIST); do \
 		touch $(REDHAT)/kabi/Module.kabi_dup_$$KABIARCH;\
 		if [ -d $(REDHAT)/kabi/kabi-dup-module/kabi_$$KABIARCH ]; then \
 			$(REDHAT)/kabi/show-kabi -k $(REDHAT)/kabi/kabi-dup-module/ -m \
-				-a $$KABIARCH -r $(RHELMAJOR).$(RHELMINOR) > \
+				-a $$KABIARCH -r $(RHEL_MAJOR).$(RHEL_MINOR) > \
 				$(REDHAT)/kabi/Module.kabi_dup_$$KABIARCH;\
 		fi \
 	done;
@@ -145,7 +145,7 @@ $(TARBALL):
 
 .PHONY: $(KABI_TARBALL)
 $(KABI_TARBALL):
-	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHELMAJOR)* kabi-current)
+	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHEL_MAJOR)* kabi-current)
 
 setup-source: rh-clean-sources
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
@@ -182,7 +182,7 @@ sources-rh: $(TARBALL)
 		cp kabi/Module.kabi_$$KABIARCH $(SOURCES)/; \
 		cp kabi/Module.kabi_dup_$$KABIARCH $(SOURCES)/; \
 	done
-	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHELMAJOR)* kabi-current)
+	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHEL_MAJOR)* kabi-current)
 
 rh-sources: setup-source rh-configs-check rh-kabi rh-kabi-dup sources-rh
 
@@ -256,7 +256,7 @@ rh-dist-git: $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec $(TARBALL) $(KABI_TARBAL
 ifeq ("$(RHDISTGIT_BRANCH)", "")
  $(error RHDISTGIT_BRANCH unset)
 endif
-	$(REDHAT)/scripts/rh-dist-git.sh "$(RHDISTGIT_BRANCH)" "$(RHDISTGIT_CACHE)" "$(RHDISTGIT_TMP)" "$(RHDISTGIT)" "$(TARBALL)" "$(KABI_TARBALL)" "$(__ZSTREAM)" "$(PACKAGE_NAME)" "$(RHELMAJOR)" "$(RHPKG_BIN)"
+	$(REDHAT)/scripts/rh-dist-git.sh "$(RHDISTGIT_BRANCH)" "$(RHDISTGIT_CACHE)" "$(RHDISTGIT_TMP)" "$(RHDISTGIT)" "$(TARBALL)" "$(KABI_TARBALL)" "$(__ZSTREAM)" "$(PACKAGE_NAME)" "$(RHEL_MAJOR)" "$(RHPKG_BIN)"
 
 rh-rtg: rh-release
 	@$(MAKE) rh-release-tag
@@ -265,11 +265,11 @@ rh-rtg: rh-release
 # RH_LATEST returns the value of the latest "known good" kernel from brew.
 # This should not be confused with the latest top-of-tree development tag.
 rh-get-latest:
-	$(eval RH_LATEST:=$(shell brew latest-pkg --quiet rhel-${RHELMAJOR}.${RHELMINOR}.0-candidate kernel | awk ' { print $$1 } '))
+	$(eval RH_LATEST:=$(shell brew latest-pkg --quiet rhel-${RHEL_MAJOR}.${RHEL_MINOR}.0-candidate kernel | awk ' { print $$1 } '))
 	@echo "The latest kernel package tag is ${RH_LATEST}."
 
 rh-os-version:
-	@echo "OSVERSION: $(RHELMAJOR).$(RHELMINOR)"
+	@echo "OSVERSION: $(RHEL_MAJOR).$(RHEL_MINOR)"
 
 rh-help:
 	@echo  'Cleaning targets:'
@@ -359,7 +359,7 @@ rh-full-help:
 
 	@echo  ''
 	@echo  'Configuration targets:'
-	@echo  '  rh-configs  - Creates config files for RHEL $(RHELMAJOR) architectures, cleans them'
+	@echo  '  rh-configs  - Creates config files for RHEL $(RHEL_MAJOR) architectures, cleans them'
 	@echo  '                by running make nonint_oldconfig, and copies them to'
 	@echo  '                redhat/configs/ directory. This is the target to use for a config!'
 	@echo  '                Copy the config file you want from the redhat/configs/ directory'
