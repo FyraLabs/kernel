@@ -12,6 +12,7 @@ else
 endif
 
 ifeq ("$(ZSTREAM)", "yes")
+  __YSTREAM = no
   ifeq ("$(origin RHDISTGIT_BRANCH)", "command line")
     __ZSTREAM = branch
   else
@@ -20,6 +21,11 @@ ifeq ("$(ZSTREAM)", "yes")
   BUILDOPTS += +kabidupchk
 else
   __ZSTREAM = no
+  ifeq ("$(EARLY_YSTREAM)", "yes")
+    __YSTREAM = early
+  else
+    __YSTREAM = yes
+  endif
 endif
 
 #ifeq ($(shell git diff --quiet HEAD && git describe --exact-match 2>/dev/null && echo ok),)
@@ -215,7 +221,7 @@ rh-release-finish: setup-source
 	@$(MAKE) rh-kabi-dup
 	@$(MAKE) sources-rh
 rh-release: rh-clean-sources
-	@$(REDHAT)/scripts/new_release.sh $(REDHAT) $(__ZSTREAM)
+	@$(REDHAT)/scripts/new_release.sh $(REDHAT) $(__YSTREAM) $(__ZSTREAM)
 	@$(MAKE) rh-release-finish
 rh-release-tag:
 	@git tag -a -m "$(PACKAGE_NAME)-$(STAMP_VERSION)-$(PKGRELEASE)" $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PKGRELEASE)

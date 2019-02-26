@@ -5,7 +5,8 @@ if [ -z "$1" -o -z "$2" ]; then
 fi
 
 RHPATH="$1";
-ZSTREAM_FLAG="$2";
+YSTREAM_FLAG="$2";
+ZSTREAM_FLAG="$3";
 
 if [ -s "$RHPATH/linux-kernel-test.patch" ]; then
 	echo "linux-kernel-test.patch is not empty, aborting" >&2;
@@ -14,15 +15,28 @@ fi
 
 RELEASE=$(sed -n -e 's/^RHEL_RELEASE\ =\ \(.*\)/\1/p' $RHPATH/../Makefile.rhelver)
 
-YVER=$(echo $RELEASE | sed -n 's/^\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)$/\1/p')
+YVER=$(echo $RELEASE | cut -d "." -f 1)
 YVER=${YVER:=$RELEASE}
-ZMAJ=$(echo $RELEASE | sed -n 's/^\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)$/\2/p')
+ZMAJ=$(echo $RELEASE | cut -s -d "." -f 2)
 ZMAJ=${ZMAJ:=0}
-ZMIN=$(echo $RELEASE | sed -n 's/^\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)$/\3/p')
+ZMIN=$(echo $RELEASE | cut -s -d "." -f 3)
 ZMIN=${ZMIN:=0}
 
 if [ "$ZSTREAM_FLAG" == "no" ]; then
-	NEW_RELEASE="$[RELEASE + 1]";
+	if [ "$YSTREAM_FLAG" == "yes" ]; then
+		NEW_RELEASE="$[RELEASE + 1]";
+	else
+		EARLY_YBUILD=$(sed -n -e 's/^EARLY_YBUILD:=\(.*\)/\1/p' $RHPATH/../Makefile.rhelver);
+		EARLY_YRELEASE=$(sed -n -e 's/^EARLY_YRELEASE:=\(.*\)/\1/p' $RHPATH/../Makefile.rhelver);
+		if [ "$EARLY_YBUILD" != "$RELEASE" ]; then
+			NEW_EARLY_YRELEASE=1;
+		else
+			NEW_EARLY_YRELEASE="$[EARLY_YRELEASE + 1]";
+		fi
+		sed -i -e "s/^EARLY_YBUILD:=$EARLY_YBUILD/EARLY_YBUILD:=$RELEASE/" $RHPATH/../Makefile.rhelver;
+		sed -i -e "s/^EARLY_YRELEASE:=$EARLY_YRELEASE/EARLY_YRELEASE:=$NEW_EARLY_YRELEASE/" $RHPATH/../Makefile.rhelver;
+		NEW_RELEASE=$RELEASE;
+	fi
 elif [ "$ZSTREAM_FLAG" == "yes" ]; then
 	NEW_RELEASE=$YVER.$((ZMAJ+1)).1;
 elif [ "$ZSTREAM_FLAG" == "branch" ]; then
