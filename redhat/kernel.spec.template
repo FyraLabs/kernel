@@ -364,8 +364,6 @@ Source2001: cpupower.config
 
 # END OF PATCH DEFINITIONS
 
-BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root
-
 %description
 The kernel meta package
 
