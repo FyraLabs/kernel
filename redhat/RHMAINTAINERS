@@ -381,6 +381,16 @@ M:	Joseph Szczypek <jszczype@redhat.com>
 S:	Maintained
 F:	drivers/scsi/hpsa*
 
+MICROSEMI SMART ARRAY SMARTPQI DRIVER (smartpqi)
+M:      Don Brace <dbrace@redhat.com>
+S:      Maintained
+F:      drivers/scsi/smartpqi/smartpqi*.[ch]
+F:      drivers/scsi/smartpqi/Kconfig
+F:      drivers/scsi/smartpqi/Makefile
+F:      include/linux/cciss*.h
+F:      include/uapi/linux/cciss*.h
+F:      Documentation/scsi/smartpqi.txt
+
 DISTRIBUTED LOCK MANAGER (DLM)
 M:	David Teigland <teigland@redhat.com>
 S:	Maintained
