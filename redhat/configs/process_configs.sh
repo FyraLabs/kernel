@@ -29,8 +29,7 @@ switch_to_toplevel()
 	path="$(pwd)"
 	while test -n "$path"
 	do
-		test -d $path/firmware && \
-			test -e $path/MAINTAINERS && \
+		test -e $path/MAINTAINERS && \
 			test -d $path/drivers && \
 			break
 
