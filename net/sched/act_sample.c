@@ -224,8 +224,7 @@ static int tcf_sample_walker(struct net *net, struct sk_buff *skb,
 	return tcf_generic_walker(tn, skb, cb, type, ops, extack);
 }
 
-static int tcf_sample_search(struct net *net, struct tc_action **a, u32 index,
-			     struct netlink_ext_ack *extack)
+static int tcf_sample_search(struct net *net, struct tc_action **a, u32 index)
 {
 	struct tc_action_net *tn = net_generic(net, sample_net_id);
 
@@ -234,7 +233,7 @@ static int tcf_sample_search(struct net *net, struct tc_action **a, u32 index,
 
 static struct tc_action_ops act_sample_ops = {
 	.kind	  = "sample",
-	.type	  = TCA_ACT_SAMPLE,
+	.id	  = TCA_ID_SAMPLE,
 	.owner	  = THIS_MODULE,
 	.act	  = tcf_sample_act,
 	.dump	  = tcf_sample_dump,
