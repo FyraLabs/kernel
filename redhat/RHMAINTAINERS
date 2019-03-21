@@ -110,6 +110,7 @@ F:	Documentation/networking/ena.txt
 F:	drivers/net/ethernet/amazon/
 
 AMD IOMMU (AMD-VI)
+M:	Jerry Snitselaar <jsnitsel@redhat.com>
 M:	Myron Stowe <myron.stowe@redhat.com>
 M:	Alex Williamson <alex.williamson@redhat.com>
 M:	Don Dutile <ddutile@redhat.com>
@@ -567,6 +568,7 @@ S:	Maintained
 F:	drivers/net/ethernet/intel/igbvf/
 
 INTEL IOMMU (VT-d)
+M:	Jerry Snitselaar <jsnitsel@redhat.com>
 M:	Myron Stowe <myron.stowe@redhat.com>
 M:	Alex Williamson <alex.williamson@redhat.com>
 M:	Don Dutile <ddutile@redhat.com>
@@ -750,6 +752,7 @@ F:	Documentation/devicetree/bindings/serio/
 F:	Documentation/input/
 
 IOMMU DRIVERS
+M:	Jerry Snitselaar <jsnitsel@redhat.com>
 M:	Myron Stowe <myron.stowe@redhat.com>
 M:	Alex Williamson <alex.williamson@redhat.com>
 M:	Don Dutile <ddutile@redhat.com>
