@@ -188,6 +188,7 @@ sources-rh: $(TARBALL)
 		mod-sign.sh \
 		configs/generate_all_configs.sh \
 		configs/process_configs.sh \
+		parallel_xz.sh \
 		$(SOURCES)/
 	@for KABIARCH in $(ARCH_LIST); do \
 		cp kabi/Module.kabi_$$KABIARCH $(SOURCES)/; \
