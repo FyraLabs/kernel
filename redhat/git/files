@@ -18,6 +18,7 @@ filter-ppc64le.sh
 filter-s390x.sh
 filter-x86_64.sh
 generate_all_configs.sh
+linux-kernel-test.patch
 mod-extra.list
 mod-extra.sh
 mod-sign.sh
