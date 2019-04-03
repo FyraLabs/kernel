@@ -4,8 +4,8 @@
 # config options, lowest priority to highest
 
 # x86_64
-x86_64=generic:generic-x86_64
-x86_64-debug=generic:generic-x86_64:debug:debug-x86_64
+x86_64=generic:generic-x86-x86_64
+x86_64-debug=generic:generic-x86-x86_64:debug:debug-x86-x86_64
 
 # ppc64le
 ppc64le=generic:generic-powerpc
