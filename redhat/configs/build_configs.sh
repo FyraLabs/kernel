@@ -4,13 +4,34 @@
 # and debug to form the necessary $PACKAGE_NAME<version>-<arch>-<variant>.config
 # files for building RHEL kernels, based on the contents of a control file
 
-PACKAGE_NAME=$1 # defines the package name used
-SUBARCH=$2 # defines a specific arch for use with rh-configs-arch-prep target
+PACKAGE_NAME="${1:-kernel}" # defines the package name used
+KVERREL="${2:-}"
+SUBARCH="${3:-}" # defines a specific arch
+SCRIPT="$(readlink -f $0)"
+OUTPUT_DIR="$PWD"
+SCRIPT_DIR="$(dirname $SCRIPT)"
+
+LANG=en_US.UTF-8
+
+# to handle this script being a symlink
+cd $SCRIPT_DIR
 
 set errexit
 set nounset
 
 control_file="priority"
+
+cleanup()
+{
+	rm -f config-*
+}
+
+die()
+{
+	echo "$1"
+	cleanup
+	exit 1
+}
 
 function combine_config_layer()
 {
@@ -23,7 +44,6 @@ function combine_config_layer()
 	fi
 
 	cat $dir/CONFIG_* > $file
-
 }
 
 function merge_configs()
@@ -31,22 +51,42 @@ function merge_configs()
 	archvar=$1
 	arch=$(echo "$archvar" | cut -f1 -d"-")
 	configs=$2
-	name=$PACKAGE_NAME-$archvar.config
+	order=$3
+	name=$OUTPUT_DIR/$PACKAGE_NAME-$archvar.config
 	echo -n "Building $name ... "
 	touch config-merging config-merged
-	for config in $(echo $configs | sed -e 's/:/ /g')
+
+	# apply based on order
+	skip_if_missing=""
+	for o in $order
 	do
-		perl merge.pl config-$config config-merging > config-merged
-		mv config-merged config-merging
+		for config in $(echo $configs | sed -e 's/:/ /g')
+		do
+			cfile="config-$o-$config"
+
+			test -n "$skip_if_missing" && test ! -e $cfile && continue
+
+			perl merge.pl $cfile config-merging > config-merged
+			if [ ! $? -eq 0 ]; then
+				die "Failed to merge $cfile"
+			fi
+			mv config-merged config-merging
+		done
+
+		# first configs in $order is baseline, all files should be
+		# there.  second pass is overrides and can be missing.
+		skip_if_missing="1"
 	done
 	if [ "x$arch" == "xaarch64" ]; then
 		echo "# arm64" > $name
-	elif [ "x$arch" == "xppc64" ]; then
-		echo "# powerpc" > $name
 	elif [ "x$arch" == "xppc64le" ]; then
 		echo "# powerpc" > $name
 	elif [ "x$arch" == "xs390x" ]; then
 		echo "# s390" > $name
+	elif [ "x$arch" == "xarmv7hl" ]; then
+		echo "# arm" > $name
+	elif [ "x$arch" == "xi686" ]; then
+		echo "# i386" > $name
 	else
 		echo "# $arch" > $name
 	fi
@@ -55,34 +95,43 @@ function merge_configs()
 	echo "done"
 }
 
-glist=$(find generic -type d)
-dlist=$(find debug -type d)
-
-for d in $glist $dlist
-do
-	combine_config_layer $d
-done
-
 while read line
 do
 	if [ $(echo "$line" | grep -c "^#") -ne 0 ]; then
 		continue
 	elif [ $(echo "$line" | grep -c "^$") -ne 0 ]; then
 		continue
+	elif [ $(echo "$line" | grep -c "^ORDER") -ne 0 ]; then
+		order=$(echo "$line" | cut -f2 -d"=")
+		for o in $order
+		do
+			glist=$(find $o -type d)
+			for d in $glist
+			do
+				combine_config_layer $d
+			done
+		done
 	else
 		arch=$(echo "$line" | cut -f1 -d"=")
 		configs=$(echo "$line" | cut -f2 -d"=")
 
-		if [ -n "$SUBARCH" ]; then
-			case $arch in
-				$SUBARCH*)
-					;;
-				*)
-					continue
-			esac
+		if [ -n "$SUBARCH" -a "$SUBARCH" != "$arch" ]; then
+			continue
 		fi
-		merge_configs $arch $configs
+
+		merge_configs $arch $configs "$order"
 	fi
 done < $control_file
 
-rm -f config-*
+# A passed in kernel version implies copy to final location
+# otherwise defer to another script
+if test -n "$KVERREL"
+then
+	for i in kernel-*.config
+	do
+		NEW="$(echo $i | sed "s/$PACKAGE_NAME-$SUBARCH/$PACKAGE_NAME-$KVERREL-$SUBARCH/")"
+		mv $i $NEW
+	done
+fi
+
+cleanup

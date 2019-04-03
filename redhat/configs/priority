@@ -2,6 +2,7 @@
 # kernel.config files are build on the fly based on this config,
 # the first arg is arch and variant, the second is a hierarchy of
 # config options, lowest priority to highest
+ORDER=ark
 
 # x86_64
 x86_64=generic:generic-x86-x86_64
@@ -18,4 +19,3 @@ s390x-zfcpdump=generic:generic-s390x:generic-s390x-zfcpdump
 # aarch64
 aarch64=generic:generic-arm-aarch64
 aarch64-debug=generic:generic-arm-aarch64:debug:debug-arm-aarch64
-
