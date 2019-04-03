@@ -1,60 +1,47 @@
-Red Hat Enterprise Linux 7 kernel config option scheme
+Red Hat Enterprise Linux Always Ready config option scheme
 ------------------------------------------------------
 
-Like the RHEL6 kernel before it, the RHEL7 kernel is forked from a Fedora
-kernel. We tracked the Fedora kernel and config options up to the point
-of forking, and maintained the RHEL kernel config option differences from
-Fedora to be applied over the top of the Fedora kernel config options
-separately until just prior to beta release, at which time things were
-reworked so that Fedora ancestry is delved by looking at git log, and we
-only maintain the config option files we care about for RHEL7.
+Historically, the RHEL kernel is forked from a Fedora kernel.
+Today, the Always Ready Kernel (ARK) is constantly rebased as new kernel
+releases come out. New configuration options are reviewed and set
+with each release.
 
-Unlike RHEL6, the RHEL7 config options are split out into a hierarchical
-tree structure, with one file per configg option at each level of the
+The config options are split out into a hierarchical
+tree structure, with one file per config option at each level of the
 hierarchy. The config options are merged and properly layered according to
-the file "variants" in the same directory as this README to generate the
-final kernel-3.10.0-<arch>-<variant>.config files we need for building the
-actual RHEL7 kernels.
+the file "priority" in the same directory as this README to generate the
+final kernel-$VERSION-<arch>-<variant>.config files we need for building the
+actual kernels.
 
-At the top level, we have generic/CONFIG_* and debug/CONFIG_*, then
+The configuration is broken down into several directories:
+
+ark - This contains all configuration options that have been fully
+reviewed by kernel developers and are suitable for inclusion at branch time.
+
+pending - This directory contains all configuration options that have
+not yet been fully reviewed for inclusion. Because of the rate at which
+kernel options come out, we can't guarantee everything has been reviewed
+by the time a build needs to happen. In the interest of letting the build
+proceed for other testing, configuration options are staged in the
+pending directory. It is expected that this directory will be empty
+at branch time.
+
+In each directory (ark etc.), we have generic/CONFIG_* and debug/CONFIG_*, then
 generic/<arch>/CONFIG_* and generic/<arch>/<variant>/CONFIG_*, as well as
 debug/<arch>/CONFIG_*. While this may seem overly complex compared with
 past RHEL kernel config setups at first glance, its actually quite
-straight-forward and should be less error-prone -- there are no Fedora
-config option files for people to accidentally modify and no patch fuzz to
-worry about when merging several config option changes. It should also be
-far more obvious where to put a config option to have it apply to the
-exact kernel variants you want it to apply to.
+straight-forward and should be less error-prone. There's no potential
+for configuration options getting out of order or conflicts when changing
+adjacent configuraiton options.
 
-Further demystifying things, we have only 7 kernel variants to worry
-about in RHEL7, and their end result config files can all be constructed
-as follows (override priority increasing towards the right):
 
-x86_64:
-generic/ < generic/x86_64/
+All the configuration options for each arch and variant can be found
+in the "priority" file.
 
-x86_64-debug:
-generic/ < generic/x86_64/    < debug/ < debug/x86_64/
-
-powerpc64:
-generic/ < generic/powerpc64/
-
-powerpc64-debug:
-generic/ < generic/powerpc64/ < debug/ < debug/powerpc64/
-
-s390x:
-generic/ < generic/s390x/
-
-s390x-debug:
-generic/ < generic/s390x/     < debug/ < debug/s390x/
-
-s390x-zfcpdump:
-generic/ < generic/s390x/ < generic/s390x/zfcpdump/
-
-If you want to make a change that applies to all RHEL8 kernels, debug and
-non-debug alike, add a config option file under generic/. If it should
-only apply to all debug kernels, add it under debug/. Arch-specific
-options go under generic/<arch>/ and so on. Each layer's individual config
+If you want to make a change that applies to all kernels, debug and
+non-debug alike, add a config option file under ark/generic/. If it should
+only apply to all debug kernels, add it under ark/debug/. Arch-specific
+options go under ark/generic/<arch>/ and so on. Each layer's individual config
 option files are concatenated together with all other options at the same
 level, then stacked atop the lower layers until reaching the highest
 precedence layer for the given config option.
