@@ -13,9 +13,9 @@ die()
 
 get_configarch()
 {
-    # given a filename provide the <arch> for $RHCP_RHEL/generic/
+    # given a filename provide the <arch> for $RHCP_RHEL/pending/generic/
     # the supported arch is embedded in the filename, translate that
-    # to the srcarch used in the $RHCP_RHEL/generic path.
+    # to the srcarch used in the $RHCP_RHEL/pending/generic path.
     file=$1
 
     # make rh-configs-prep uses <package-name>-<arch>-<variant>.config
@@ -24,10 +24,10 @@ get_configarch()
 
     # translate arch
     case $arch in
-        'x86_64')	echo "x86_64" ;;
-        'ppc64le')	echo "powerpc64le" ;;
+        'x86_64')	echo "x86/x86_64" ;;
+        'ppc64le')	echo "powerpc" ;;
         's390x')	echo "s390x" ;;
-        'aarch64')	echo "aarch64" ;;
+        'aarch64')	echo "arm/aarch64" ;;
         *)		die "Unsupported arch $arch" ;;
     esac
 }
@@ -35,8 +35,8 @@ get_configarch()
 find_conflicts()
 {
     # create master array, duplicate entries should have matching values
-    # if they don't, we can't create a 'generic/' entry.  We will have to
-    # resort to a 'generic/<arch>' entry instead.  Print config options that
+    # if they don't, we can't create a 'pending/generic/' entry.  We will have to
+    # resort to a 'pending/generic/<arch>' entry instead.  Print config options that
     # have conflicting defaults.
   /usr/bin/awk '
 
@@ -72,7 +72,7 @@ save_defaults()
 
     echo "Saving config defaults"
 
-    # write shared config values to $RHCP_RHEL/generic
+    # write shared config values to $RHCP_RHEL/pending/generic
     # combine all configs and filter out conflicts, then unique sort them
     # this avoids the duplicate configs from each kernel*.config file.
     # With conflicts filtered out, all files should be new.
@@ -80,7 +80,7 @@ save_defaults()
     while read config
     do
         file="$(echo $config | cut -f1 -d '=')"
-        path="$RHCP_RHEL/generic/$file"
+        path="$RHCP_RHEL/pending/generic/$file"
 
         # translate the =n to 'is not set'
         if [[ "$config" = *"=n" ]]
@@ -107,7 +107,7 @@ save_defaults()
 
     done < $WORK/.configs
 
-    # write conflicting config values to $RHCP_RHEL/generic/arch
+    # write conflicting config values to $RHCP_RHEL/pending/generic/arch
     for f in $(ls -1 $WORK/kernel*.config)
     do
         grep -f $conflicts $f > $WORK/.configs
@@ -117,7 +117,7 @@ save_defaults()
         while read config
         do
             file="$(echo $config | cut -f1 -d '=')"
-            path="$RHCP_RHEL/generic/$arch/$file"
+            path="$RHCP_RHEL/pending/generic/$arch/$file"
 
             # translate the =n to 'is not set'
             if [[ "$config" = *"=n" ]]
