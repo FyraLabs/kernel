@@ -32,6 +32,11 @@ lasttag=$(git rev-list --first-parent --grep="^\[redhat\] kernel-${RPMVERSION}" 
 if [ -z "$lasttag" ]; then
 	lasttag=$(git describe --match="$MARKER" --abbrev=0)
 fi
+# if we're doing an untagged release, just use the marker
+if [ -z "$lasttag" ]; then
+	echo "Using $MARKER"
+	lasttag=$MARKER
+fi
 echo "Gathering new log entries since $lasttag"
 git format-patch --no-renames -k --stdout ${lasttag}.. | awk '
 BEGIN{TYPE="PATCHJUNK"; }
