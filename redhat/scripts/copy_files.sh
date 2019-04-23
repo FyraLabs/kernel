@@ -34,4 +34,9 @@ cd $cloned/$package_name || die "\"$cloned\" doesn't seem to have a dist-git clo
 cp $(cat $redhat/git/files | sed -e "s,^,$sources/,") . || die "Unable to copy files";
 git add $(cat $redhat/git/files);
 
+# copy the split out patches. We can't put this with the rest of the files
+# because the version changes
+cp $sources/patch-*-redhat.patch .
+git add patch-*-redhat.patch
+
 exit 0;

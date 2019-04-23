@@ -13,6 +13,7 @@ SPECRELEASE=${10}
 ZSTREAM_FLAG=${11}
 BUILDOPTS=${12}
 MARKER=${13}
+SINGLE_TARBALL=${14}
 RPMVERSION=${KVERSION}.${KPATCHLEVEL}.${KSUBLEVEL}
 clogf="$SOURCES/changelog"
 # hide [redhat] entries from changelog
@@ -195,6 +196,14 @@ test -n "$SPECFILE" &&
 	s/%%SPECRELEASE%%/$SPECRELEASE/
 	s/%%DISTRO_BUILD%%/$DISTRO_BUILD/
 	s/%%RELEASED_KERNEL%%/$RELEASED_KERNEL/" $SPECFILE
+
+
+if [ "$SINGLE_TARBALL" = 0 ]; then
+	git diff -p --no-renames --stat $MARKER.. ":(exclude,top)redhat" ":(exclude,top)makefile" ":(exclude,top)configs" ":(exclude,top).gitattributes" ":(exclude,top).gitignore"> $SOURCES/patch-${RPMVERSION}-redhat.patch
+else
+	# Need an empty file for dist-git compatibility
+	touch $SOURCES/patch-${RPMVERSION}-redhat.patch
+fi
 
 for opt in $BUILDOPTS; do
 	add_opt=

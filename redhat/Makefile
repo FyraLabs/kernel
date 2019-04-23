@@ -141,7 +141,11 @@ rh-stub-key:
 # force tarball to be regenerated if HEAD changes
 .PHONY:	$(TARBALL)
 $(TARBALL):
-	@scripts/create-tarball.sh $(GITID) $(TARBALL) linux-$(KVERSION)-$(PKGRELEASE)
+	@if [ $(SINGLE_TARBALL) -eq 1 ]; then \
+		scripts/create-tarball.sh $(GITID) $(TARBALL) linux-$(KVERSION)-$(PKGRELEASE); \
+	else \
+		scripts/create-tarball.sh $(MARKER) $(TARBALL) linux-$(KVERSION)-$(PKGRELEASE); \
+	fi
 
 .PHONY: $(KABI_TARBALL)
 $(KABI_TARBALL):
@@ -154,7 +158,7 @@ setup-source: rh-clean-sources
 		cp $(REDHAT)/$(CHANGELOG_PREV) $(REDHAT)/$(CHANGELOG); \
 	fi
 	@cp $(REDHAT)/$(CHANGELOG) $(SOURCES)/$(CHANGELOG)
-	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(SOURCES)/$(CHANGELOG) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(DISTRO_BUILD) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) "$(BUILDOPTS)" $(MARKER)
+	@$(REDHAT)/genspec.sh $(SOURCES) $(SOURCES)/$(SPECFILE) $(SOURCES)/$(CHANGELOG) $(PKGRELEASE) $(RPMKVERSION) $(RPMKPATCHLEVEL) $(RPMKSUBLEVEL) $(DISTRO_BUILD) $(RELEASED_KERNEL) $(SPECRELEASE) $(__ZSTREAM) "$(BUILDOPTS)" $(MARKER) $(SINGLE_TARBALL)
 	@cp $(SOURCES)/$(SPECFILE) $(SOURCES)/../SPECS/
 
 sources-rh: $(TARBALL)

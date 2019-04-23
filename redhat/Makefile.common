@@ -31,6 +31,15 @@ SOURCES:=$(RPM)/SOURCES
 TESTPATCH:=$(REDHAT)/linux-kernel-test.patch
 FILTERDIFF:=/usr/bin/filterdiff -x '*redhat/*' -x '*/.gitignore' -x '*/makefile' -x '*/Makefile'
 ARCH_LIST=aarch64 ppc64le s390x x86_64
+# A unified tarball means that the tarball in the srpm contains both the
+# upstream sources and redhat patches. A non-unified tarball means that
+# the tarball is only upstream sources and the patches get applied as
+# a diff in the spec file
+ifeq ("$(DIST)", ".elrdy")
+  SINGLE_TARBALL:=0
+else
+  SINGLE_TARBALL:=1
+endif
 
 # RELEASED_KERNEL: swaps between the pre-release secureboot keys and
 # 		   the release one, for vmlinux signing.

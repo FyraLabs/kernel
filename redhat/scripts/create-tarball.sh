@@ -8,7 +8,8 @@ XZ_THREADS=`rpm --eval %{_smp_mflags} | sed -e 's!^-j!--threads !'`
 
 if [ -f ${TARBALL} ]; then
 	TARID=`( xzcat -qq ${TARBALL} | git get-tar-commit-id ) 2>/dev/null`
-	if [ "${GITID}" = "${TARID}" ]; then
+	GITID_NORMALIZE=`git log --max-count=1 --pretty=format:%H ${GITID}`
+	if [ "${GITID_NORMALIZE}" = "${TARID}" ]; then
 		echo "`basename ${TARBALL}` unchanged..."
 		exit 0
 	fi
