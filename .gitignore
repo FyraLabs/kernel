@@ -133,3 +133,9 @@ all.config
 
 # Kdevelop4
 *.kdev4
+
+#
+# Red Hat
+#
+configs/*.config
+localversion
