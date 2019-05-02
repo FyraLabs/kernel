@@ -8,8 +8,6 @@ redhatsecurebootca2.cer
 redhatsecureboot003.cer
 securebootca.cer
 secureboot.cer
-Makefile.common
-Makefile
 cpupower.config
 cpupower.service
 filter-aarch64.sh

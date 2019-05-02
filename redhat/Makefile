@@ -185,9 +185,9 @@ sources-rh: $(TARBALL)
 		x509.genkey \
 		keys/rhel*.x509 \
 		keys/extra_certificates \
-		Makefile.common kabi/check-kabi \
+		kabi/check-kabi \
 		configs/$(PACKAGE_NAME)-*.config \
-		rhpkg/Makefile keys/*.cer filter-*.sh \
+		keys/*.cer filter-*.sh \
 		mod-extra.* \
 		mod-sign.sh \
 		configs/generate_all_configs.sh \
