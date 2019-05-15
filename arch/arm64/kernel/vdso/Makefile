@@ -13,6 +13,7 @@ targets := $(obj-vdso) vdso.so vdso.so.dbg
 obj-vdso := $(addprefix $(obj)/, $(obj-vdso))
 
 ldflags-y := -shared -nostdlib -soname=linux-vdso.so.1 \
+		$(call ld-option, --build-id) \
 		$(call ld-option, --hash-style=sysv) -n -T
 
 # Disable gcov profiling for VDSO code
