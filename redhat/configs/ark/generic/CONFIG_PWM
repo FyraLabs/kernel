@@ -1,1 +1,1 @@
-# CONFIG_PWM is not set
+CONFIG_PWM=y
