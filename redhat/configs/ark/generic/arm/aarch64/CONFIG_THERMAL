@@ -1,1 +1,1 @@
-# CONFIG_THERMAL is not set
+CONFIG_THERMAL=y
