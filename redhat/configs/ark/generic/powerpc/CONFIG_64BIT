@@ -1,1 +1,1 @@
-# CONFIG_64BIT is not set
+CONFIG_64BIT=y
