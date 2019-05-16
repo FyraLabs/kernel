@@ -1,1 +1,1 @@
-# CONFIG_FUSION_SAS is not set
+CONFIG_FUSION_SAS=m
