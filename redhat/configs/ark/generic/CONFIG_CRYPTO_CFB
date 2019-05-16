@@ -1,1 +1,1 @@
-CONFIG_CRYPTO_CFB=m
+# CONFIG_CRYPTO_CFB is not set
