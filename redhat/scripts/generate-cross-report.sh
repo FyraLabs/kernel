@@ -27,7 +27,6 @@ if [ -e ~/.rpmmacros ]; then
 	cat ~/.rpmmacros | grep smp_mflags >& /dev/null
 	if [ $? -eq 0 ]; then
 		smpflags=`cat ~/.rpmmacros | awk -F " " ' { print $2 } '`
-		# PRARIT: fix me
 		echo "$HOSTNAME with $smpflags"
 	fi
 else
