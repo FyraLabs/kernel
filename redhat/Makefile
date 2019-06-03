@@ -222,14 +222,9 @@ sources-rh: $(TARBALL)
 		echo "WARNING: There are uncommitted changes in your tree or the changes are not in sync with linux-kernel-test.patch.  Either commit the changes or run 'make rh-test-patch'"
 	@rm $(TESTPATCH).tmp
 	@cp $(TESTPATCH) $(SOURCES)/linux-kernel-test.patch
-	@# if the extra_certificates doesn't exist, create a empty one
-	@(if [ ! -f keys/extra_certificates ]; then \
-		touch keys/extra_certificates; \
-	fi)
 	@cp cpupower.* \
 		x509.genkey \
 		keys/rhel*.x509 \
-		keys/extra_certificates \
 		kabi/check-kabi \
 		configs/$(PACKAGE_NAME)-*.config \
 		keys/*.cer filter-*.sh \
