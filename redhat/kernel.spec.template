@@ -21,7 +21,7 @@ Summary: The Linux kernel
 %global distro_build %%DISTRO_BUILD%%
 
 # Sign the x86_64 kernel for secure boot authentication
-%ifarch x86_64
+%ifarch x86_64 aarch64
 %global signkernel 1
 %else
 %global signkernel 0
@@ -1004,12 +1004,22 @@ BuildKernel() {
     fi
     %if %{signkernel}
     # Sign the image if we're using EFI
-    %pesign -s -i $KernelImage -o vmlinuz.signed -a %{SOURCE13} -c %{SOURCE14} -n %{pesign_name}
+    # aarch64 kernels are gziped EFI images
+    KernelExtension=${KernelImage##*.}
+    if [ "$KernelExtension" == "gz" ]; then
+        SignImage=${KernelImage%.*}
+    else
+        SignImage=$KernelImage
+    fi
+    %pesign -s -i $SignImage -o vmlinuz.signed -a %{SOURCE13} -c %{SOURCE14} -n %{pesign_name}
     if [ ! -s vmlinuz.signed ]; then
         echo "pesigning failed"
         exit 1
     fi
-    mv vmlinuz.signed $KernelImage
+    mv vmlinuz.signed $SignImage
+    if [ "$KernelExtension" == "gz" ]; then
+        gzip -f9 $SignImage
+    fi
     %endif
     $CopyKernel $KernelImage \
                 $RPM_BUILD_ROOT/%{image_install_path}/$InstallName-$KernelVer
