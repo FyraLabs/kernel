@@ -84,6 +84,10 @@ Summary: The Linux kernel
 # kernel-abi-whitelists
 %define with_kernel_abi_whitelists %{?_without_kernel_abi_whitelists: 0} %{?!_without_kernel_abi_whitelists: 1}
 #
+# Optional packages
+#
+%define with_bpf_samples %{?_with_bpf_samples: 1} %{?!_with_bpf_samples: 0}
+#
 # Additional options for user-friendly one-off kernel building:
 #
 # Only build the base kernel (--with baseonly):
@@ -164,6 +168,7 @@ Summary: The Linux kernel
 %define with_tools 0
 %define with_perf 0
 %define with_bpftool 0
+%define with_bpf_samples 0
 %define with_debug 0
 %define all_arch_configs kernel-%{version}-*.config
 %endif
@@ -234,6 +239,7 @@ Summary: The Linux kernel
 %define with_perf 0
 %define with_tools 0
 %define with_bpftool 0
+%define with_bpf_samples 0
 %define _enable_debug_packages 0
 %endif
 
@@ -291,6 +297,9 @@ BuildRequires: pciutils-devel
 %if %{with_bpftool}
 BuildRequires: python3-docutils
 BuildRequires: zlib-devel binutils-devel
+%endif
+%if %{with_bpf_samples}
+BuildRequires: libcap-devel libcap-ng-devel glibc-static rsync llvm-toolset-6.0
 %endif
 BuildConflicts: rhbuildsys(DiskFree) < 500Mb
 %if %{with_debuginfo}
@@ -569,6 +578,16 @@ This package contains the bpftool, which allows inspection and simple
 manipulation of eBPF programs and maps.
 
 %endif # with_bpftool
+
+%if %{with_bpf_samples}
+
+%package -n bpf-samples
+Summary: eBPF samples and selftests
+License: GPLv2
+%description -n bpf-samples
+eBPF sample programs and selftests.
+
+%endif # with_bpf_samples
 
 %if %{with_gcov}
 %package gcov
@@ -1323,6 +1342,19 @@ make
 popd
 %endif
 
+%if %{with_bpf_samples}
+# Unfortunately, samples/bpf/Makefile expects that the headers are installed
+# in the source tree. We installed them previously to $RPM_BUILD_ROOT/usr
+# but there's no way to tell the Makefile to take them from there.
+make headers_install
+scl enable llvm-toolset-6.0 "%{make} -s ARCH=$Arch V=1 samples/bpf/"
+pushd tools/testing/selftests
+# We need to install here because we need to call make with ARCH set which
+# doesn't seem possible to do in the install section.
+scl enable llvm-toolset-6.0 "%{make} -s ARCH=$Arch V=1 TARGETS=bpf INSTALL_PATH=%{buildroot}%{_libexecdir}/bpf-samples/selftests install"
+popd
+%endif
+
 # In the modsign case, we do 3 things.  1) We check the "flavour" and hard
 # code the value in the following invocations.  This is somewhat sub-optimal
 # but we're doing this inside of an RPM macro and it isn't as easy as it
@@ -1514,6 +1546,19 @@ popd
 
 %if %{with_bootwrapper}
 make DESTDIR=$RPM_BUILD_ROOT bootwrapper_install WRAPPER_OBJDIR=%{_libdir}/kernel-wrapper WRAPPER_DTSDIR=%{_libdir}/kernel-wrapper/dts
+%endif
+
+%if %{with_bpf_samples}
+pushd samples/bpf
+install -d %{buildroot}%{_libexecdir}/bpf-samples
+find -type f -executable -exec install -m755 {} %{buildroot}%{_libexecdir}/bpf-samples \;
+install -m755 *.sh %{buildroot}%{_libexecdir}/bpf-samples
+# test_lwt_bpf.sh compiles test_lwt_bpf.c when run; this works only from the
+# kernel tree. Just remove it.
+rm %{buildroot}%{_libexecdir}/bpf-samples/test_lwt_bpf.sh
+install -m644 *_kern.o %{buildroot}%{_libexecdir}/bpf-samples
+install -m644 tcp_bpf.readme %{buildroot}%{_libexecdir}/bpf-samples
+popd
 %endif
 
 # We have to do the headers checksum calculation after the tools install because
@@ -1758,6 +1803,11 @@ fi
 %{_mandir}/man8/bpftool-net.8.gz
 %{_mandir}/man8/bpftool-feature.8.gz
 %{_mandir}/man8/bpftool-btf.8.gz
+%endif
+
+%if %{with_bpf_samples}
+%files -n bpf-samples
+%{_libexecdir}/bpf-samples
 %endif
 
 # empty meta-package
