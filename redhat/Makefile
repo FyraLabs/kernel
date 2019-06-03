@@ -239,6 +239,7 @@ sources-rh: $(TARBALL)
 		configs/generate_all_configs.sh \
 		configs/process_configs.sh \
 		parallel_xz.sh \
+		generate_bls_conf.sh \
 		$(SOURCES)/
 	@for KABIARCH in $(ARCH_LIST); do \
 		cp kabi/Module.kabi_$$KABIARCH $(SOURCES)/; \
