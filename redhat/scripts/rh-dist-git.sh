@@ -7,8 +7,9 @@
 # $4: alternate dist-git server
 # $5: kernel source tarball
 # $6: kabi whitelists tarball
-# $7: zstream build
-# $8: package name
+# $7: dwarf-bases kabi tarball
+# $8: zstream build
+# $9: package name
 
 rhdistgit_branch=$1;
 rhdistgit_cache=$2;
@@ -16,10 +17,11 @@ rhdistgit_tmp=$3;
 rhdistgit_server=$4;
 rhdistgit_tarball=$5;
 rhdistgit_kabi_tarball=$6;
-rhdistgit_zstream_flag=$7;
-package_name=$8;
-rhel_major=$9;
-rhpkg_bin=${10};
+rhdistgit_kabidw_tarball=$7;
+rhdistgit_zstream_flag=$8;
+package_name=$9;
+rhel_major=${10};
+rhpkg_bin=${11};
 
 redhat=$(dirname $0)/..;
 topdir=$redhat/..;
@@ -64,6 +66,10 @@ if [ "$rhdistgit_zstream_flag" == "no" ]; then
 	if ! grep -q "$rhdistgit_kabi_tarball" $tmpdir/$package_name/sources; then
 		sed -i "/kernel-abi-whitelists.*.tar.bz2/d" $tmpdir/$package_name/{sources,.gitignore};
 		upload_list="$upload_list $rhdistgit_kabi_tarball"
+	fi
+	if ! grep -q "$rhdistgit_kabidw_tarball" $tmpdir/$package_name/sources; then
+		sed -i "/kernel-kabi-dw-*.tar.bz2/d" $tmpdir/$package_name/{sources,.gitignore};
+		upload_list="$upload_list $rhdistgit_kabidw_tarball"
 	fi
 fi
 

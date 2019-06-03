@@ -99,6 +99,11 @@ Summary: The Linux kernel
 # Control whether we perform a compat. check against DUP ABI.
 %define with_kabidupchk %{?_with_kabidupchk:  1} %{?!_with_kabidupchk:   0}
 #
+# Control whether to run an extensive DWARF based kABI check.
+# Note that this option needs to have baseline setup in SOURCE300.
+%define with_kabidwchk %{?_without_kabidwchk: 0} %{?!_without_kabidwchk: 1}
+%define with_kabidw_base %{?_with_kabidw_base: 1} %{?!_with_kabidw_base: 0}
+#
 # should we do C=1 builds with sparse
 %define with_sparse    %{?_with_sparse:       1} %{?!_with_sparse:       0}
 #
@@ -118,6 +123,12 @@ Summary: The Linux kernel
 %define with_debug 0
 %define with_kabichk 0
 %define with_kabidupchk 0
+%define with_kabidwchk 0
+%endif
+
+# turn off kABI DWARF-based check if we're generating the base dataset
+%if %{with_kabidw_base}
+%define with_kabidwchk 0
 %endif
 
 %define make_target bzImage
@@ -149,9 +160,10 @@ Summary: The Linux kernel
 %define with_bpftool 0
 %endif
 
-# turn off kABI DUP check if kABI check is disabled
+# turn off kABI DUP check and DWARF-based check if kABI check is disabled
 %if !%{with_kabichk}
 %define with_kabidupchk 0
+%define with_kabidwchk 0
 %endif
 
 %ifnarch noarch
@@ -318,6 +330,9 @@ BuildConflicts: rpm < 4.13.0.1-19
 %global _missing_build_ids_terminate_build 1
 %global _no_recompute_build_ids 1
 %endif
+%if %{with_kabidwchk} || %{with_kabidw_base}
+BuildRequires: kabi-dw
+%endif
 
 %if %{signkernel}%{signmodules}
 BuildRequires: openssl openssl-devel
@@ -389,6 +404,7 @@ Source212: Module.kabi_dup_s390x
 Source213: Module.kabi_dup_x86_64
 
 Source300: kernel-abi-whitelists-%{rpmversion}-%{distro_build}.tar.bz2
+Source301: kernel-kabi-dw-%{rpmversion}-%{distro_build}.tar.bz2
 
 # Sources for kernel-tools
 Source2000: cpupower.service
@@ -603,6 +619,16 @@ AutoReqProv: no
 The kABI package contains information pertaining to the Red Hat Enterprise
 Linux kernel ABI, including lists of kernel symbols that are needed by
 external Linux kernel modules, and a yum plugin to aid enforcement.
+
+%if %{with_kabidw_base}
+%package kabidw-base
+Summary: The baseline dataset for kABI verification using DWARF data
+Group: System Environment/Kernel
+AutoReqProv: no
+%description kabidw-base
+The kabidw-base package contains data describing the current ABI of the Red Hat
+Enterprise Linux kernel, suitable for the kabi-dw tool.
+%endif
 
 #
 # This macro creates a kernel-<subpackage>-debuginfo package.
@@ -1064,6 +1090,54 @@ BuildKernel() {
         rm $RPM_BUILD_ROOT/Module.kabi # for now, don't keep it around.
     else
         echo "**** NOTE: Cannot find DUP reference Module.kabi file. ****"
+    fi
+%endif
+
+%if %{with_kabidw_base}
+    # Don't build kabi base for debug kernels
+    if [ "$Flavour" != "kdump" -a "$Flavour" != "debug" ]; then
+        mkdir -p $RPM_BUILD_ROOT/kabi-dwarf
+        tar xjvf %{SOURCE301} -C $RPM_BUILD_ROOT/kabi-dwarf
+
+        mkdir -p $RPM_BUILD_ROOT/kabi-dwarf/whitelists
+        tar xjvf %{SOURCE300} -C $RPM_BUILD_ROOT/kabi-dwarf/whitelists
+
+        echo "**** GENERATING DWARF-based kABI baseline dataset ****"
+        chmod 0755 $RPM_BUILD_ROOT/kabi-dwarf/run_kabi-dw.sh
+        $RPM_BUILD_ROOT/kabi-dwarf/run_kabi-dw.sh generate \
+            "$RPM_BUILD_ROOT/kabi-dwarf/whitelists/kabi-current/kabi_whitelist_%{_target_cpu}" \
+            "$(pwd)" \
+            "$RPM_BUILD_ROOT/kabidw-base/%{_target_cpu}${Flavour:+.${Flavour}}" || :
+
+        rm -rf $RPM_BUILD_ROOT/kabi-dwarf
+    fi
+%endif
+
+%if %{with_kabidwchk}
+    if [ "$Flavour" != "kdump" ]; then
+        mkdir -p $RPM_BUILD_ROOT/kabi-dwarf
+        tar xjvf %{SOURCE301} -C $RPM_BUILD_ROOT/kabi-dwarf
+        if [ -d "$RPM_BUILD_ROOT/kabi-dwarf/base/%{_target_cpu}${Flavour:+.${Flavour}}" ]; then
+            mkdir -p $RPM_BUILD_ROOT/kabi-dwarf/whitelists
+            tar xjvf %{SOURCE300} -C $RPM_BUILD_ROOT/kabi-dwarf/whitelists
+
+            echo "**** GENERATING DWARF-based kABI dataset ****"
+            chmod 0755 $RPM_BUILD_ROOT/kabi-dwarf/run_kabi-dw.sh
+            $RPM_BUILD_ROOT/kabi-dwarf/run_kabi-dw.sh generate \
+                "$RPM_BUILD_ROOT/kabi-dwarf/whitelists/kabi-current/kabi_whitelist_%{_target_cpu}" \
+                "$(pwd)" \
+                "$RPM_BUILD_ROOT/kabi-dwarf/base/%{_target_cpu}${Flavour:+.${Flavour}}.tmp" || :
+
+            echo "**** kABI DWARF-based comparison report ****"
+            $RPM_BUILD_ROOT/kabi-dwarf/run_kabi-dw.sh compare \
+                "$RPM_BUILD_ROOT/kabi-dwarf/base/%{_target_cpu}${Flavour:+.${Flavour}}" \
+                "$RPM_BUILD_ROOT/kabi-dwarf/base/%{_target_cpu}${Flavour:+.${Flavour}}.tmp" || :
+            echo "**** End of kABI DWARF-based comparison report ****"
+        else
+            echo "**** Baseline dataset for kABI DWARF-BASED comparison report not found ****"
+        fi
+
+        rm -rf $RPM_BUILD_ROOT/kabi-dwarf
     fi
 %endif
 
@@ -1725,6 +1799,14 @@ fi
 %if %{with_kernel_abi_whitelists}
 %files -n kernel-abi-whitelists
 /lib/modules/kabi-*
+%endif
+
+%if %{with_kabidw_base}
+%ifarch x86_64 s390x ppc64 ppc64le aarch64
+%files kabidw-base
+%defattr(-,root,root)
+/kabidw-base/%{_target_cpu}/*
+%endif
 %endif
 
 %if %{with_perf}

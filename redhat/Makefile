@@ -44,8 +44,11 @@ ifeq ("$(origin O)", "command line")
   _EXTRA_ARGS := O=$(_OUTPUT)
 endif
 
+CURARCH := $(shell uname -m)
 ARCHCONFIG := $(shell uname -m | sed -e s/x86_64/X86_64/ \
 				     -e s/s390x/S390/ -e s/ppc.*/PPC/ )
+
+KABIDW := $(REDHAT)/kabi-dwarf
 
 include Makefile.cross
 
@@ -101,6 +104,30 @@ rh-check-kabi-dup: rh-kabi-dup
 	@$(REDHAT)/kabi/check-kabi -k $(REDHAT)/kabi/Module.kabi_dup_$(MACH) \
 	-s $(_OUTPUT)/Module.symvers
 
+rh-kabi-dw-base: rh-kabi
+	@echo "Generating baseline dataset for KABI DWARF-based comparison..."
+	@echo "**** GENERATING DWARF-based kABI baseline dataset ****"
+	@$(KABIDW)/run_kabi-dw.sh generate \
+		$(REDHAT)/kabi/kabi-current/kabi_whitelist_$(CURARCH) \
+		$(_OUTPUT) $(KABIDW)/base/$(CURARCH)/
+
+rh-kabi-dw-check: rh-kabi
+	@if [ ! -d $(KABIDW)/base/$(CURARCH) ]; then \
+		echo "**** ERROR: ****"; \
+		echo "Comparison base not found in $(KABIDW)/base/$(CURARCH)."; \
+		echo "Please run \"make rh-kabi-dw-base\" first!"; \
+		exit 1; \
+	fi
+	@echo "**** GENERATING DWARF-based kABI dataset ****"
+	@$(KABIDW)/run_kabi-dw.sh generate \
+		$(REDHAT)/kabi/kabi-current/kabi_whitelist_$(CURARCH) \
+		$(_OUTPUT) $(KABIDW)/base/$(CURARCH).tmp/
+	@echo "**** KABI DWARF-based comparison report ****"
+	@$(KABIDW)/run_kabi-dw.sh compare \
+		$(KABIDW)/base/$(CURARCH) $(KABIDW)/base/$(CURARCH).tmp || :
+	@echo "**** End of KABI DWARF-based comparison report ****"
+	@rm -rf $(KABIDW)/base/$(CURARCH).tmp
+
 rh-configs: rh-configs-prep
 	@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh; \
 	./process_configs.sh -n -w $(PACKAGE_NAME) $(KVERSION)
@@ -151,6 +178,13 @@ $(TARBALL):
 $(KABI_TARBALL):
 	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHEL_MAJOR)* kabi-current)
 
+.PHONY: $(KABIDW_TARBALL)
+$(KABIDW_TARBALL):
+	@if [ ! -d $(KABIDW)/base ]; then \
+		mkdir -p $(KABIDW)/base; \
+	fi
+	@(cd kabi-dwarf && tar cjvf $(SOURCES)/$(KABIDW_TARFILE) base run_kabi-dw.sh)
+
 setup-source: rh-clean-sources
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
 	@if [ ! -e  $(REDHAT)/$(CHANGELOG) ]; then \
@@ -199,6 +233,10 @@ sources-rh: $(TARBALL)
 		cp kabi/Module.kabi_dup_$$KABIARCH $(SOURCES)/; \
 	done
 	@(cd kabi && tar cjvf $(SOURCES)/$(KABI_TARFILE) kabi-rhel$(RHEL_MAJOR)* kabi-current)
+	@if [ ! -d $(KABIDW)/base ]; then \
+		mkdir -p $(KABIDW)/base; \
+	fi
+	@(cd kabi-dwarf && tar cjvf $(SOURCES)/$(KABIDW_TARFILE) base run_kabi-dw.sh)
 
 rh-sources: setup-source rh-configs-check rh-kabi rh-kabi-dup sources-rh
 
@@ -268,11 +306,11 @@ $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec:
 rh-dist-git-test: export RH_DIST_GIT_TEST="1"
 rh-dist-git-test: rh-dist-git
 
-rh-dist-git: $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec $(TARBALL) $(KABI_TARBALL)
+rh-dist-git: $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec $(TARBALL) $(KABI_TARBALL) $(KABIDW_TARBALL)
 ifeq ("$(RHDISTGIT_BRANCH)", "")
  $(error RHDISTGIT_BRANCH unset)
 endif
-	$(REDHAT)/scripts/rh-dist-git.sh "$(RHDISTGIT_BRANCH)" "$(RHDISTGIT_CACHE)" "$(RHDISTGIT_TMP)" "$(RHDISTGIT)" "$(TARBALL)" "$(KABI_TARBALL)" "$(__ZSTREAM)" "$(PACKAGE_NAME)" "$(RHEL_MAJOR)" "$(RHPKG_BIN)"
+	$(REDHAT)/scripts/rh-dist-git.sh "$(RHDISTGIT_BRANCH)" "$(RHDISTGIT_CACHE)" "$(RHDISTGIT_TMP)" "$(RHDISTGIT)" "$(TARBALL)" "$(KABI_TARBALL)" "$(KABIDW_TARBALL)" "$(__ZSTREAM)" "$(PACKAGE_NAME)" "$(RHEL_MAJOR)" "$(RHPKG_BIN)"
 
 rh-rtg: rh-release
 	@$(MAKE) rh-release-tag
@@ -372,6 +410,9 @@ rh-full-help:
 	@echo  '                      Requires a pre-compiled tree: run `make rh-configs`, copy the'
 	@echo  '                      relevant config file from redhat/configs/ to .config, run `make`.'
 	@echo  '  rh-check-kabi-dup - Like rh-check-kabi but uses a DUP kABI whitelist.'
+	@echo  '  rh-kabi-dw-base   - Generate the base dataset for kABI DWARF-based check.'
+	@echo  '  rh-kabi-dw-check  - Run DWARF-based kABI comparison of current binaries with the base'
+	@echo  '                      dataset.'
 
 	@echo  ''
 	@echo  'Configuration targets:'
