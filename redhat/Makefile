@@ -223,6 +223,7 @@ sources-rh: $(TARBALL)
 		configs/$(PACKAGE_NAME)-*.config \
 		keys/*.cer filter-*.sh \
 		mod-extra.* \
+		mod-extra-blacklist.sh \
 		mod-sign.sh \
 		configs/generate_all_configs.sh \
 		configs/process_configs.sh \
