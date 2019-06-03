@@ -289,6 +289,7 @@ BuildRequires: pciutils-devel
 %endif
 %if %{with_bpftool}
 BuildRequires: python3-docutils
+BuildRequires: zlib-devel binutils-devel
 %endif
 BuildConflicts: rhbuildsys(DiskFree) < 500Mb
 %if %{with_debuginfo}
