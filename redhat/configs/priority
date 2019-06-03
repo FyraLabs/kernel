@@ -2,7 +2,7 @@
 # kernel.config files are build on the fly based on this config,
 # the first arg is arch and variant, the second is a hierarchy of
 # config options, lowest priority to highest
-ORDER=ark pending
+ORDER=common ark pending
 
 # x86_64
 x86_64=generic:generic-x86:generic-x86-x86_64
