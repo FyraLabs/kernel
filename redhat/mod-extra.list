@@ -38,7 +38,6 @@ dccp.ko
 dccp_probe.ko
 diva_idi.ko
 divas.ko
-dlm.ko
 ds1wm.ko
 ds2482.ko
 ds2490.ko
@@ -50,7 +49,6 @@ esd_usb2.ko
 esi-sir.ko
 gamecon.ko
 gf2k.ko
-gfs2.ko
 gigaset.ko
 girbil-sir.ko
 grip.ko
