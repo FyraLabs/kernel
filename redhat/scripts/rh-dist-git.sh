@@ -68,7 +68,7 @@ if [ "$rhdistgit_zstream_flag" == "no" ]; then
 		upload_list="$upload_list $rhdistgit_kabi_tarball"
 	fi
 	if ! grep -q "$rhdistgit_kabidw_tarball" $tmpdir/$package_name/sources; then
-		sed -i "/kernel-kabi-dw-*.tar.bz2/d" $tmpdir/$package_name/{sources,.gitignore};
+		sed -i "/kernel-kabi-dw-.*.tar.bz2/d" $tmpdir/$package_name/{sources,.gitignore};
 		upload_list="$upload_list $rhdistgit_kabidw_tarball"
 	fi
 fi
