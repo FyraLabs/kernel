@@ -1425,9 +1425,11 @@ pushd tools/gpio/
 popd
 %endif
 
+%global bpftool_make \
+  make EXTRA_CFLAGS="${RPM_OPT_FLAGS}" EXTRA_LDFLAGS="%{__global_ldflags}" DESTDIR=$RPM_BUILD_ROOT V=1
 %if %{with_bpftool}
 pushd tools/bpf/bpftool
-make
+%{bpftool_make}
 popd
 %endif
 
@@ -1629,7 +1631,7 @@ popd
 
 %if %{with_bpftool}
 pushd tools/bpf/bpftool
-make DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix} bash_compdir=%{_sysconfdir}/bash_completion.d/ mandir=%{_mandir} install doc-install
+%{bpftool_make} prefix=%{_prefix} bash_compdir=%{_sysconfdir}/bash_completion.d/ mandir=%{_mandir} install doc-install
 popd
 %endif
 
