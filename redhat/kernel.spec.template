@@ -64,6 +64,8 @@ Summary: The Linux kernel
 %define with_up        %{?_without_up:        0} %{?!_without_up:        1}
 # kernel-debug
 %define with_debug     %{?_without_debug:     0} %{?!_without_debug:     1}
+# kernel-doc
+%define with_doc       %{?_without_doc:       0} %{?!_without_doc:       1}
 # kernel-headers
 %define with_headers   %{?_without_headers:   0} %{?!_without_headers:   1}
 %define with_cross_headers   %{?_without_cross_headers:   0} %{?!_without_cross_headers:   1}
@@ -173,6 +175,12 @@ Summary: The Linux kernel
 %endif
 
 # Overrides for generic default options
+
+# only package docs noarch
+%ifnarch noarch
+%define with_doc 0
+%define doc_build_fail true
+%endif
 
 # don't build noarch kernels or headers (duh)
 %ifarch noarch
@@ -291,6 +299,9 @@ BuildRequires: kmod, patch, bash, tar, git
 BuildRequires: bzip2, xz, findutils, gzip, m4, perl-interpreter, perl-Carp, perl-devel, perl-generators, make, diffutils, gawk
 BuildRequires: gcc, binutils, redhat-rpm-config, hmaccalc, python3-devel
 BuildRequires: net-tools, hostname, bc, bison, flex, elfutils-devel
+%if %{with_doc}
+BuildRequires: xmlto, asciidoc, python3-sphinx
+%endif
 %if %{with_sparse}
 BuildRequires: sparse
 %endif
@@ -451,6 +462,19 @@ Conflicts: xorg-x11-drv-vmmouse < 13.0.99\
 AutoReq: no\
 AutoProv: yes\
 %{nil}
+
+
+%package doc
+Summary: Various documentation bits found in the kernel source
+Group: Documentation
+%description doc
+This package contains documentation files from the kernel
+source. Various bits of information about the Linux kernel and the
+device drivers shipped with it are documented in these files.
+
+You'll want to install this package if you need a reference to the
+options that can be passed to Linux kernel modules at load time.
+
 
 %package headers
 Summary: Header files for the Linux kernel for use by glibc
@@ -873,6 +897,7 @@ pathfix.py -i %{__python3} -p -n \
 	tools/perf/tests/attr.py \
 	tools/perf/scripts/python/stat-cpi.py \
 	tools/perf/scripts/python/sched-migration.py \
+	Documentation \
 	scripts/gen_compile_commands.py
 
 # only deal with configs if we are going to build for the arch
@@ -1461,6 +1486,15 @@ pushd tools/testing/selftests
 popd
 %endif
 
+%if %{with_doc}
+# Make the HTML pages.
+make htmldocs || %{doc_build_fail}
+
+# sometimes non-world-readable files sneak into the kernel source tree
+chmod -R a=rX Documentation
+find Documentation -type d | xargs chmod u+w
+%endif
+
 # In the modsign case, we do 3 things.  1) We check the "flavour" and hard
 # code the value in the following invocations.  This is somewhat sub-optimal
 # but we're doing this inside of an RPM macro and it isn't as easy as it
@@ -1522,6 +1556,15 @@ popd
 %install
 
 cd linux-%{KVERREL}
+
+%if %{with_doc}
+docdir=$RPM_BUILD_ROOT%{_datadir}/doc/kernel-doc-%{rpmversion}
+
+# copy the source over
+mkdir -p $docdir
+tar -h -f - --exclude=man --exclude='.*' -c Documentation | tar xf - -C $docdir
+
+%endif # with_doc
 
 # We have to do the headers install before the tools install because the
 # kernel headers_install will remove any header files in /usr/include that
@@ -1834,6 +1877,15 @@ fi
 %defattr(-,root,root)
 /kabidw-base/%{_target_cpu}/*
 %endif
+%endif
+
+# only some architecture builds need kernel-doc
+%if %{with_doc}
+%files doc
+%defattr(-,root,root)
+%{_datadir}/doc/kernel-doc-%{rpmversion}/Documentation/*
+%dir %{_datadir}/doc/kernel-doc-%{rpmversion}/Documentation
+%dir %{_datadir}/doc/kernel-doc-%{rpmversion}
 %endif
 
 %if %{with_perf}
