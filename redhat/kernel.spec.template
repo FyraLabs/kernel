@@ -886,7 +886,7 @@ cp $RPM_SOURCE_DIR/kernel-*.config .
 cp %{SOURCE41} .
 VERSION=%{version} ./generate_all_configs.sh
 
-%define make make %{?cross_opts}
+%define make make %{?cross_opts} HOSTCFLAGS="${RPM_OPT_FLAGS}" HOSTLDFLAGS="%{__global_ldflags}"
 
 # enable GCOV kernel config options if gcov is on
 %if %{with_gcov}
@@ -960,7 +960,7 @@ BuildKernel() {
 
     # and now to start the build process
 
-    make -s %{?_smp_mflags} mrproper
+    %{make} -s %{?_smp_mflags} mrproper
     cp configs/$Config .config
 
     %if %{signkernel}%{signmodules}
@@ -970,7 +970,7 @@ BuildKernel() {
     Arch=`head -1 .config | cut -b 3-`
     echo USING ARCH=$Arch
 
-    make -s ARCH=$Arch olddefconfig >/dev/null
+    %{make} -s ARCH=$Arch olddefconfig >/dev/null
     %{make} -s ARCH=$Arch V=1 %{?_smp_mflags} KCFLAGS="%{?kcflags}" WITH_GCOV="%{?with_gcov}" $MakeTarget %{?sparse_mflags} %{?kernel_mflags}
     if [ $DoModules -eq 1 ]; then
 	%{make} -s ARCH=$Arch V=1 %{?_smp_mflags} KCFLAGS="%{?kcflags}" WITH_GCOV="%{?with_gcov}" modules %{?sparse_mflags} || exit 1
