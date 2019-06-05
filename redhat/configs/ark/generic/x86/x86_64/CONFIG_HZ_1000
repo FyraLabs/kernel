@@ -1,4 +1,4 @@
-# HZ=1000 is inherited from Fedora/RHEL7 (Bug 1564274). Also we use this value
+# HZ=1000 is inherited from Fedora/RHEL7. Also we use this value
 # to avoid TCP issues as explained by David Miller:
 # "When the system is busy, a system with NO_HZ + HZ=1000 processes it's timer
 #  workload more smoothly.
