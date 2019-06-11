@@ -6,6 +6,9 @@ LANG=C
 ifeq ("$(DIST)", ".elrdy")
   BUILD_DEFAULT_TARGET = temp-ark-rhel-8-test
   BUILD_SCRATCH_TARGET = temp-ark-rhel-8-test
+else ifeq ("$(IS_FEDORA)", "1")
+  BUILD_DEFAULT_TARGET = temp-ark-rhel-8-test
+  BUILD_SCRATCH_TARGET = temp-ark-rhel-8-test
 else
   BUILD_DEFAULT_TARGET = rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
   BUILD_SCRATCH_TARGET = rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
@@ -26,6 +29,13 @@ else
   else
     __YSTREAM = yes
   endif
+endif
+
+
+ifeq ("$(IS_FEDORA)", "1")
+   DIST_TARGET=fedora
+else
+   DIST_TARGET=rhel
 endif
 
 #ifeq ($(shell git diff --quiet HEAD && git describe --exact-match 2>/dev/null && echo ok),)
@@ -136,7 +146,7 @@ rh-configs-check: rh-configs-prep
 	cd $(REDHAT)/configs; ./process_configs.sh -n -t $(PACKAGE_NAME)
 
 rh-configs-prep: rh-clean-configs
-	cd $(REDHAT)/configs; ./build_configs.sh $(PACKAGE_NAME) $(ARCH_MACH)
+	cd $(REDHAT)/configs; TARGET=$(DIST_TARGET) ./build_configs.sh $(PACKAGE_NAME) $(ARCH_MACH)
 
 rh-configs-arch: ARCH_MACH = $(MACH)
 rh-configs-arch: rh-configs
@@ -222,12 +232,16 @@ sources-rh: $(TARBALL)
 		echo "WARNING: There are uncommitted changes in your tree or the changes are not in sync with linux-kernel-test.patch.  Either commit the changes or run 'make rh-test-patch'"
 	@rm $(TESTPATCH).tmp
 	@cp $(TESTPATCH) $(SOURCES)/linux-kernel-test.patch
+	@if [ $(IS_FEDORA) -eq 1 ]; then \
+		cp fedora_files/* $(SOURCES); \
+	else \
+		cp rhel_files/* $(SOURCES); \
+	fi
 	@cp cpupower.* \
-		x509.genkey \
 		keys/rhel*.x509 \
 		kabi/check-kabi \
 		configs/$(PACKAGE_NAME)-*.config \
-		keys/*.cer filter-*.sh \
+		keys/*.cer \
 		mod-extra.* \
 		mod-extra-blacklist.sh \
 		mod-sign.sh \

@@ -23,10 +23,13 @@ else
 endif
 
 DIST:=.elrdy
+IS_FEDORA:=$(shell ! echo $(DIST) | grep -q fc; echo $$?)
 # If VERSION_ON_UPSTREAM is set, the versioning of the rpm package is based
 # on a branch tracking upstream. This allows for generating rpms
 # based on untagged releases.
 ifeq ("$(DIST)", ".elrdy")
+  VERSION_ON_UPSTREAM:=1
+else ifeq ("$(IS_FEDORA)", "1")
   VERSION_ON_UPSTREAM:=1
 else
   VERSION_ON_UPSTREAM:=0
@@ -79,11 +82,14 @@ SOURCES:=$(RPM)/SOURCES
 TESTPATCH:=$(REDHAT)/linux-kernel-test.patch
 FILTERDIFF:=/usr/bin/filterdiff -x '*redhat/*' -x '*/.gitignore' -x '*/makefile' -x '*/Makefile'
 ARCH_LIST=aarch64 ppc64le s390x x86_64
+# Make can't match on a regex to match fc31, fc32 so add another check here
 # A unified tarball means that the tarball in the srpm contains both the
 # upstream sources and redhat patches. A non-unified tarball means that
 # the tarball is only upstream sources and the patches get applied as
 # a diff in the spec file
 ifeq ("$(DIST)", ".elrdy")
+  SINGLE_TARBALL:=0
+else ifeq ("$(IS_FEDORA)", "1")
   SINGLE_TARBALL:=0
 else
   SINGLE_TARBALL:=1
@@ -126,6 +132,8 @@ CHANGELOG:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(RHEL_MINOR)
 CHANGELOG_PREV:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(shell expr $(RHEL_MINOR) - 1)
 
 ifeq ("$(DIST)", ".elrdy")
+  RHPRODUCT:=rhel-ready
+else ifeq ("$(IS_FEDORA)", "1")
   RHPRODUCT:=rhel-ready
 else
   RHPRODUCT:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0

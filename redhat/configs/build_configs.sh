@@ -19,7 +19,7 @@ cd $SCRIPT_DIR
 set errexit
 set nounset
 
-control_file="priority"
+control_file="priority".$TARGET
 
 cleanup()
 {
@@ -101,6 +101,13 @@ do
 		continue
 	elif [ $(echo "$line" | grep -c "^$") -ne 0 ]; then
 		continue
+	elif [ $(echo "$line" | grep -c "^EMPTY") -ne 0 ]; then
+		empty=$(echo "$line" | cut -f2 -d"=")
+		for a in $empty
+		do
+			echo "# EMPTY" > $OUTPUT_DIR/$PACKAGE_NAME-$a.config
+
+		done
 	elif [ $(echo "$line" | grep -c "^ORDER") -ne 0 ]; then
 		order=$(echo "$line" | cut -f2 -d"=")
 		for o in $order

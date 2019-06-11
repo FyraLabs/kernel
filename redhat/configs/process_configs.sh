@@ -88,6 +88,11 @@ function process_configs()
 		cat $cfg > $cfgorig
 
 		echo -n "Processing $cfg ... "
+		if [ "$arch" = "EMPTY" ]
+		then
+			# This arch is intentionally left blank
+			continue
+		fi
 
 		make ARCH=$arch KCONFIG_CONFIG=$cfgorig listnewconfig >& .listnewconfig
 		grep -E 'CONFIG_' .listnewconfig > .newoptions
