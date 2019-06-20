@@ -22,8 +22,8 @@ s390x=generic:generic-s390x
 s390x-debug=generic:generic-s390x:debug:debug-s390x
 
 # aarch64
-aarch64=generic:generic-arm-aarch64
-aarch64-debug=generic:generic-arm-aarch64:debug:debug-arm-aarch64
+aarch64=generic:generic-arm:generic-arm-aarch64
+aarch64-debug=generic:generic-arm:generic-arm-aarch64:debug:debug-arm-aarch64
 
 # arm
 armv7hl=generic:generic-arm:generic-arm-armv7:generic-arm-armv7-armv7
