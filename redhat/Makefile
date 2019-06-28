@@ -244,6 +244,7 @@ sources-rh: $(TARBALL)
 		keys/*.cer \
 		mod-extra.* \
 		mod-extra-blacklist.sh \
+		mod-internal.list \
 		mod-sign.sh \
 		configs/generate_all_configs.sh \
 		configs/process_configs.sh \
