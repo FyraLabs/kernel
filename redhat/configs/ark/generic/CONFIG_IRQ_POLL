@@ -1,1 +1,4 @@
-# CONFIG_IRQ_POLL is not set
+# Enabling IRQ_POLL only enables the polling library for the few
+# remaining drivers that need it(mpt3sas, cxflash, be2isci, and
+# infiniband)
+CONFIG_IRQ_POLL=y
