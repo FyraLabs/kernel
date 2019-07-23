@@ -1,0 +1,41 @@
+From 7d17db9673bf425f26034711e6093abc910d25f1 Mon Sep 17 00:00:00 2001
+From: "Herton R. Krzesinski" <herton@redhat.com>
+Date: Wed, 27 Jun 2018 17:39:08 -0400
+Subject: [PATCH] [tools] perf scripts python: Add Python 3 support to
+ SchedGui.py
+
+Message-id: <20180627173914.14243-4-herton@redhat.com>
+Patchwork-id: 223086
+O-Subject: [RHEL8 PATCH 3/9] perf scripts python: Add Python 3 support to SchedGui.py
+Bugzilla: 1561505
+RH-Acked-by: Rafael Aquini <aquini@redhat.com>
+RH-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+RH-Acked-by: Prarit Bhargava <prarit@redhat.com>
+
+From: Jeremy Cline <jeremy@jcline.org>
+
+Fix a single syntax error in SchedGui.py to support both Python 2 and
+Python 3. This should have no functional change.
+
+Signed-off-by: Jeremy Cline <jeremy@jcline.org>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
+index fdd92f6..cac7b25 100644
+--- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
++++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
+@@ -11,7 +11,7 @@
+ try:
+ 	import wx
+ except ImportError:
+-	raise ImportError, "You need to install the wxpython lib for this script"
++	raise ImportError("You need to install the wxpython lib for this script")
+ 
+ 
+ class RootFrame(wx.Frame):
+-- 
+2.9.0
+

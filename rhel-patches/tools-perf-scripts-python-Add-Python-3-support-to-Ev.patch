@@ -1,0 +1,50 @@
+From 8c90296ccb2de32b7c5030bd738b80400cf6b762 Mon Sep 17 00:00:00 2001
+From: "Herton R. Krzesinski" <herton@redhat.com>
+Date: Wed, 27 Jun 2018 17:39:10 -0400
+Subject: [PATCH] [tools] perf scripts python: Add Python 3 support to
+ EventClass.py
+
+Message-id: <20180627173914.14243-6-herton@redhat.com>
+Patchwork-id: 223081
+O-Subject: [RHEL8 PATCH 5/9] perf scripts python: Add Python 3 support to EventClass.py
+Bugzilla: 1561505
+RH-Acked-by: Rafael Aquini <aquini@redhat.com>
+RH-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+RH-Acked-by: Prarit Bhargava <prarit@redhat.com>
+
+From: Jeremy Cline <jeremy@jcline.org>
+
+Support both Python 2 and Python 3 in EventClass.py. ``print`` is now a
+function rather than a statement. This should have no functional change.
+
+Signed-off-by: Jeremy Cline <jeremy@jcline.org>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ .../perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/EventClass.py  | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/EventClass.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/EventClass.py
+index 81a56cd..21a7a12 100755
+--- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/EventClass.py
++++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/EventClass.py
+@@ -8,6 +8,7 @@
+ # PerfEvent is the base class for all perf event sample, PebsEvent
+ # is a HW base Intel x86 PEBS event, and user could add more SW/HW
+ # event classes based on requirements.
++from __future__ import print_function
+ 
+ import struct
+ 
+@@ -44,7 +45,8 @@ class PerfEvent(object):
+                 PerfEvent.event_num += 1
+ 
+         def show(self):
+-                print "PMU event: name=%12s, symbol=%24s, comm=%8s, dso=%12s" % (self.name, self.symbol, self.comm, self.dso)
++                print("PMU event: name=%12s, symbol=%24s, comm=%8s, dso=%12s" %
++                      (self.name, self.symbol, self.comm, self.dso))
+ 
+ #
+ # Basic Intel PEBS (Precise Event-based Sampling) event, whose raw buffer
+-- 
+2.9.0
+

@@ -1,0 +1,63 @@
+From 376f1330a29c07e7783920f9c17d4c8a0a596617 Mon Sep 17 00:00:00 2001
+From: Philipp Rudo <prudo@redhat.com>
+Date: Fri, 23 Nov 2018 11:13:33 +0100
+Subject: [PATCH] [kernel] rh_taint: correct loaddable module support
+ dependencies
+
+Message-id: <20181123111337.26898-5-prudo@redhat.com>
+Patchwork-id: 233658
+O-Subject: [ARK PATCH RESEND v2 4/8] [kernel] rh_taint: correct loaddable module support dependencies
+Bugzilla: 1652266
+RH-Acked-by: Jakub Racek <jracek@redhat.com>
+RH-Acked-by: Jiri Benc <jbenc@redhat.com>
+RH-Acked-by: Cornelia Huck <cohuck@redhat.com>
+
+Bugzilla: 1652266
+Build Info: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=19252944
+Upstream Status: RHEL_only
+
+The kernel configuration for the s390/zfcpdump kernel variant turns
+loaddable module support off.  The build breaks in rh_taint.c due to
+compiler errors caused by dereferencing struct module variables which
+is just a declaration if CONFIG_MODULES is not set.
+
+To solve this build break, access struct module members only if
+CONFIG_MODULES is enabled.
+
+Signed-off-by: Philipp Rudo <prudo@redhat.com>
+---
+ kernel/rh_taint.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+Signed-off-by: Jakub Racek <jracek@redhat.com>
+---
+ kernel/rh_taint.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/kernel/rh_taint.c b/kernel/rh_taint.c
+index 5db9774..8d16417 100644
+--- a/kernel/rh_taint.c
++++ b/kernel/rh_taint.c
+@@ -61,15 +61,19 @@ void mark_tech_preview(const char *msg, struct module *mod)
+ 
+ 	if (msg)
+ 		str = msg;
++#ifdef CONFIG_MODULES
+ 	else if (mod && mod->name)
+ 		str = mod->name;
++#endif
+ 
+ 	pr_warn("TECH PREVIEW: %s may not be fully supported.\n"
+ 		"Please review provided documentation for limitations.\n",
+ 		(str ? str : "kernel"));
+ 	add_taint(TAINT_AUX, LOCKDEP_STILL_OK);
++#ifdef CONFIG_MODULES
+ 	if (mod)
+ 		mod->taints |= (1U << TAINT_AUX);
++#endif
+ }
+ EXPORT_SYMBOL(mark_tech_preview);
+ 
+-- 
+1.8.3.1
+

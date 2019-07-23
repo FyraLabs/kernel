@@ -1,0 +1,406 @@
+From 04eed8cfdf2d30e77d88866cb284db4d75d75a3e Mon Sep 17 00:00:00 2001
+From: Dick Kennedy <dkennedy@redhat.com>
+Date: Tue, 1 May 2018 20:23:04 -0400
+Subject: [PATCH] [scsi] Removing Obsolete hba pci-ids from rhel8
+
+Message-id: <1525206184-20470-1-git-send-email-dkennedy@redhat.com>
+Patchwork-id: 212089
+O-Subject: [RHEL8 PATCH e-stor] Removing Obsolete hba pci-ids from rhel8.
+Bugzilla: 1572321
+RH-Acked-by: Chris Leech <cleech@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
+
+These adapters printed an Obsolete Unsupported message is rhel7. They
+are being removed for rhel8
+
+brew-id: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=15948800
+bugzilla: 1572321
+tested on: rhel-storage-44 and on rhel-storage-07
+
+RHEL Specific
+
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ drivers/scsi/lpfc/lpfc_els.c  |   9 ---
+ drivers/scsi/lpfc/lpfc_hw.h   |  39 +-----------
+ drivers/scsi/lpfc/lpfc_ids.h  |  60 -------------------
+ drivers/scsi/lpfc/lpfc_init.c | 136 +-----------------------------------------
+ 4 files changed, 3 insertions(+), 241 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index 4dda969..cd3232a 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -3327,15 +3327,6 @@ struct lpfc_iocbq *
+ 	case IOSTAT_LOCAL_REJECT:
+ 		switch ((irsp->un.ulpWord[4] & IOERR_PARAM_MASK)) {
+ 		case IOERR_LOOP_OPEN_FAILURE:
+-			if (cmd == ELS_CMD_FLOGI) {
+-				if (PCI_DEVICE_ID_HORNET ==
+-					phba->pcidev->device) {
+-					phba->fc_topology = LPFC_TOPOLOGY_LOOP;
+-					phba->pport->fc_myDID = 0;
+-					phba->alpa_map[0] = 0;
+-					phba->alpa_map[1] = 0;
+-				}
+-			}
+ 			if (cmd == ELS_CMD_PLOGI && cmdiocb->retry == 0)
+ 				delay = 1000;
+ 			retry = 1;
+diff --git a/drivers/scsi/lpfc/lpfc_hw.h b/drivers/scsi/lpfc/lpfc_hw.h
+index 009aa0e..1ef4ead 100644
+--- a/drivers/scsi/lpfc/lpfc_hw.h
++++ b/drivers/scsi/lpfc/lpfc_hw.h
+@@ -1578,54 +1578,24 @@ struct lpfc_fdmi_reg_portattr {
+ 
+ /* Start FireFly Register definitions */
+ #define PCI_VENDOR_ID_EMULEX        0x10df
+-#define PCI_DEVICE_ID_FIREFLY       0x1ae5
+-#define PCI_DEVICE_ID_PROTEUS_VF    0xe100
+-#define PCI_DEVICE_ID_BALIUS        0xe131
+-#define PCI_DEVICE_ID_PROTEUS_PF    0xe180
+ #define PCI_DEVICE_ID_LANCER_FC     0xe200
+-#define PCI_DEVICE_ID_LANCER_FC_VF  0xe208
+ #define PCI_DEVICE_ID_LANCER_FCOE   0xe260
+-#define PCI_DEVICE_ID_LANCER_FCOE_VF 0xe268
+ #define PCI_DEVICE_ID_LANCER_G6_FC  0xe300
+ #define PCI_DEVICE_ID_LANCER_G7_FC  0xf400
+ #define PCI_DEVICE_ID_SAT_SMB       0xf011
+ #define PCI_DEVICE_ID_SAT_MID       0xf015
+-#define PCI_DEVICE_ID_RFLY          0xf095
+-#define PCI_DEVICE_ID_PFLY          0xf098
+-#define PCI_DEVICE_ID_LP101         0xf0a1
+-#define PCI_DEVICE_ID_TFLY          0xf0a5
+-#define PCI_DEVICE_ID_BSMB          0xf0d1
+ #define PCI_DEVICE_ID_BMID          0xf0d5
+ #define PCI_DEVICE_ID_ZSMB          0xf0e1
+ #define PCI_DEVICE_ID_ZMID          0xf0e5
+-#define PCI_DEVICE_ID_NEPTUNE       0xf0f5
+-#define PCI_DEVICE_ID_NEPTUNE_SCSP  0xf0f6
+-#define PCI_DEVICE_ID_NEPTUNE_DCSP  0xf0f7
+ #define PCI_DEVICE_ID_SAT           0xf100
+ #define PCI_DEVICE_ID_SAT_SCSP      0xf111
+ #define PCI_DEVICE_ID_SAT_DCSP      0xf112
+ #define PCI_DEVICE_ID_FALCON        0xf180
+-#define PCI_DEVICE_ID_SUPERFLY      0xf700
+-#define PCI_DEVICE_ID_DRAGONFLY     0xf800
+-#define PCI_DEVICE_ID_CENTAUR       0xf900
+-#define PCI_DEVICE_ID_PEGASUS       0xf980
+-#define PCI_DEVICE_ID_THOR          0xfa00
+-#define PCI_DEVICE_ID_VIPER         0xfb00
+-#define PCI_DEVICE_ID_LP10000S      0xfc00
+-#define PCI_DEVICE_ID_LP11000S      0xfc10
+-#define PCI_DEVICE_ID_LPE11000S     0xfc20
+ #define PCI_DEVICE_ID_SAT_S         0xfc40
+-#define PCI_DEVICE_ID_PROTEUS_S     0xfc50
+-#define PCI_DEVICE_ID_HELIOS        0xfd00
+-#define PCI_DEVICE_ID_HELIOS_SCSP   0xfd11
+-#define PCI_DEVICE_ID_HELIOS_DCSP   0xfd12
+ #define PCI_DEVICE_ID_ZEPHYR        0xfe00
+-#define PCI_DEVICE_ID_HORNET        0xfe05
+ #define PCI_DEVICE_ID_ZEPHYR_SCSP   0xfe11
+ #define PCI_DEVICE_ID_ZEPHYR_DCSP   0xfe12
+ #define PCI_VENDOR_ID_SERVERENGINE  0x19a2
+-#define PCI_DEVICE_ID_TIGERSHARK    0x0704
+-#define PCI_DEVICE_ID_TOMCAT        0x0714
+ #define PCI_DEVICE_ID_SKYHAWK       0x0724
+ #define PCI_DEVICE_ID_SKYHAWK_VF    0x072c
+ 
+@@ -4252,16 +4222,11 @@ struct lpfc_sli2_slim {
+ static inline int
+ lpfc_is_LC_HBA(unsigned short device)
+ {
+-	if ((device == PCI_DEVICE_ID_TFLY) ||
+-	    (device == PCI_DEVICE_ID_PFLY) ||
+-	    (device == PCI_DEVICE_ID_LP101) ||
+-	    (device == PCI_DEVICE_ID_BMID) ||
+-	    (device == PCI_DEVICE_ID_BSMB) ||
++	if ((device == PCI_DEVICE_ID_BMID) ||
+ 	    (device == PCI_DEVICE_ID_ZMID) ||
+ 	    (device == PCI_DEVICE_ID_ZSMB) ||
+ 	    (device == PCI_DEVICE_ID_SAT_MID) ||
+-	    (device == PCI_DEVICE_ID_SAT_SMB) ||
+-	    (device == PCI_DEVICE_ID_RFLY))
++	    (device == PCI_DEVICE_ID_SAT_SMB))
+ 		return 1;
+ 	else
+ 		return 0;
+diff --git a/drivers/scsi/lpfc/lpfc_ids.h b/drivers/scsi/lpfc/lpfc_ids.h
+index d48414e..9e7c908 100644
+--- a/drivers/scsi/lpfc/lpfc_ids.h
++++ b/drivers/scsi/lpfc/lpfc_ids.h
+@@ -24,44 +24,10 @@
+ #include <linux/pci.h>
+ 
+ const struct pci_device_id lpfc_id_table[] = {
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_VIPER,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_FIREFLY,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_THOR,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_PEGASUS,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_CENTAUR,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_DRAGONFLY,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_SUPERFLY,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_RFLY,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_PFLY,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_NEPTUNE,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_NEPTUNE_SCSP,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_NEPTUNE_DCSP,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_HELIOS,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_HELIOS_SCSP,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_HELIOS_DCSP,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_BMID,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_BSMB,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_ZEPHYR,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_HORNET,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_ZEPHYR_SCSP,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_ZEPHYR_DCSP,
+@@ -70,16 +36,6 @@
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_ZSMB,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_TFLY,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LP101,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LP10000S,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LP11000S,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LPE11000S,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_SAT,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_SAT_MID,
+@@ -92,28 +48,12 @@
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_SAT_S,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_PROTEUS_VF,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_PROTEUS_PF,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_PROTEUS_S,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_SERVERENGINE, PCI_DEVICE_ID_TIGERSHARK,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_SERVERENGINE, PCI_DEVICE_ID_TOMCAT,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_FALCON,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_BALIUS,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_FC,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_FCOE,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_FC_VF,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+-	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_FCOE_VF,
+-		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G6_FC,
+ 		PCI_ANY_ID, PCI_ANY_ID, },
+ 	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G7_FC,
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index f3cae73..86086ed 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -2312,83 +2312,9 @@
+ 	vp = &phba->vpd;
+ 
+ 	switch (dev_id) {
+-	case PCI_DEVICE_ID_FIREFLY:
+-		m = (typeof(m)){"LP6000", "PCI",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_SUPERFLY:
+-		if (vp->rev.biuRev >= 1 && vp->rev.biuRev <= 3)
+-			m = (typeof(m)){"LP7000", "PCI", ""};
+-		else
+-			m = (typeof(m)){"LP7000E", "PCI", ""};
+-		m.function = "Obsolete, Unsupported Fibre Channel Adapter";
+-		break;
+-	case PCI_DEVICE_ID_DRAGONFLY:
+-		m = (typeof(m)){"LP8000", "PCI",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_CENTAUR:
+-		if (FC_JEDEC_ID(vp->rev.biuRev) == CENTAUR_2G_JEDEC_ID)
+-			m = (typeof(m)){"LP9002", "PCI", ""};
+-		else
+-			m = (typeof(m)){"LP9000", "PCI", ""};
+-		m.function = "Obsolete, Unsupported Fibre Channel Adapter";
+-		break;
+-	case PCI_DEVICE_ID_RFLY:
+-		m = (typeof(m)){"LP952", "PCI",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_PEGASUS:
+-		m = (typeof(m)){"LP9802", "PCI-X",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_THOR:
+-		m = (typeof(m)){"LP10000", "PCI-X",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_VIPER:
+-		m = (typeof(m)){"LPX1000",  "PCI-X",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_PFLY:
+-		m = (typeof(m)){"LP982", "PCI-X",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_TFLY:
+-		m = (typeof(m)){"LP1050", "PCI-X",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_HELIOS:
+-		m = (typeof(m)){"LP11000", "PCI-X2",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_HELIOS_SCSP:
+-		m = (typeof(m)){"LP11000-SP", "PCI-X2",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_HELIOS_DCSP:
+-		m = (typeof(m)){"LP11002-SP",  "PCI-X2",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_NEPTUNE:
+-		m = (typeof(m)){"LPe1000", "PCIe",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_NEPTUNE_SCSP:
+-		m = (typeof(m)){"LPe1000-SP", "PCIe",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_NEPTUNE_DCSP:
+-		m = (typeof(m)){"LPe1002-SP", "PCIe",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+ 	case PCI_DEVICE_ID_BMID:
+ 		m = (typeof(m)){"LP1150", "PCI-X2", "Fibre Channel Adapter"};
+ 		break;
+-	case PCI_DEVICE_ID_BSMB:
+-		m = (typeof(m)){"LP111", "PCI-X2",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+ 	case PCI_DEVICE_ID_ZEPHYR:
+ 		m = (typeof(m)){"LPe11000", "PCIe", "Fibre Channel Adapter"};
+ 		break;
+@@ -2405,22 +2331,6 @@
+ 	case PCI_DEVICE_ID_ZSMB:
+ 		m = (typeof(m)){"LPe111", "PCIe", "Fibre Channel Adapter"};
+ 		break;
+-	case PCI_DEVICE_ID_LP101:
+-		m = (typeof(m)){"LP101", "PCI-X",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_LP10000S:
+-		m = (typeof(m)){"LP10000-S", "PCI",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_LP11000S:
+-		m = (typeof(m)){"LP11000-S", "PCI-X2",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_LPE11000S:
+-		m = (typeof(m)){"LPe11000-S", "PCIe",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+ 	case PCI_DEVICE_ID_SAT:
+ 		m = (typeof(m)){"LPe12000", "PCIe", "Fibre Channel Adapter"};
+ 		break;
+@@ -2439,54 +2349,17 @@
+ 	case PCI_DEVICE_ID_SAT_S:
+ 		m = (typeof(m)){"LPe12000-S", "PCIe", "Fibre Channel Adapter"};
+ 		break;
+-	case PCI_DEVICE_ID_HORNET:
+-		m = (typeof(m)){"LP21000", "PCIe",
+-				"Obsolete, Unsupported FCoE Adapter"};
+-		GE = 1;
+-		break;
+-	case PCI_DEVICE_ID_PROTEUS_VF:
+-		m = (typeof(m)){"LPev12000", "PCIe IOV",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_PROTEUS_PF:
+-		m = (typeof(m)){"LPev12000", "PCIe IOV",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_PROTEUS_S:
+-		m = (typeof(m)){"LPemv12002-S", "PCIe IOV",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+-	case PCI_DEVICE_ID_TIGERSHARK:
+-		oneConnect = 1;
+-		m = (typeof(m)){"OCe10100", "PCIe", "FCoE"};
+-		break;
+-	case PCI_DEVICE_ID_TOMCAT:
+-		oneConnect = 1;
+-		m = (typeof(m)){"OCe11100", "PCIe", "FCoE"};
+-		break;
+ 	case PCI_DEVICE_ID_FALCON:
+ 		m = (typeof(m)){"LPSe12002-ML1-E", "PCIe",
+ 				"EmulexSecure Fibre"};
+ 		break;
+-	case PCI_DEVICE_ID_BALIUS:
+-		m = (typeof(m)){"LPVe12002", "PCIe Shared I/O",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+ 	case PCI_DEVICE_ID_LANCER_FC:
+ 		m = (typeof(m)){"LPe16000", "PCIe", "Fibre Channel Adapter"};
+ 		break;
+-	case PCI_DEVICE_ID_LANCER_FC_VF:
+-		m = (typeof(m)){"LPe16000", "PCIe",
+-				"Obsolete, Unsupported Fibre Channel Adapter"};
+-		break;
+ 	case PCI_DEVICE_ID_LANCER_FCOE:
+ 		oneConnect = 1;
+-		m = (typeof(m)){"OCe15100", "PCIe", "FCoE"};
+-		break;
+-	case PCI_DEVICE_ID_LANCER_FCOE_VF:
+-		oneConnect = 1;
+ 		m = (typeof(m)){"OCe15100", "PCIe",
+-				"Obsolete, Unsupported FCoE"};
++				"Obsolete, Unsupported FCoE Adapter"};
+ 		break;
+ 	case PCI_DEVICE_ID_LANCER_G6_FC:
+ 		m = (typeof(m)){"LPe32000", "PCIe", "Fibre Channel Adapter"};
+@@ -5715,13 +5588,6 @@ static void lpfc_log_intr_mode(struct lpfc_hba *phba, uint32_t intr_mode)
+ 	if (rc)
+ 		return -ENODEV;
+ 
+-	if (phba->pcidev->device == PCI_DEVICE_ID_HORNET) {
+-		phba->menlo_flag |= HBA_MENLO_SUPPORT;
+-		/* check for menlo minimum sg count */
+-		if (phba->cfg_sg_seg_cnt < LPFC_DEFAULT_MENLO_SG_SEG_CNT)
+-			phba->cfg_sg_seg_cnt = LPFC_DEFAULT_MENLO_SG_SEG_CNT;
+-	}
+-
+ 	if (!phba->sli.sli3_ring)
+ 		phba->sli.sli3_ring = kcalloc(LPFC_SLI3_MAX_RING,
+ 					      sizeof(struct lpfc_sli_ring),
+-- 
+1.8.3.1
+

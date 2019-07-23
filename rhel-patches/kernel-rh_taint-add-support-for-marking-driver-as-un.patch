@@ -1,0 +1,67 @@
+From d4df415e3adf91c123568e22523718b26c9e4d14 Mon Sep 17 00:00:00 2001
+From: Jonathan Toppins <jtoppins@redhat.com>
+Date: Mon, 23 Apr 2018 22:50:02 -0400
+Subject: [PATCH] [kernel] rh_taint: add support for marking driver as
+ unsupported
+
+Message-id: <f42d35b07bd02f34b14a6341a219c80b21a8aff9.1524523802.git.jtoppins@redhat.com>
+Patchwork-id: 211020
+O-Subject: [RHEL8.0] rh_taint: add support for marking driver as unsupported
+Bugzilla: 1565704
+RH-Acked-by: Jiri Benc <jbenc@redhat.com>
+RH-Acked-by: David Arcari <darcari@redhat.com>
+
+In some cases a driver needs to be enabled by Red Hat to support internal
+testing but the driver is not intended to be supported on customer hardware.
+This adds a function "make_driver_unsupported()" to facilitate such
+situations. The function will print a kernel log message.
+
+Upstream Status: RHEL Only
+Bugzilla: 1565704
+Build Info: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=15873552
+Tested: compile only
+
+Signed-off-by: Jonathan Toppins <jtoppins@redhat.com>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ include/linux/kernel.h |  1 +
+ kernel/rh_taint.c      | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index df2bfb8..bc2f24b 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -956,5 +956,6 @@ struct module;
+ void mark_hardware_unsupported(const char *msg);
+ void mark_hardware_deprecated(const char *msg);
+ void mark_tech_preview(const char *msg, struct module *mod);
++void mark_driver_unsupported(const char *name);
+ 
+ #endif
+diff --git a/kernel/rh_taint.c b/kernel/rh_taint.c
+index 59821f8..5db9774 100644
+--- a/kernel/rh_taint.c
++++ b/kernel/rh_taint.c
+@@ -72,3 +72,18 @@ void mark_tech_preview(const char *msg, struct module *mod)
+ 		mod->taints |= (1U << TAINT_AUX);
+ }
+ EXPORT_SYMBOL(mark_tech_preview);
++
++/**
++ * mark_driver_unsupported - drivers that we know we don't want to support
++ * @name: the name of the driver
++ *
++ * In some cases Red Hat has chosen to build a driver for internal QE
++ * use. Use this function to mark those drivers as unsupported for
++ * customers.
++ */
++void mark_driver_unsupported(const char *name)
++{
++	pr_crit("Warning: %s - This driver has not undergone sufficient testing by Red Hat for this release and therefore cannot be used in production systems.\n",
++	        name ? name : "kernel");
++}
++EXPORT_SYMBOL(mark_driver_unsupported);
+-- 
+2.9.0
+

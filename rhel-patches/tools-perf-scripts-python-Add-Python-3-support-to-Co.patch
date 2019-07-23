@@ -1,0 +1,94 @@
+From ffae340f2f8ac1d0b61ed34f1b4b93b3a36f935d Mon Sep 17 00:00:00 2001
+From: "Herton R. Krzesinski" <herton@redhat.com>
+Date: Wed, 27 Jun 2018 17:39:07 -0400
+Subject: [PATCH] [tools] perf scripts python: Add Python 3 support to Core.py
+
+Message-id: <20180627173914.14243-3-herton@redhat.com>
+Patchwork-id: 223083
+O-Subject: [RHEL8 PATCH 2/9] perf scripts python: Add Python 3 support to Core.py
+Bugzilla: 1561505
+RH-Acked-by: Rafael Aquini <aquini@redhat.com>
+RH-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+RH-Acked-by: Prarit Bhargava <prarit@redhat.com>
+
+From: Jeremy Cline <jeremy@jcline.org>
+
+Support both Python 2 and Python 3 in Core.py. This should have no
+functional change.
+
+Signed-off-by: Jeremy Cline <jeremy@jcline.org>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ .../python/Perf-Trace-Util/lib/Perf/Trace/Core.py  | 40 +++++++++-------------
+ 1 file changed, 17 insertions(+), 23 deletions(-)
+
+diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Core.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Core.py
+index 38dfb72..54ace2f 100644
+--- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Core.py
++++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Core.py
+@@ -31,10 +31,8 @@ def flag_str(event_name, field_name, value):
+     string = ""
+ 
+     if flag_fields[event_name][field_name]:
+-	print_delim = 0
+-        keys = flag_fields[event_name][field_name]['values'].keys()
+-        keys.sort()
+-        for idx in keys:
++        print_delim = 0
++        for idx in sorted(flag_fields[event_name][field_name]['values']):
+             if not value and not idx:
+                 string += flag_fields[event_name][field_name]['values'][idx]
+                 break
+@@ -51,14 +49,12 @@ def symbol_str(event_name, field_name, value):
+     string = ""
+ 
+     if symbolic_fields[event_name][field_name]:
+-        keys = symbolic_fields[event_name][field_name]['values'].keys()
+-        keys.sort()
+-        for idx in keys:
++        for idx in sorted(symbolic_fields[event_name][field_name]['values']):
+             if not value and not idx:
+-		string = symbolic_fields[event_name][field_name]['values'][idx]
++                string = symbolic_fields[event_name][field_name]['values'][idx]
+                 break
+-	    if (value == idx):
+-		string = symbolic_fields[event_name][field_name]['values'][idx]
++            if (value == idx):
++                string = symbolic_fields[event_name][field_name]['values'][idx]
+                 break
+ 
+     return string
+@@ -74,19 +70,17 @@ def trace_flag_str(value):
+     string = ""
+     print_delim = 0
+ 
+-    keys = trace_flags.keys()
+-
+-    for idx in keys:
+-	if not value and not idx:
+-	    string += "NONE"
+-	    break
+-
+-	if idx and (value & idx) == idx:
+-	    if print_delim:
+-		string += " | ";
+-	    string += trace_flags[idx]
+-	    print_delim = 1
+-	    value &= ~idx
++    for idx in trace_flags:
++        if not value and not idx:
++            string += "NONE"
++            break
++
++        if idx and (value & idx) == idx:
++            if print_delim:
++                string += " | ";
++            string += trace_flags[idx]
++            print_delim = 1
++            value &= ~idx
+ 
+     return string
+ 
+-- 
+2.9.0
+

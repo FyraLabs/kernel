@@ -1,0 +1,55 @@
+From 84d46b64adcef2b8e46476bf7349c695623a649b Mon Sep 17 00:00:00 2001
+From: Eugene Syromiatnikov <esyr@redhat.com>
+Date: Thu, 14 Jun 2018 16:36:11 -0400
+Subject: [PATCH] [kernel] bpf: set default values for bpf_jit_harden and
+ bpf_jit_kallsyms
+
+Message-id: <32d6b4ba539b10013b196f56d4c930cb125d167e.1528991396.git.esyr@redhat.com>
+Patchwork-id: 8253
+O-Subject: [kernel team] [RHEL8 PATCH v4 4/5] [bpf] bpf: set default values for bpf_jit_harden and bpf_jit_kallsyms
+Bugzilla: 1569061
+RH-Acked-by: Jiri Benc <jbenc@redhat.com>
+RH-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+
+Set default values for net.bpf_jit_harden and net.bpf_jit_kallsyms
+sysctls:
+ - net.bpf_jit_harden is set to 1: it's a compromise between the fact that
+   by default we do not have unprivileged BPF enabled (and there's little
+   reason for enforcing constant blinding for root programs by default,
+   considering performance tradeoffs), and providing some sane default for
+   users that still want unprivileged BPF (and enable it via the boot
+   option),
+ - net.bpf_jit_kallsyms is set to 1, as the actual kallsyms addresses are
+   available only to root, and there are no apparent reasons against
+   enabling it.
+
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1569061
+Brew: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=16716594
+Upstream: RHEL only. The patch for configuring boot-time value for these
+          options has been proposed [1] and rejected upstream.
+
+[1] https://lkml.org/lkml/2018/5/23/449
+
+Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ kernel/bpf/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+Index: kernel-ark/kernel/bpf/core.c
+===================================================================
+--- kernel-ark.orig/kernel/bpf/core.c
++++ kernel-ark/kernel/bpf/core.c
+@@ -369,8 +369,10 @@ void bpf_prog_kallsyms_del_all(struct bp
+ 
+ /* All BPF JIT sysctl knobs here. */
+ int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
+-int bpf_jit_harden   __read_mostly;
+-int bpf_jit_kallsyms __read_mostly;
++/* RHEL-only: set it to 1 by default */
++int bpf_jit_harden   __read_mostly = 1;
++/* RHEL-only: set it to 1 by default */
++int bpf_jit_kallsyms __read_mostly = 1;
+ int bpf_jit_limit    __read_mostly = BPF_JIT_LIMIT_DEFAULT;
+ 
+ static __always_inline void

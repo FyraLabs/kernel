@@ -1,0 +1,45 @@
+From 2a13bd91115d813d180f9ff5fedfc84f315874b8 Mon Sep 17 00:00:00 2001
+From: Maurizio Lombardi <mlombard@redhat.com>
+Date: Fri, 6 Jul 2018 15:28:47 -0400
+Subject: [PATCH] [scsi] be2iscsi: remove BE3 family support
+
+Message-id: <1530890927-5792-1-git-send-email-mlombard@redhat.com>
+Patchwork-id: 223576
+O-Subject: [RHEL8 e-stor PATCH] be2iscsi: remove BE3 family support
+Bugzilla: 1598366
+RH-Acked-by: Tomas Henzl <thenzl@redhat.com>
+RH-Acked-by: Chris Leech <cleech@redhat.com>
+
+BZ: https://bugzilla.redhat.com/show_bug.cgi?id=1598366
+Brew: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=16996775
+Upstream: RHEL-only, they tried to mark BE3 as unsupported
+          in upstream kernel but the patch has been rejected.
+          See: https://marc.info/?l=linux-scsi&m=152835991600881&w=2
+
+Broadcom doesn't want to provide support for the BE3 device family
+in RHEL8.
+
+This patch removes the BE3's PCI-IDs.
+
+Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ drivers/scsi/be2iscsi/be_main.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
+index 8c3831d..340d980 100644
+--- a/drivers/scsi/be2iscsi/be_main.c
++++ b/drivers/scsi/be2iscsi/be_main.c
+@@ -365,8 +365,6 @@ static int beiscsi_eh_device_reset(struct scsi_cmnd *sc)
+ 
+ /*------------------- PCI Driver operations and data ----------------- */
+ static const struct pci_device_id beiscsi_pci_id_table[] = {
+-	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
+-	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID3) },
+ 	{ PCI_DEVICE(ELX_VENDOR_ID, OC_SKH_ID1) },
+ 	{ 0 }
+ };
+-- 
+2.9.0
+

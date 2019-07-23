@@ -1,0 +1,187 @@
+From fdef4fdfbcd5e68db6a748d7568637603dba74a2 Mon Sep 17 00:00:00 2001
+From: David Arcari <darcari@redhat.com>
+Date: Thu, 3 May 2018 02:09:57 -0400
+Subject: [PATCH] [x86] add rh_check_supported
+
+Message-id: <1525313397-75200-1-git-send-email-darcari@redhat.com>
+Patchwork-id: 212189
+O-Subject: [RHEL8.0 BZ 1565717 v2] x86: add rh_check_supported
+Bugzilla: 1565717
+RH-Acked-by: Steve Best <sbest@redhat.com>
+RH-Acked-by: Mikulas Patocka <mpatocka@redhat.com>
+
+Description:
+
+Add code to verify that the booted x86 processor is supported by
+Red Hat.  In cases where the processor is not supported a critical
+message is logged.
+
+Initially the supported set of processors for RHEL8 remains the same
+as RHEL7.
+
+Bugzilla: http://bugzilla.redhat.com/1565717
+Brew: https://brewweb.devel.redhat.com/taskinfo?taskID=15966242
+
+Test: Booted brew build on supported (Haswell) and unsupported processor (CNL)
+      and achieved desired results.
+
+Upstream: RHEL Only
+
+Cc: David Arcari <darcari@redhat.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ arch/x86/kernel/cpu/common.c |   1 +
+ arch/x86/kernel/setup.c      | 108 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 109 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 44c4ef3..d8869a67 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1081,6 +1081,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 		cpu_detect(c);
+ 		get_cpu_vendor(c);
+ 		get_cpu_cap(c);
++		get_model_name(c); /* RHEL8: get model name for unsupported check */
+ 		get_cpu_address_sizes(c);
+ 		setup_force_cpu_cap(X86_FEATURE_CPUID);
+ 
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index b4866ba..190b0b3 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -117,6 +117,7 @@
+ #include <asm/microcode.h>
+ #include <asm/kaslr.h>
+ #include <asm/unwind.h>
++#include <asm/intel-family.h>
+ 
+ /*
+  * max_low_pfn_mapped: highest direct mapped pfn under 4GB
+@@ -786,6 +787,111 @@ static void __init trim_low_memory_range(void)
+ 	memblock_reserve(0, ALIGN(reserve_low, PAGE_SIZE));
+ }
+ 	
++static bool valid_amd_processor(__u8 family, const char *model_id)
++{
++	bool valid;
++
++	if (family < 0x17)
++		valid = true;
++	else
++		valid = strstr(model_id, "AMD EPYC 7");
++
++	return valid;
++}
++
++static bool valid_intel_processor(__u8 model, __u8 stepping)
++{
++	bool valid;
++
++	switch(model) {
++	case INTEL_FAM6_KABYLAKE_DESKTOP:
++	case INTEL_FAM6_KABYLAKE_MOBILE:
++	case INTEL_FAM6_XEON_PHI_KNM:
++	case INTEL_FAM6_ATOM_GEMINI_LAKE:
++	case INTEL_FAM6_ATOM_DENVERTON:
++	case INTEL_FAM6_XEON_PHI_KNL:
++	case INTEL_FAM6_BROADWELL_XEON_D:
++	case INTEL_FAM6_BROADWELL_X:
++	case INTEL_FAM6_ATOM_SILVERMONT2:
++	case INTEL_FAM6_BROADWELL_GT3E:
++	case INTEL_FAM6_HASWELL_GT3E:
++	case INTEL_FAM6_HASWELL_ULT:
++		valid = true;
++		break;
++
++	case INTEL_FAM6_SKYLAKE_MOBILE:
++	case INTEL_FAM6_SKYLAKE_DESKTOP:
++	case INTEL_FAM6_SKYLAKE_X:
++		/* stepping > 4 is Cascade Lake and is not supported */
++		valid = (boot_cpu_data.x86_stepping <= 4);
++		break;
++
++	default:
++		valid = (boot_cpu_data.x86_model <= INTEL_FAM6_HASWELL_X);
++		break;
++	}
++
++	return valid;
++}
++
++static void rh_check_supported(void)
++{
++	bool guest;
++
++	guest = (x86_hyper_type != X86_HYPER_NATIVE || boot_cpu_has(X86_FEATURE_HYPERVISOR));
++
++	/* RHEL supports single cpu on guests only */
++	if (((boot_cpu_data.x86_max_cores * smp_num_siblings) == 1) &&
++	    !guest && is_kdump_kernel()) {
++		pr_crit("Detected single cpu native boot.\n");
++		pr_crit("Important:  In Red Hat Enterprise Linux 8, single threaded, single CPU 64-bit physical systems are unsupported by Red Hat. Please contact your Red Hat support representative for a list of certified and supported systems.");
++	}
++
++	/* RHEL only supports Intel and AMD processors */
++	if ((boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) &&
++	    (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)) {
++		pr_crit("Detected processor %s %s\n",
++			boot_cpu_data.x86_vendor_id,
++			boot_cpu_data.x86_model_id);
++		mark_hardware_unsupported("Processor");
++	}
++
++	/* If the RHEL kernel does not support this hardware, the kernel will
++	 * attempt to boot, but no support is provided for this hardware */
++
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++		if (!valid_amd_processor(boot_cpu_data.x86,
++					 boot_cpu_data.x86_model_id)) {
++			pr_crit("Detected CPU family %xh model %d\n",
++				boot_cpu_data.x86,
++				boot_cpu_data.x86_model);
++			mark_hardware_unsupported("AMD Processor");
++		}
++	}
++
++	/* Intel CPU family 6, model greater than 60 */
++	if ((boot_cpu_data.x86_vendor == X86_VENDOR_INTEL) &&
++	    ((boot_cpu_data.x86 == 6))) {
++		if (!valid_intel_processor(boot_cpu_data.x86_model,
++					   boot_cpu_data.x86_stepping)) {
++			pr_crit("Detected CPU family %d model %d stepping %d\n",
++				boot_cpu_data.x86,
++				boot_cpu_data.x86_model,
++				boot_cpu_data.x86_stepping);
++			mark_hardware_unsupported("Intel Processor");
++		}
++	}
++
++	/*
++	 * Due to the complexity of x86 lapic & ioapic enumeration, and PCI IRQ
++	 * routing, ACPI is required for x86.  acpi=off is a valid debug kernel
++	 * parameter, so just print out a loud warning in case something
++	 * goes wrong (which is most of the time).
++	 */
++	if (acpi_disabled && !guest)
++		pr_crit("ACPI has been disabled or is not available on this hardware.  This may result in a single cpu boot, incorrect PCI IRQ routing, or boot failure.\n");
++}
++
+ /*
+  * Dump out kernel offset information on panic.
+  */
+@@ -1278,6 +1384,8 @@ void __init setup_arch(char **cmdline_p)
+ 		efi_apply_memmap_quirks();
+ #endif
+ 
++	rh_check_supported();
++
+ 	unwind_init();
+ }
+ 
+-- 
+1.8.3.1
+

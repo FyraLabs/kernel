@@ -1,0 +1,104 @@
+From patchwork Fri Feb 22 13:51:34 2019
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Ritesh Harjani <riteshh@codeaurora.org>
+X-Patchwork-Id: 10826031
+Return-Path: <linux-mmc-owner@kernel.org>
+Received: from mail.wl.linuxfoundation.org (pdx-wl-mail.web.codeaurora.org
+ [172.30.200.125])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 7D0F01805
+	for <patchwork-linux-mmc@patchwork.kernel.org>;
+ Fri, 22 Feb 2019 13:51:48 +0000 (UTC)
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+	by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 6C19D32739
+	for <patchwork-linux-mmc@patchwork.kernel.org>;
+ Fri, 22 Feb 2019 13:51:48 +0000 (UTC)
+Received: by mail.wl.linuxfoundation.org (Postfix, from userid 486)
+	id 604FC32741; Fri, 22 Feb 2019 13:51:48 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
+	pdx-wl-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.7 required=2.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,RCVD_IN_DNSWL_HI autolearn=ham version=3.3.1
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 0E18D32739
+	for <patchwork-linux-mmc@patchwork.kernel.org>;
+ Fri, 22 Feb 2019 13:51:48 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726275AbfBVNvr (ORCPT
+        <rfc822;patchwork-linux-mmc@patchwork.kernel.org>);
+        Fri, 22 Feb 2019 08:51:47 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:42666 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbfBVNvr (ORCPT
+        <rfc822;linux-mmc@vger.kernel.org>); Fri, 22 Feb 2019 08:51:47 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id ED4576079B; Fri, 22 Feb 2019 13:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550843506;
+        bh=Cf0KkFTkkyz1aFLfqqk3IS/Gvq5B9EQ1zLxq9aqTTso=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=B6eLfiAJWpNqi358aTHkWQ4YdNrMrEZFzwYcJxHId3XBH+e5yY5K0U0PUN6S8VuOz
+         2ADjyq6i9aBOIHdxS2IZD9ltivj6qaZRUD2QZIraHwOxM2cgEVWITd9gFfKM/l1DGl
+         kjAaP0MHLU2cOUTND4jhUn7q3oEtFchp+HKp3HyY=
+Received: from rharjani-linux.qualcomm.com
+ (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: riteshh@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F362B6079B;
+        Fri, 22 Feb 2019 13:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550843506;
+        bh=Cf0KkFTkkyz1aFLfqqk3IS/Gvq5B9EQ1zLxq9aqTTso=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=B6eLfiAJWpNqi358aTHkWQ4YdNrMrEZFzwYcJxHId3XBH+e5yY5K0U0PUN6S8VuOz
+         2ADjyq6i9aBOIHdxS2IZD9ltivj6qaZRUD2QZIraHwOxM2cgEVWITd9gFfKM/l1DGl
+         kjAaP0MHLU2cOUTND4jhUn7q3oEtFchp+HKp3HyY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F362B6079B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org;
+ dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org;
+ spf=none smtp.mailfrom=riteshh@codeaurora.org
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, labbott@redhat.com
+Cc: linux-mmc@vger.kernel.org, asutoshd@codeaurora.org,
+        adrian.hunter@intel.com, linus.walleij@linaro.org,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH] mmc: core: Fix NULL ptr crash from mmc_should_fail_request
+Date: Fri, 22 Feb 2019 19:21:34 +0530
+Message-Id: <1550843494-9457-1-git-send-email-riteshh@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <5e81d594-15bb-81f5-75a0-a147fd5cfc18@codeaurora.org>
+References: <5e81d594-15bb-81f5-75a0-a147fd5cfc18@codeaurora.org>
+Sender: linux-mmc-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-mmc.vger.kernel.org>
+X-Mailing-List: linux-mmc@vger.kernel.org
+X-Virus-Scanned: ClamAV using ClamSMTP
+
+In case of CQHCI, mrq->cmd may be NULL for data requests (non DCMD).
+In such case mmc_should_fail_request is directly dereferencing
+mrq->cmd while cmd is NULL.
+Fix this by checking for mrq->cmd pointer.
+
+Fixes: 72a5af554df8 ("mmc: core: Add support for handling CQE requests")
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ drivers/mmc/core/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index de0f1a1..4a66087 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -95,7 +95,7 @@ static void mmc_should_fail_request(struct mmc_host *host,
+ 	if (!data)
+ 		return;
+ 
+-	if (cmd->error || data->error ||
++	if ((cmd && cmd->error) || data->error ||
+ 	    !should_fail(&host->fail_mmc_request, data->blksz * data->blocks))
+ 		return;
+ 

@@ -1,0 +1,49 @@
+From ba61fa7fd7a9ca34e5c217b8039f0e22b4b87bd9 Mon Sep 17 00:00:00 2001
+From: David Arcari <darcari@redhat.com>
+Date: Mon, 6 Aug 2018 18:31:17 -0400
+Subject: [PATCH] [x86] mark intel knights landing and knights mill unsupported
+
+Message-id: <1533580277-126323-1-git-send-email-darcari@redhat.com>
+Patchwork-id: 226187
+O-Subject: [RHEL8.0 BZ 1610493] mark intel knights landing and knights mill unsupported
+Bugzilla: 1610493
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+RH-Acked-by: Prarit Bhargava <prarit@redhat.com>
+RH-Acked-by: Steve Best <sbest@redhat.com>
+
+Bugzilla: http://bugzilla.redhat.com/1610493
+Build Info: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=17625348
+
+Tested: verified on KNL/KNM system
+Upstream Status: RHEL Only
+Depends: http://bugzilla.redhat.com/1609604
+
+We are marking KNL/KNM processors as unsupported. No code is being removed;
+however, the older processors are not supported and as such are not
+candidates for certification.
+
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: David Arcari <darcari@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ arch/x86/kernel/setup.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 5895172..135c499 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -828,9 +828,6 @@ static bool valid_intel_processor(__u8 family, __u8 model, __u8 stepping)
+ 	case INTEL_FAM6_HASWELL_GT3E:
+ 	case INTEL_FAM6_HASWELL_ULT:
+ 	case INTEL_FAM6_HASWELL_X:
+-
+-	case INTEL_FAM6_XEON_PHI_KNM:
+-	case INTEL_FAM6_XEON_PHI_KNL:
+ 		valid = true;
+ 		break;
+ 
+-- 
+2.9.0
+

@@ -1,0 +1,67 @@
+From 5d946af80ab3f714198b3a116bb0df6c9c881bc8 Mon Sep 17 00:00:00 2001
+From: David Arcari <darcari@redhat.com>
+Date: Wed, 1 Aug 2018 12:13:49 -0400
+Subject: [PATCH] [x86] mark whiskey-lake processor supported
+
+Message-id: <1533125629-12870-1-git-send-email-darcari@redhat.com>
+Patchwork-id: 225809
+O-Subject: [ BZ 1609604] mark whiskey-lake processor supported
+Bugzilla: 1609604
+RH-Acked-by: Steve Best <sbest@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+RH-Acked-by: Prarit Bhargava <prarit@redhat.com>
+
+Bugzilla: http://bugzilla.redhat.com/1609604
+Build Info: https://brewweb.devel.redhat.com/taskinfo?taskID=17474338
+Upstream Status: RHEL Only
+Tested: Successful excecution of platform-test suite.
+
+Whiskey Lake is cpu model 142 with stepping 11.  Stepping > 11 for cpu model
+142 is not supported.
+
+For model 158, the highest supported stepping is 10.
+
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: David Arcari <darcari@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ arch/x86/kernel/setup.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index a3750c1..5895172 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -829,19 +829,24 @@ static bool valid_intel_processor(__u8 family, __u8 model, __u8 stepping)
+ 	case INTEL_FAM6_HASWELL_ULT:
+ 	case INTEL_FAM6_HASWELL_X:
+ 
+-	case INTEL_FAM6_KABYLAKE_DESKTOP:
+-	case INTEL_FAM6_KABYLAKE_MOBILE:
+-
+ 	case INTEL_FAM6_XEON_PHI_KNM:
+ 	case INTEL_FAM6_XEON_PHI_KNL:
+ 		valid = true;
+ 		break;
+ 
++	case INTEL_FAM6_KABYLAKE_DESKTOP:
++		valid = (stepping <= 10);
++		break;
++
++	case INTEL_FAM6_KABYLAKE_MOBILE:
++		valid = (stepping <= 11);
++		break;
++
+ 	case INTEL_FAM6_SKYLAKE_MOBILE:
+ 	case INTEL_FAM6_SKYLAKE_DESKTOP:
+ 	case INTEL_FAM6_SKYLAKE_X:
+ 		/* stepping > 4 is Cascade Lake and is not supported */
+-		valid = (boot_cpu_data.x86_stepping <= 4);
++		valid = (stepping <= 4);
+ 		break;
+ 
+ 	default:
+-- 
+2.9.0
+

@@ -1,0 +1,55 @@
+From d70603ac7527970d7ec05724e3ef9a8941a8e724 Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Tue, 3 Apr 2018 14:30:30 -0400
+Subject: [PATCH] [scsi] megaraid_sas: remove deprecated pci-ids
+
+Message-id: <20180403143030.4971-2-thenzl@redhat.com>
+Patchwork-id: 7432
+O-Subject: [kernel team] [RHEL8 e-stor PATCH] megaraid_sas: remove deprecated pci-ids
+Bugzilla: 1509329
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Chris Leech <cleech@redhat.com>
+
+bz#1509329
+brew - task_15594743
+
+RH specific - remove EOL devices from the pci-id table
+(devices to remove were selected by Broadcom)
+
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ drivers/scsi/megaraid/megaraid_sas_base.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
+
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index dde0798..07910d8 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -127,24 +127,6 @@ static int megasas_get_target_prop(struct megasas_instance *instance,
+  */
+ static struct pci_device_id megasas_pci_table[] = {
+ 
+-	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1064R)},
+-	/* xscale IOP */
+-	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1078R)},
+-	/* ppc IOP */
+-	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1078DE)},
+-	/* ppc IOP */
+-	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1078GEN2)},
+-	/* gen2*/
+-	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS0079GEN2)},
+-	/* gen2*/
+-	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS0073SKINNY)},
+-	/* skinny*/
+-	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS0071SKINNY)},
+-	/* skinny*/
+-	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_VERDE_ZCR)},
+-	/* xscale IOP, vega */
+-	{PCI_DEVICE(PCI_VENDOR_ID_DELL, PCI_DEVICE_ID_DELL_PERC5)},
+-	/* xscale IOP */
+ 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_FUSION)},
+ 	/* Fusion */
+ 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_PLASMA)},
+-- 
+2.9.0
+

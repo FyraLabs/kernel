@@ -1,0 +1,64 @@
+From 84be245e5761c4cceb7976e5a8ad9d11083742f5 Mon Sep 17 00:00:00 2001
+From: "Herton R. Krzesinski" <herton@redhat.com>
+Date: Wed, 27 Jun 2018 17:39:09 -0400
+Subject: [PATCH] [tools] perf scripts python: Add Python 3 support to Util.py
+
+Message-id: <20180627173914.14243-5-herton@redhat.com>
+Patchwork-id: 223084
+O-Subject: [RHEL8 PATCH 4/9] perf scripts python: Add Python 3 support to Util.py
+Bugzilla: 1561505
+RH-Acked-by: Rafael Aquini <aquini@redhat.com>
+RH-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+RH-Acked-by: Prarit Bhargava <prarit@redhat.com>
+
+From: Jeremy Cline <jeremy@jcline.org>
+
+Support both Python 2 and Python 3 in Util.py. The dict class no longer
+has a ``has_key`` method and print is now a function rather than a
+statement. This should have no functional change.
+
+Signed-off-by: Jeremy Cline <jeremy@jcline.org>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ .../scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py     | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
+index f6c8496..7384dcb 100644
+--- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
++++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
+@@ -5,6 +5,7 @@
+ # This software may be distributed under the terms of the GNU General
+ # Public License ("GPL") version 2 as published by the Free Software
+ # Foundation.
++from __future__ import print_function
+ 
+ import errno, os
+ 
+@@ -33,7 +34,7 @@ def nsecs_str(nsecs):
+     return str
+ 
+ def add_stats(dict, key, value):
+-	if not dict.has_key(key):
++	if key not in dict:
+ 		dict[key] = (value, value, value, 1)
+ 	else:
+ 		min, max, avg, count = dict[key]
+@@ -72,10 +73,10 @@ try:
+ except:
+ 	if not audit_package_warned:
+ 		audit_package_warned = True
+-		print "Install the audit-libs-python package to get syscall names.\n" \
+-                    "For example:\n  # apt-get install python-audit (Ubuntu)" \
+-                    "\n  # yum install audit-libs-python (Fedora)" \
+-                    "\n  etc.\n"
++		print("Install the audit-libs-python package to get syscall names.\n"
++                    "For example:\n  # apt-get install python-audit (Ubuntu)"
++                    "\n  # yum install audit-libs-python (Fedora)"
++                    "\n  etc.\n")
+ 
+ def syscall_name(id):
+ 	try:
+-- 
+2.9.0
+

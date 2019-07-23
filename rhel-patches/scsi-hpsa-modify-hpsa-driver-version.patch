@@ -1,0 +1,53 @@
+From cd2cd91e88642e9c358faf9b423b6f3edf8c5a1b Mon Sep 17 00:00:00 2001
+From: Laura Abbott <labbott@redhat.com>
+Date: Mon, 20 May 2019 22:19:30 -0400
+Subject: [PATCH] [scsi] hpsa: modify hpsa driver version
+
+Message-id: <20190520221930.19040-1-labbott@redhat.com>
+Patchwork-id: 259214
+O-Subject: [ARK INTERNAL PATCH] [scsi] hpsa: modify hpsa driver version
+Bugzilla:
+RH-Acked-by: Rob Evers <revers@redhat.com>
+RH-Acked-by: Don Zickus <dzickus@redhat.com>
+
+Rebase for the new version bump with 5.2-rc1
+
+	Message-id: <1524750809-43700-3-git-send-email-jszczype@redhat.com>
+	Patchwork-id: 211574
+	O-Subject: [RHEL8 e-stor PATCH 2/2] hpsa: modify hpsa driver version
+	Bugzilla: 1471185
+	RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+	RH-Acked-by: Tomas Henzl <thenzl@redhat.com>
+
+	Modify driver version to reflect changes to driver. The old
+	PCI IDs for smartarrays that had used cciss driver were removed.
+	Add the -RH1 to reflect that.
+
+	Acked-by: Don Brace <don.brace@microsemi.com>
+	Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ drivers/scsi/hpsa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ drivers/scsi/hpsa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 1bef1da273c2..c2b6191ce24e 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -60,7 +60,7 @@
+  * HPSA_DRIVER_VERSION must be 3 byte values (0-255) separated by '.'
+  * with an optional trailing '-' followed by a byte value (0-255).
+  */
+-#define HPSA_DRIVER_VERSION "3.4.20-160"
++#define HPSA_DRIVER_VERSION "3.4.20-160-RH1"
+ #define DRIVER_NAME "HP HPSA Driver (v " HPSA_DRIVER_VERSION ")"
+ #define HPSA "hpsa"
+ 
+-- 
+2.21.0
+

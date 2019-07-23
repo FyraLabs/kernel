@@ -1,0 +1,61 @@
+# Ye olde patches
+
+lib-cpumask-Make-CPUMASK_OFFSTACK-usable-without-deb.patch
+input-kill-stupid-messages.patch
+die-floppy-die.patch
+no-pcspkr-modalias.patch
+Kbuild-Add-an-option-to-enable-GCC-VTA.patch
+lis3-improve-handling-of-null-rate.patch
+scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
+namespaces-no-expert.patch
+ath9k-rx-dma-stop-check.patch
+Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
+
+disable-i8042-check-on-apple-mac.patch
+drm-i915-hush-check-crtc-state.patch
+
+# Secureboot
+
+efi-lockdown.patch
+
+# bz 1497559 - Make kernel MODSIGN code not error on missing variables
+0001-Make-get_cert_list-not-complain-about-cert-lists-tha.patch
+0002-Add-efi_status_to_str-and-rework-efi_status_to_err.patch
+0003-Make-get_cert_list-use-efi_status_to_str-to-print-er.patch
+
+efi-secureboot.patch
+
+# ARM patches
+
+# 300 - ARM patches
+arm64-Add-option-of-13-for-FORCE_MAX_ZONEORDER.patch
+# http://www.spinics.net/lists/linux-tegra/msg26029.html
+usb-phy-tegra-Add-38.4MHz-clock-table-entry.patch
+# http://patchwork.ozlabs.org/patch/587554/
+ARM-tegra-usb-no-reset.patch
+# rhbz 1574718
+ACPI-irq-Workaround-firmware-issue-on-X-Gene-based-m400.patch
+# https://patchwork.kernel.org/project/linux-mmc/list/?submitter=71861
+arm-sdhci-esdhc-imx-fixes.patch
+arm64-rock960-enable-tsadc.patch
+bcm2835-cpufreq-add-CPU-frequency-control-driver.patch
+watchdog-bcm2835_wdt-Fix-module-autoload.patch
+# Tegra bits
+arm64-tegra-jetson-tx1-fixes.patch
+
+
+input-rmi4-remove-the-need-for-artifical-IRQ.patch
+
+# gcc9 fixes
+0001-s390-jump_label-Correct-asm-contraint.patch
+0001-Drop-that-for-now.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1701096
+# Submitted upstream at https://lkml.org/lkml/2019/4/23/89
+KEYS-Make-use-of-platform-keyring-for-module-signature.patch
+
+# build fix
+v2-powerpc-mm-mark-more-tlb-functions-as-__always_inline.patch
+
+crypto-ghash-fix-unaligned-memory-access-in-ghash_setkey.patch
+

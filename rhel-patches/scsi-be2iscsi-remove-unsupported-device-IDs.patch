@@ -1,0 +1,44 @@
+From fccda4e2cedeeed2a61711f37b237f6265a37c0d Mon Sep 17 00:00:00 2001
+From: Chris Leech <cleech@redhat.com>
+Date: Thu, 3 May 2018 19:40:32 -0400
+Subject: [PATCH] [scsi] be2iscsi: remove unsupported device IDs
+
+Message-id: <20180503194032.1461134-1-cleech@redhat.com>
+Patchwork-id: 212454
+O-Subject: [RHEL8 PATCH e-stor] scsi: be2iscsi: remove unsupported device IDs
+Bugzilla: 1574502
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Tom Coughlan <coughlan@redhat.com>
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+
+Bugzilla: 1574502
+Upstream Status: RHEL Specific
+Build Info: brew 15975638
+
+BladeEngine 2 generation devices are deprecated in RHEL 7
+and not supported in RHEL 8
+
+Signed-off-by: Chris Leech <cleech@redhat.com>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ drivers/scsi/be2iscsi/be_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
+index b3cfdd5..a011367 100644
+--- a/drivers/scsi/be2iscsi/be_main.c
++++ b/drivers/scsi/be2iscsi/be_main.c
+@@ -365,10 +365,7 @@ static int beiscsi_eh_device_reset(struct scsi_cmnd *sc)
+ 
+ /*------------------- PCI Driver operations and data ----------------- */
+ static const struct pci_device_id beiscsi_pci_id_table[] = {
+-	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID1) },
+ 	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
+-	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID1) },
+-	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID2) },
+ 	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID3) },
+ 	{ PCI_DEVICE(ELX_VENDOR_ID, OC_SKH_ID1) },
+ 	{ 0 }
+-- 
+2.9.0
+
