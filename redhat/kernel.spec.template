@@ -1658,10 +1658,6 @@ popd
 %endif
 
 %if %{with_selftests}
-# Unfortunately, samples/bpf/Makefile expects that the headers are installed
-# in the source tree. We installed them previously to $RPM_BUILD_ROOT/usr
-# but there's no way to tell the Makefile to take them from there.
-make headers_install
 %{make} -s ARCH=$Arch V=1 samples/bpf/
 pushd tools/testing/selftests
 # We need to install here because we need to call make with ARCH set which
