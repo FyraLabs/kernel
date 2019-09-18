@@ -1,41 +1,53 @@
-From cb30c9b3662dc731a26bff1016e62f239306c34a Mon Sep 17 00:00:00 2001
-From: Himanshu Madhani <hmadhani@redhat.com>
-Date: Thu, 3 May 2018 23:47:50 -0400
+From e3a55d713536ee0a24425af0af39656701e1cbb0 Mon Sep 17 00:00:00 2001
+From: Jeremy Cline <jcline@redhat.com>
+Date: Mon, 8 Jul 2019 19:22:23 +0000
 Subject: [PATCH] [scsi] qla2xxx: Remove PCI IDs of deprecated adapter
 
-Message-id: <20180503234750.33648-1-hmadhani@redhat.com>
-Patchwork-id: 212501
-O-Subject: [RHEL 8 e-stor PATCH v2] qla2xxx: Remove PCI IDs of deprecated adapter
-Bugzilla: 1572233
-RH-Acked-by: Tomas Henzl <thenzl@redhat.com>
-RH-Acked-by: Chris Leech <cleech@redhat.com>
-RH-Acked-by: Tom Coughlan <coughlan@redhat.com>
-
+Message-id: <20190708192223.21890-1-jcline@redhat.com>
+Patchwork-id: 266422
+O-Subject: [ARK INTERNAL PATCH] qla2xxx: Remove PCI IDs of deprecated adapter
 Bugzilla:
-=========
-https://bugzilla.redhat.com/show_bug.cgi?id=1572233
+RH-Acked-by: Don Zickus <dzickus@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
 
-commit none
+Commit ecc89f25e225 ("scsi: qla2xxx: Add Device ID for ISP28XX")
+introduced addition device IDs which broke the patch context.
 
-Brewbuild:
-===========
-https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=15977226
+    Message-id: <20180503234750.33648-1-hmadhani@redhat.com>
+    Patchwork-id: 212501
+    O-Subject: [RHEL 8 e-stor PATCH v2] qla2xxx: Remove PCI IDs of deprecated adapter
+    Bugzilla: 1572233
+    RH-Acked-by: Tomas Henzl <thenzl@redhat.com>
+    RH-Acked-by: Chris Leech <cleech@redhat.com>
+    RH-Acked-by: Tom Coughlan <coughlan@redhat.com>
 
-Tetsing:
-========
-N/A. PCI IDs are removed as part of this patch
+    Bugzilla:
+    =========
+    https://bugzilla.redhat.com/show_bug.cgi?id=1572233
 
-Signed-off-by: Himanshu Madhani <hmadhani@redhat.com>
-Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+    commit none
+
+    Brewbuild:
+    ===========
+    https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=15977226
+
+    Tetsing:
+    ========
+    N/A. PCI IDs are removed as part of this patch
+
+    Signed-off-by: Himanshu Madhani <hmadhani@redhat.com>
+    Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+
+Signed-off-by: Jeremy Cline <jcline@redhat.com>
 ---
- drivers/scsi/qla2xxx/qla_os.c | 120 +-----------------------------------------
+ drivers/scsi/qla2xxx/qla_os.c | 120 +---------------------------------
  1 file changed, 1 insertion(+), 119 deletions(-)
 
 diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 5c5dcca4..be1f6cb 100644
+index d056f5e7cf93..51dd878dd8d0 100644
 --- a/drivers/scsi/qla2xxx/qla_os.c
 +++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -2522,73 +2522,6 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
+@@ -2514,73 +2514,6 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
  {
  	ha->device_type = DT_EXTENDED_IDS;
  	switch (ha->pdev->device) {
@@ -109,7 +121,7 @@ index 5c5dcca4..be1f6cb 100644
  	case PCI_DEVICE_ID_QLOGIC_ISP2532:
  		ha->isp_type |= DT_ISP2532;
  		ha->device_type |= DT_ZIO_SUPPORTED;
-@@ -2596,29 +2529,6 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
+@@ -2588,29 +2521,6 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
  		ha->device_type |= DT_IIDMA;
  		ha->fw_srisc_address = RISC_START_ADDRESS_2400;
  		break;
@@ -139,7 +151,7 @@ index 5c5dcca4..be1f6cb 100644
  	case PCI_DEVICE_ID_QLOGIC_ISP2031:
  		ha->isp_type |= DT_ISP2031;
  		ha->device_type |= DT_ZIO_SUPPORTED;
-@@ -2635,9 +2545,6 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
+@@ -2627,9 +2537,6 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
  		ha->device_type |= DT_T10_PI;
  		ha->fw_srisc_address = RISC_START_ADDRESS_2400;
  		break;
@@ -149,7 +161,7 @@ index 5c5dcca4..be1f6cb 100644
  	case PCI_DEVICE_ID_QLOGIC_ISP2071:
  		ha->isp_type |= DT_ISP2071;
  		ha->device_type |= DT_ZIO_SUPPORTED;
-@@ -2752,18 +2659,9 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+@@ -2763,18 +2670,9 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
  
  	bars = pci_select_bars(pdev, IORESOURCE_MEM | IORESOURCE_IO);
  	sht = &qla2xxx_driver_template;
@@ -168,8 +180,8 @@ index 5c5dcca4..be1f6cb 100644
 -	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP8044 ||
  	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP2071 ||
  	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP2271 ||
- 	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP2261) {
-@@ -6842,25 +6740,9 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
+ 	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP2261 ||
+@@ -7160,25 +7058,9 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
  };
  
  static struct pci_device_id qla2xxx_pci_tbl[] = {
@@ -196,5 +208,5 @@ index 5c5dcca4..be1f6cb 100644
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2271) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2261) },
 -- 
-2.9.0
+2.21.0
 
