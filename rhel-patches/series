@@ -40,6 +40,7 @@ x86-mark-intel-knights-landing-and-knights-mill-unsu.patch
 0001-kernel-rh_kabi-introduce-RH_KABI_EXCLUDE.patch
 0001-kernel-rh_taint-correct-loaddable-module-support-dep.patch
 0001_iommu_iommu_arm-smmu_workaround.patch
+arm-aarch64-Drop-the-EXPERT-setting-from-ARM64_FORCE.patch
 # secureboot
 0001-Make-get_cert_list-not-complain-about-cert-lists-tha.patch
 0002-Add-efi_status_to_str-and-rework-efi_status_to_err.patch
