@@ -1,22 +1,10 @@
-From ec5c9f0548e9a2804040a6ce81490667842c564e Mon Sep 17 00:00:00 2001
-From: Laura Abbott <labbott@redhat.com>
-Date: Wed, 19 Jun 2019 16:28:21 -0400
-Subject: [PATCH 32/35] Make get_cert_list() use efi_status_to_str() to print
+From 3681bcded9d67b672d28476b56c45bc32be8e9b1 Mon Sep 17 00:00:00 2001
+From: Peter Jones <pjones@redhat.com>
+Date: Mon, 2 Oct 2017 18:18:30 -0400
+Subject: [PATCH 3/7] Make get_cert_list() use efi_status_to_str() to print
  error messages.
 
-Message-id: <20190619162824.427-17-labbott@redhat.com>
-Patchwork-id: 265694
-O-Subject: [ARK PATCH 32/35] Make get_cert_list() use efi_status_to_str() to print error messages.
-Bugzilla:
-RH-Acked-by: Jarod Wilson <jarod@redhat.com>
-
-From: Peter Jones <pjones@redhat.com>
-
 Signed-off-by: Peter Jones <pjones@redhat.com>
----
- security/integrity/platform_certs/load_uefi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-Signed-off-by: Laura Abbott <labbott@redhat.com>
 ---
  security/integrity/platform_certs/load_uefi.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)

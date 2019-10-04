@@ -1,15 +1,7 @@
-From 674782bef1b8a242f68eeb1e717c1f70863dc43d Mon Sep 17 00:00:00 2001
-From: Laura Abbott <labbott@redhat.com>
-Date: Wed, 19 Jun 2019 16:28:20 -0400
-Subject: [PATCH 31/35] Add efi_status_to_str() and rework efi_status_to_err().
-
-Message-id: <20190619162824.427-16-labbott@redhat.com>
-Patchwork-id: 265681
-O-Subject: [ARK PATCH 31/35] Add efi_status_to_str() and rework efi_status_to_err().
-Bugzilla:
-RH-Acked-by: Jarod Wilson <jarod@redhat.com>
-
+From bfb3da7874bcbdd9d8c3484d69e7ea74c4a19094 Mon Sep 17 00:00:00 2001
 From: Peter Jones <pjones@redhat.com>
+Date: Mon, 2 Oct 2017 18:22:13 -0400
+Subject: [PATCH 2/7] Add efi_status_to_str() and rework efi_status_to_err().
 
 This adds efi_status_to_str() for use when printing efi_status_t
 messages, and reworks efi_status_to_err() so that the two use a common
@@ -21,25 +13,19 @@ Signed-off-by: Peter Jones <pjones@redhat.com>
  include/linux/efi.h        |   3 +
  2 files changed, 96 insertions(+), 31 deletions(-)
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
- drivers/firmware/efi/efi.c | 124 +++++++++++++++++++++++++++----------
- include/linux/efi.h        |   3 +
- 2 files changed, 96 insertions(+), 31 deletions(-)
-
 diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 16b2137d117c..9137650dd3cf 100644
+index 8d3e778e988b..d6a745f667d1 100644
 --- a/drivers/firmware/efi/efi.c
 +++ b/drivers/firmware/efi/efi.c
-@@ -30,6 +30,7 @@
- #include <linux/acpi.h>
+@@ -31,6 +31,7 @@
  #include <linux/ucs2_string.h>
  #include <linux/memblock.h>
+ #include <linux/security.h>
 +#include <linux/bsearch.h>
  
  #include <asm/early_ioremap.h>
  
-@@ -926,40 +927,101 @@ int efi_mem_type(unsigned long phys_addr)
+@@ -915,40 +916,101 @@ int efi_mem_type(unsigned long phys_addr)
  }
  #endif
  
@@ -171,9 +157,9 @@ index 16b2137d117c..9137650dd3cf 100644
 +	return found->description;
  }
  
- bool efi_is_table_address(unsigned long phys_addr)
+ static DEFINE_SPINLOCK(efi_mem_reserve_persistent_lock);
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 6ebc2098cfe1..e26798c3668f 100644
+index bd3837022307..21d81021c1f4 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -42,6 +42,8 @@
@@ -185,7 +171,7 @@ index 6ebc2098cfe1..e26798c3668f 100644
  typedef unsigned long efi_status_t;
  typedef u8 efi_bool_t;
  typedef u16 efi_char16_t;		/* UNICODE character */
-@@ -1232,6 +1234,7 @@ static inline bool efi_is_table_address(unsigned long phys_addr)
+@@ -1228,6 +1230,7 @@ efi_capsule_pending(int *reset_type)
  #endif
  
  extern int efi_status_to_err(efi_status_t status);
