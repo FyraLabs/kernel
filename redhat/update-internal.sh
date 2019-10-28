@@ -6,9 +6,9 @@ set -x
 
 git fetch --depth=$GIT_DEPTH origin
 git checkout -b new_clog_$RANDOM origin/internal
-git checkout origin/master -- redhat/kernel.changelog-8.99
+git checkout "$CI_COMMIT_TAG" -- redhat/kernel.changelog-8.99
 git add redhat/kernel.changelog-8.99
-git checkout origin/master -- redhat/marker
+git checkout "$CI_COMMIT_TAG" -- redhat/marker
 git add redhat/marker
 git config user.name "CKI@GitLab"
 git config user.email "cki-project@redhat.com"
