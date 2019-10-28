@@ -17,8 +17,7 @@ git config user.email "cki-project@redhat.com"
 LINES_CHANGED=$(git diff --cached | wc -l)
 if [ "${LINES_CHANGED}" != "0" ]; then
     git commit -m "Updated changelog"
-    git remote add gitlab git@gitlab.com:cki-project/kernel-ark.git
-    ssh-keyscan -H gitlab.com >> ~/.ssh/known_hosts
+    git remote add gitlab https://oauth2:"$SECRET_KEY"@gitlab.com/jeremycline/kernel-ark.git
     git push -o merge_request.create \
                 -o merge_request.target=internal \
                 -o merge_request.title="Changelog Update" \
