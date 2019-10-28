@@ -41,4 +41,4 @@ update_internal:
    script:
      - redhat/update-internal.sh $GIT_DEPTH
    only:
-     - master
+     - ^kernel-[\d]+\.[\d]+\.[\d]+-.*\.elrdy$
