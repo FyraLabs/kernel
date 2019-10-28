@@ -1,3 +1,7 @@
+* Thu Oct 17 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc4.1.elrdy]
+- A silly test
+- Maybe it'll work
+
 * Thu Oct 17 2019 Jeremy Cline <jcline@redhat.com> [5.4.0-0.rc3.1.elrdy]
 - v5.4-rc3 rebase
 - Amend the changelog when rebasing (Laura Abbott)
