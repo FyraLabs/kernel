@@ -1138,6 +1138,11 @@ exit 1
 %endif
 %endif
 
+%if "%{baserelease}" == "0"
+echo "baserelease must be greater than zero"
+exit 1
+%endif
+
 # more sanity checking; do it quietly
 if [ "%{patches}" != "%%{patches}" ] ; then
   for patch in %{patches} ; do
