@@ -13,14 +13,23 @@ RHDISTGIT_TMP:=/tmp
 # Branch it should be switched into
 RHDISTGIT_BRANCH:=${RHPRODUCT}
 
+RHDISTGIT:="ssh://$(RHDISTGIT_USER)@pkgs.devel.redhat.com/rpms/$(PACKAGE_NAME)"
 # load configuration, starting with home directory then local
 ifeq ("$(RHDISTGIT_CACHE)", "")
- ifneq ("$(wildcard ${HOME}/.rhel8git.mk)", "")
-  include ${HOME}/.rhel8git.mk
- endif
- ifneq ("$(wildcard $(TOPDIR)/.rhel8git.mk)", "")
-  include $(TOPDIR)/.rhel8git.mk
+ ifeq ("$(IS_FEDORA)", "1")
+   ifneq ("$(wildcard ${HOME}/.fedoragit.mk)", "")
+    include ${HOME}/.fedoragit.mk
+   endif
+   ifneq ("$(wildcard $(TOPDIR)/.fedoragit.mk)", "")
+    include $(TOPDIR)/.fedoragit.mk
+   endif
+ else
+   ifneq ("$(wildcard ${HOME}/.rhel8git.mk)", "")
+    include ${HOME}/.rhel8git.mk
+   endif
+   ifneq ("$(wildcard $(TOPDIR)/.rhel8git.mk)", "")
+    include $(TOPDIR)/.rhel8git.mk
+   endif
  endif
 endif
 
-RHDISTGIT:="ssh://$(RHDISTGIT_USER)@pkgs.devel.redhat.com/rpms/$(PACKAGE_NAME)"
