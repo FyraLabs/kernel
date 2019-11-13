@@ -667,6 +667,7 @@ Source53: generate_bls_conf.sh
 Source56: update_scripts.sh
 
 Source54: mod-internal.list
+Source55: merge.pl
 
 Source200: check-kabi
 
@@ -682,6 +683,10 @@ Source213: Module.kabi_dup_x86_64
 
 Source300: kernel-abi-whitelists-%{rpmversion}-%{distro_build}.tar.bz2
 Source301: kernel-kabi-dw-%{rpmversion}-%{distro_build}.tar.bz2
+
+# This file is intentionally left empty in the stock kernel. Its a nicety
+# added for those wanting to do custom rebuilds with altered config opts.
+Source1000: kernel-local
 
 # Sources for kernel-tools
 Source2000: cpupower.service
@@ -1220,8 +1225,20 @@ cd configs
 
 # Drop some necessary files from the source dir into the buildroot
 cp $RPM_SOURCE_DIR/kernel-*.config .
+cp %{SOURCE1000} .
+cp %{SOURCE55} .
 cp %{SOURCE51} .
 VERSION=%{version} ./generate_all_configs.sh %{primary_target} %{debugbuildsenabled}
+
+# Merge in any user-provided local config option changes
+%ifnarch %nobuildarches
+for i in %{all_arch_configs}
+do
+  mv $i $i.tmp
+  ./merge.pl %{SOURCE1000} $i.tmp > $i
+  rm $i.tmp
+done
+%endif
 
 # enable GCOV kernel config options if gcov is on
 %if %{with_gcov}
