@@ -260,7 +260,10 @@ Summary: The Linux kernel
 
 # if requested, only build debug kernel
 %if %{with_dbgonly}
+%if %{debugbuildsenabled}
 %define with_up 0
+%endif
+%define with_pae 0
 %define with_tools 0
 %define with_perf 0
 %define with_bpftool 0
@@ -410,6 +413,7 @@ Summary: The Linux kernel
 %define with_tools 0
 %define with_bpftool 0
 %define with_selftests 0
+%define with_pae 0
 %define _enable_debug_packages 0
 %endif
 
@@ -1112,7 +1116,7 @@ input and output, etc.
 %prep
 # do a few sanity-checks for --with *only builds
 %if %{with_baseonly}
-%if !%{with_up}
+%if !%{with_up}%{with_pae}
 echo "Cannot build --with baseonly, up build is disabled"
 exit 1
 %endif
