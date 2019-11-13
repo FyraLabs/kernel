@@ -1,18 +1,19 @@
 #Keep track of a list of RHEL-only patches
+# Top level config for turning off things
+0003-Introduce-CONFIG_RH_DISABLE_DEPRECATED.patch
+# various features like mark_tech_preview etc.
+0001-Add-Red-Hat-tainting.patch
 acpi-ACPI-APEI-arm64-Ignore-broken-HPE-moonshot-APEI.patch
 kernel-modules-add-rhelversion-MODULE_INFO-tag.patch
 scsi-mpt-remove-certain-deprecated-pci-ids.patch
 scsi-megaraid_sas-remove-deprecated-pci-ids.patch
 scsi-aacraid-Remove-depreciated-device-and-vendor-PC.patch
 scsi-qla4xxx-Remove-deprecated-PCI-IDs-from-RHEL-8.patch
-kernel-rh_taint-add-support.patch
-kernel-rh_taint-add-support-for-marking-driver-as-un.patch
 scsi-hpsa-remove-old-cciss-based-smartarray-pci-ids.patch
 scsi-hpsa-modify-hpsa-driver-version.patch
 scsi-Removing-Obsolete-hba-pci-ids-from-rhel8.patch
 scsi-be2iscsi-remove-unsupported-device-IDs.patch
 scsi-qla2xxx-Remove-PCI-IDs-of-deprecated-adapter.patch
-x86-add-rh_check_supported.patch
 acpi-ACPI-irq-Workaround-firmware-issue-on-X-Gene-ba.patch
 acpi-aarch64-acpi-scan-Fix-regression-related-to-X-G.patch
 arm64-acpi-prefer-booting-with-ACPI-over-DTS.patch
@@ -29,18 +30,16 @@ pci-Vulcan-AHCI-PCI-bar-fix-for-Broadcom-Vulcan-earl.patch
 ata-ahci-thunderx2-Fix-for-errata-that-affects-stop-.patch
 pci-add-pci_hw_vendor_status.patch
 kernel-kABI-Add-generic-kABI-macros-to-use-for-kABI-.patch
-x86-update-rh_check_supported-processor-list.patch
 scsi-be2iscsi-remove-BE3-family-support.patch
 netdrv-ice-mark-driver-as-tech-preview.patch
 scsi-scsi-smartpqi-add-inspur-advantech-ids.patch
 infiniband-IB-rxe-Mark-Soft-RoCE-Transport-driver-as.patch
 char-ipmi-do-not-configure-ipmi-for-HPE-m400.patch
-x86-mark-whiskey-lake-processor-supported.patch
-x86-mark-intel-knights-landing-and-knights-mill-unsu.patch
 0001-kernel-rh_kabi-introduce-RH_KABI_EXCLUDE.patch
-0001-kernel-rh_taint-correct-loaddable-module-support-dep.patch
 0001_iommu_iommu_arm-smmu_workaround.patch
 arm-aarch64-Drop-the-EXPERT-setting-from-ARM64_FORCE.patch
+# deprecate x86 processors
+0002-Add-support-for-deprecating-processors.patch
 # secureboot
 0001-Make-get_cert_list-not-complain-about-cert-lists-tha.patch
 0002-Add-efi_status_to_str-and-rework-efi_status_to_err.patch
