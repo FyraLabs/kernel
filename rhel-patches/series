@@ -48,3 +48,4 @@ arm-aarch64-Drop-the-EXPERT-setting-from-ARM64_FORCE.patch
 0005-efi-Add-an-EFI_SECURE_BOOT-flag-to-indicate-secure-b.patch
 0006-efi-Lock-down-the-kernel-if-booted-in-secure-boot-mo.patch
 0007-Add-a-SysRq-option-to-lift-kernel-lockdown.patch
+0001-kconfig-Add-option-to-get-the-full-help-text-with-li.patch
