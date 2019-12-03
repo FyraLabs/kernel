@@ -16,10 +16,14 @@ cd $cloned/$package_name || die "\"$cloned\" doesn't seem to have a dist-git clo
 # delete everything in the cloned tree to avoid having stale files
 rm -r *
 
+# copy a few misc files that aren't part of the exact srpm
+# but are still useful to have in dist-git
+cp -r $redhat/dist-git/* .
+# trick to update the gitignore
+mv gitignore .gitignore
+
 git reset HEAD -- sources
 git checkout sources
-echo "*.xz" > .gitignore
-echo "*.bz2" >> .gitignore
 
 # expand the srpm into the tree
 rpm2cpio $srpm | cpio -idmv
