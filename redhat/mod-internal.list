@@ -1,4 +1,10 @@
+act_ctinfo
+act_mpls
+dmatest
+locktorture
 mac80211_hwsim
 netdevsim
 pktgen
+rcutorture
 rocker
+torture
