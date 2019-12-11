@@ -92,3 +92,17 @@ update_internal:
      - redhat/update-internal.sh $GIT_DEPTH
    only:
      - ark-latest
+
+
+ark_patches_rebase:
+  script:
+    - echo "fastestmirror=true" >> /etc/dnf/dnf.conf
+    - dnf -y install python3-gitlab
+    - git fetch --depth=250 origin ark-patches:ark-patches
+    - git fetch --depth=10000 origin master:master
+    - redhat/scripts/ark-rebase-patches.sh "master" "$CI_PROJECT_ID"
+  only:
+    refs:
+      - schedules
+    variables:
+      - $REBASE_ARK_PATCHES == "true"
