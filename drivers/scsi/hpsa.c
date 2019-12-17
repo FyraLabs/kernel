@@ -59,7 +59,11 @@
  * HPSA_DRIVER_VERSION must be 3 byte values (0-255) separated by '.'
  * with an optional trailing '-' followed by a byte value (0-255).
  */
+#ifdef CONFIG_RH_DISABLE_DEPRECATED
+#define HPSA_DRIVER_VERSION "3.4.20-170-RH1"
+#else
 #define HPSA_DRIVER_VERSION "3.4.20-170"
+#endif
 #define DRIVER_NAME "HP HPSA Driver (v " HPSA_DRIVER_VERSION ")"
 #define HPSA "hpsa"
 
