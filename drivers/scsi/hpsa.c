@@ -82,7 +82,9 @@ MODULE_DESCRIPTION("Driver for HP Smart Array Controller version " \
 MODULE_SUPPORTED_DEVICE("HP Smart Array Controllers");
 MODULE_VERSION(HPSA_DRIVER_VERSION);
 MODULE_LICENSE("GPL");
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 MODULE_ALIAS("cciss");
+#endif
 
 static int hpsa_simple_mode;
 module_param(hpsa_simple_mode, int, S_IRUGO|S_IWUSR);
@@ -144,10 +146,12 @@ static const struct pci_device_id hpsa_pci_device_id[] = {
 	{PCI_VENDOR_ID_HP_3PAR, 0x0075, 0x1590, 0x007D},
 	{PCI_VENDOR_ID_HP_3PAR, 0x0075, 0x1590, 0x0088},
 	{PCI_VENDOR_ID_HP, 0x333f, 0x103c, 0x333f},
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	{PCI_VENDOR_ID_HP,     PCI_ANY_ID,	PCI_ANY_ID, PCI_ANY_ID,
 		PCI_CLASS_STORAGE_RAID << 8, 0xffff << 8, 0},
 	{PCI_VENDOR_ID_COMPAQ,     PCI_ANY_ID,	PCI_ANY_ID, PCI_ANY_ID,
 		PCI_CLASS_STORAGE_RAID << 8, 0xffff << 8, 0},
+#endif
 	{0,}
 };
 
@@ -158,6 +162,7 @@ MODULE_DEVICE_TABLE(pci, hpsa_pci_device_id);
  *  access = Address of the struct of function pointers
  */
 static struct board_type products[] = {
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	{0x40700E11, "Smart Array 5300", &SA5A_access},
 	{0x40800E11, "Smart Array 5i", &SA5B_access},
 	{0x40820E11, "Smart Array 532", &SA5B_access},
@@ -178,6 +183,7 @@ static struct board_type products[] = {
 	{0x3215103C, "Smart Array E200i", &SA5A_access},
 	{0x3237103C, "Smart Array E500", &SA5A_access},
 	{0x323D103C, "Smart Array P700m", &SA5A_access},
+#endif
 	{0x3241103C, "Smart Array P212", &SA5_access},
 	{0x3243103C, "Smart Array P410", &SA5_access},
 	{0x3245103C, "Smart Array P410i", &SA5_access},
