@@ -2309,6 +2309,7 @@ lpfc_get_hba_model_desc(struct lpfc_hba *phba, uint8_t *mdp, uint8_t *descp)
 	vp = &phba->vpd;
 
 	switch (dev_id) {
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	case PCI_DEVICE_ID_FIREFLY:
 		m = (typeof(m)){"LP6000", "PCI",
 				"Obsolete, Unsupported Fibre Channel Adapter"};
@@ -2379,13 +2380,17 @@ lpfc_get_hba_model_desc(struct lpfc_hba *phba, uint8_t *mdp, uint8_t *descp)
 		m = (typeof(m)){"LPe1002-SP", "PCIe",
 				"Obsolete, Unsupported Fibre Channel Adapter"};
 		break;
+#endif
 	case PCI_DEVICE_ID_BMID:
 		m = (typeof(m)){"LP1150", "PCI-X2", "Fibre Channel Adapter"};
 		break;
+
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	case PCI_DEVICE_ID_BSMB:
 		m = (typeof(m)){"LP111", "PCI-X2",
 				"Obsolete, Unsupported Fibre Channel Adapter"};
 		break;
+#endif
 	case PCI_DEVICE_ID_ZEPHYR:
 		m = (typeof(m)){"LPe11000", "PCIe", "Fibre Channel Adapter"};
 		break;
@@ -2402,6 +2407,7 @@ lpfc_get_hba_model_desc(struct lpfc_hba *phba, uint8_t *mdp, uint8_t *descp)
 	case PCI_DEVICE_ID_ZSMB:
 		m = (typeof(m)){"LPe111", "PCIe", "Fibre Channel Adapter"};
 		break;
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	case PCI_DEVICE_ID_LP101:
 		m = (typeof(m)){"LP101", "PCI-X",
 				"Obsolete, Unsupported Fibre Channel Adapter"};
@@ -2418,6 +2424,7 @@ lpfc_get_hba_model_desc(struct lpfc_hba *phba, uint8_t *mdp, uint8_t *descp)
 		m = (typeof(m)){"LPe11000-S", "PCIe",
 				"Obsolete, Unsupported Fibre Channel Adapter"};
 		break;
+#endif
 	case PCI_DEVICE_ID_SAT:
 		m = (typeof(m)){"LPe12000", "PCIe", "Fibre Channel Adapter"};
 		break;
@@ -2436,6 +2443,7 @@ lpfc_get_hba_model_desc(struct lpfc_hba *phba, uint8_t *mdp, uint8_t *descp)
 	case PCI_DEVICE_ID_SAT_S:
 		m = (typeof(m)){"LPe12000-S", "PCIe", "Fibre Channel Adapter"};
 		break;
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	case PCI_DEVICE_ID_HORNET:
 		m = (typeof(m)){"LP21000", "PCIe",
 				"Obsolete, Unsupported FCoE Adapter"};
@@ -2461,30 +2469,37 @@ lpfc_get_hba_model_desc(struct lpfc_hba *phba, uint8_t *mdp, uint8_t *descp)
 		oneConnect = 1;
 		m = (typeof(m)){"OCe11100", "PCIe", "FCoE"};
 		break;
+#endif
 	case PCI_DEVICE_ID_FALCON:
 		m = (typeof(m)){"LPSe12002-ML1-E", "PCIe",
 				"EmulexSecure Fibre"};
 		break;
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	case PCI_DEVICE_ID_BALIUS:
 		m = (typeof(m)){"LPVe12002", "PCIe Shared I/O",
 				"Obsolete, Unsupported Fibre Channel Adapter"};
 		break;
+#endif
 	case PCI_DEVICE_ID_LANCER_FC:
 		m = (typeof(m)){"LPe16000", "PCIe", "Fibre Channel Adapter"};
 		break;
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	case PCI_DEVICE_ID_LANCER_FC_VF:
 		m = (typeof(m)){"LPe16000", "PCIe",
 				"Obsolete, Unsupported Fibre Channel Adapter"};
 		break;
+#endif
 	case PCI_DEVICE_ID_LANCER_FCOE:
 		oneConnect = 1;
 		m = (typeof(m)){"OCe15100", "PCIe", "FCoE"};
 		break;
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	case PCI_DEVICE_ID_LANCER_FCOE_VF:
 		oneConnect = 1;
 		m = (typeof(m)){"OCe15100", "PCIe",
 				"Obsolete, Unsupported FCoE"};
 		break;
+#endif
 	case PCI_DEVICE_ID_LANCER_G6_FC:
 		m = (typeof(m)){"LPe32000", "PCIe", "Fibre Channel Adapter"};
 		break;
@@ -6291,12 +6306,14 @@ lpfc_sli_driver_resource_setup(struct lpfc_hba *phba)
 	if (rc)
 		return -ENODEV;
 
+#ifndef CONFIG_RH_DISABLE_DEPRECATED
 	if (phba->pcidev->device == PCI_DEVICE_ID_HORNET) {
 		phba->menlo_flag |= HBA_MENLO_SUPPORT;
 		/* check for menlo minimum sg count */
 		if (phba->cfg_sg_seg_cnt < LPFC_DEFAULT_MENLO_SG_SEG_CNT)
 			phba->cfg_sg_seg_cnt = LPFC_DEFAULT_MENLO_SG_SEG_CNT;
 	}
+#endif
 
 	if (!phba->sli.sli3_ring)
 		phba->sli.sli3_ring = kcalloc(LPFC_SLI3_MAX_RING,
