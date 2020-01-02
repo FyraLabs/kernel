@@ -1539,6 +1539,12 @@ mptspi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 		    0, 0, 0, 0, 5);
 
 	scsi_scan_host(sh);
+
+#ifdef CONFIG_RH_DISABLE_DEPRECATED
+	add_taint(TAINT_SUPPORT_REMOVED, LOCKDEP_STILL_OK);
+	pr_warn("MPTSPI MODULE IS NOT SUPPORTED\n");
+#endif
+
 	return 0;
 
 out_mptspi_probe:
