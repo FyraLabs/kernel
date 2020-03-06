@@ -598,7 +598,7 @@ extern enum system_states {
 #define TAINT_24			24
 #define TAINT_25			25
 #define TAINT_26			26
-#define TAINT_27			27
+#define TAINT_SUPPORT_REMOVED		27
 /* Bits 28 - 31 are reserved for Red Hat use only */
 #define TAINT_RESERVED28		28
 #define TAINT_RESERVED29		29
@@ -1042,7 +1042,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
 
 struct module;
 
-#ifdef CONFIG_RH_DISABLE_DEPRECATED
+#ifdef CONFIG_RHEL_DIFFERENCES
 void mark_hardware_unsupported(const char *msg);
 void mark_hardware_deprecated(const char *msg);
 void mark_tech_preview(const char *msg, struct module *mod);
