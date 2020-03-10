@@ -1,0 +1,12 @@
+stages:
+        - validate_bz
+        - test
+
+bz_validation:
+        stage: validate_bz
+        image: python:3
+        script:
+                - apt-get update -qy
+                - apt-get install -y python-bugzilla
+                - chmod 755 ./ci_scripts/validate_bz
+                - ./ci_scripts/validate_bz

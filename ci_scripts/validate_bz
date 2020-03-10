@@ -1,0 +1,6 @@
+#!/bin/sh
+
+#Gather list of bz's in each of the commits in this mr
+BASE_COMMIT=$(git merge-base $CI_MERGE_REQUEST_TARGET_BRANCH_NAME HEAD)
+git log $BASE_COMMIT..HEAD
+
