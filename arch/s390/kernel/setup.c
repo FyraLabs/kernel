@@ -1092,7 +1092,7 @@ void __init setup_arch(char **cmdline_p)
 	log_component_list();
 
 	if (ipl_get_secureboot())
-		security_lock_kernel_down("Secure IPL mode", LOCKDOWN_CONFIDENTIALITY_MAX);
+		security_lock_kernel_down("Secure IPL mode", LOCKDOWN_INTEGRITY_MAX);
 
 	/* Have one command line that is parsed and saved in /proc/cmdline */
 	/* boot_command_line has been already set up in early.c */
