@@ -1831,8 +1831,8 @@ static void task_fork_dl(struct task_struct *p)
 
 #ifdef CONFIG_SMP
 
-/* Only try algorithms three times */
-#define DL_MAX_TRIES 3
+/* Only try algorithms four times */
+#define DL_MAX_TRIES 4
 
 static int pick_dl_task(struct rq *rq, struct task_struct *p, int cpu)
 {
