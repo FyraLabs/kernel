@@ -3,7 +3,7 @@ VERSION = 5
 PATCHLEVEL = 6
 SUBLEVEL = 0
 EXTRAVERSION = -rc7
-NAME = Kleptomaniac Octopus
+NAME = Confetti and Pedro45
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
