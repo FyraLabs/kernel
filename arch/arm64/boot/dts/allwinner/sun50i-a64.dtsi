@@ -671,6 +671,11 @@
 				function = "i2c1";
 			};
 
+			i2c2_pins: i2c2-pins {
+				pins = "PE14", "PE15";
+				function = "i2c2";
+			};
+
 			/omit-if-no-ref/
 			lcd_rgb666_pins: lcd-rgb666-pins {
 				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
@@ -958,11 +963,12 @@
 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
 			clocks = <&ccu CLK_BUS_I2C2>;
 			resets = <&ccu RST_BUS_I2C2>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&i2c2_pins>;
 			status = "disabled";
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
-
 
 		spi0: spi@1c68000 {
 			compatible = "allwinner,sun8i-h3-spi";
@@ -1059,6 +1065,14 @@
 			pinctrl-0 = <&pwm_pin>;
 			#pwm-cells = <3>;
 			status = "disabled";
+		};
+
+		mbus: dram-controller@1c62000 {
+			compatible = "allwinner,sun50i-a64-mbus";
+			reg = <0x01c62000 0x1000>;
+			clocks = <&ccu 112>;
+			dma-ranges = <0x00000000 0x40000000 0xc0000000>;
+			#interconnect-cells = <1>;
 		};
 
 		csi: csi@1cb0000 {
