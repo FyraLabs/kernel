@@ -24,3 +24,4 @@ config RH_FEDORA
 	  FORCE_MAX_ZONEORDER default for ARM.
 
 endmenu
+
