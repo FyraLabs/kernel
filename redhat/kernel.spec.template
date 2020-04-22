@@ -697,6 +697,7 @@ Source2001: cpupower.config
 # source tree, but in the mean time we carry this to support the legacy workflow
 Source3000: merge.pl
 Source3001: kernel-local
+Source3002: Patchlist
 
 Source4000: README.rst
 
@@ -704,6 +705,7 @@ Source4000: README.rst
 
 Patch1: patch-%{rpmversion}-redhat.patch
 
+PATCHLIST
 # empty final patch to facilitate testing of kernel patches
 Patch999999: linux-kernel-test.patch
 

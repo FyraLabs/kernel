@@ -28,6 +28,9 @@ clogf="$SOURCES/changelog"
 HIDE_REDHAT=1;
 # hide entries for unsupported arches
 HIDE_UNSUPPORTED_ARCH=1;
+# Set up for broken out patches
+plistf="$SOURCES/Patchlist"
+pnum=2
 # override LC_TIME to avoid date conflicts when building the srpm
 LC_TIME=
 STAMP=$(echo $MARKER | cut -f 1 -d '-' | sed -e "s/v//");
@@ -242,11 +245,41 @@ test -n "$SPECFILE" &&
 	s/%%TARBALL_VERSION%%/$TARFILE_RELEASE/" $SPECFILE
 
 
+# Need an empty file for dist-git compatibility
+touch "$SOURCES/patch-$RPMVERSION-redhat.patch"
+truncate -s 0 "$SOURCES/patch-$RPMVERSION-redhat.patch"
 if [ "$SINGLE_TARBALL" = 0 ]; then
-	git diff -p --no-renames --stat $MARKER.. ":(exclude,top)redhat" ":(exclude,top)makefile" ":(exclude,top)configs" ":(exclude,top).gitattributes" ":(exclude,top).gitignore"> $SOURCES/patch-${RPMVERSION}-redhat.patch
-else
-	# Need an empty file for dist-git compatibility
-	touch $SOURCES/patch-${RPMVERSION}-redhat.patch
+	# We want the current state of this file, not all its history
+	RHELVER=$(git diff -p --stat master HEAD -- ../Makefile.rhelver)
+	printf "From 8474ffe83a89d7b5d2c6515875a308ff682df6f9 Mon Sep 17 00:00:00 2001
+From: Kernel Team <kernel-team@fedoraproject.org>
+Date: %s
+Subject: [PATCH] Include Makefile.rhelver
+
+Used to set the RHEL version.
+---
+%s
+--
+2.26.0\n
+" "$(date "+%a, %d %b %Y %R:%S %z")" "$RHELVER" > "$SOURCES/patch-$RPMVERSION-redhat.patch"
+
+	truncate -s 0 $plistf
+	COMMITS=$(git log --reverse --pretty=format:"%h" --no-merges "$MARKER".. \
+		":(exclude,top).get_maintainer.conf" \
+		":(exclude,top).gitattributes" \
+		":(exclude,top).gitignore" \
+		":(exclude,top).gitlab-ci.yml" \
+		":(exclude,top)makefile" \
+		":(exclude,top)Makefile.rhelver" \
+		":(exclude,top)redhat")
+	for c in $COMMITS; do
+		patch=$(git format-patch -1 "$c")
+		echo "$patch" >> $plistf
+		mv $patch $SOURCES/
+		sed -i "s/PATCHLIST/Patch$pnum: $patch\nPATCHLIST/" $SPECFILE
+		((pnum++))
+	done
+	sed -i "s/PATCHLIST//" $SPECFILE
 fi
 
 for opt in $BUILDOPTS; do
