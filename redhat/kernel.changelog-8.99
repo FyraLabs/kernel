@@ -1,3 +1,12 @@
+* Tue Apr 28 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc3.20200428git51184ae37e05.1]
+- 51184ae37e05 rebase
+- Add cec to the filter overrides ("Justin M. Forbes")
+- Add overrides to filter-modules.sh ("Justin M. Forbes")
+- Move the sed to clear the patch templating outside of conditionals ("Justin M. Forbes")
+- Exit non-zero if the tag already exists for a release (Jeremy Cline)
+- Adjust the changelog update script to not push anything (Jeremy Cline)
+- Drop --target noarch from the rh-rpms make target (Jeremy Cline)
+
 * Fri Apr 24 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc2.20200424gitb4f633221f0a.1]
 - b4f633221f0a rebase
 
