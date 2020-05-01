@@ -506,10 +506,10 @@ BuildRequires: python3-docutils
 BuildRequires: zlib-devel binutils-devel
 %endif
 %if %{with_selftests}
-%if 0%{?fedora}
-BuildRequires: clang llvm
-%else
+%if 0%{?el8}
 BuildRequires: llvm-toolset
+%else
+BuildRequires: clang llvm
 %endif
 %ifnarch %{arm}
 BuildRequires: numactl-devel
