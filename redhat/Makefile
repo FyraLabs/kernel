@@ -133,6 +133,10 @@ rh-kabi-dw-check: rh-kabi
 	@echo "**** End of KABI DWARF-based comparison report ****"
 	@rm -rf $(KABIDW)/base/$(CURARCH).tmp
 
+rh-gitsetup:
+	@git config --get include.path | grep -q 'redhat/kernel.gitconfig' || \
+		git config --local --add include.path "../redhat/kernel.gitconfig"
+
 rh-configs-commit: rh-configs-prep
 	@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh $(FLAVOR) 1; \
 	./process_configs.sh -z $(PACKAGE_NAME) $(KVERSION) "" $(FLAVOR)
@@ -363,6 +367,7 @@ rh-help:
 	@echo  '  rh-cross-all-rpms - Build RPMs for all supported archs using a cross compiler.'
 	@echo  ''
 	@echo  'Configuration targets:'
+	@echo  '  rh-gitsetup       - include redhat/kernel.gitconfig in repo git config'
 	@echo  '  rh-configs        - Create RHEL config files in redhat/config/.'
 	@echo  ''
 	@echo  'For detailed description and full list of targets, run `make rh-full-help`.'
@@ -442,6 +447,7 @@ rh-full-help:
 
 	@echo  ''
 	@echo  'Configuration targets:'
+	@echo  '  rh-gitsetup - include redhat/kernel.gitconfig in repo git config'
 	@echo  '  rh-configs  - Creates config files for RHEL $(RHEL_MAJOR) architectures, cleans them'
 	@echo  '                by running make nonint_oldconfig, and copies them to'
 	@echo  '                redhat/configs/ directory. This is the target to use for a config!'
