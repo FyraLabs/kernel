@@ -750,6 +750,7 @@ static void __init trim_low_memory_range(void)
 	memblock_reserve(0, ALIGN(reserve_low, PAGE_SIZE));
 }
 
+#ifdef CONFIG_RHEL_DIFFERENCES
 static bool valid_amd_processor(__u8 family, const char *model_id)
 {
 	bool valid;
@@ -821,7 +822,7 @@ static void rh_check_supported(void)
 {
 	bool guest;
 
-	guest = (x86_hyper_type != X86_HYPER_NATIVE || boot_cpu_has(X86_FEATURE_HYPERVISOR));
+	guest = (!hypervisor_is_type(X86_HYPER_NATIVE) || boot_cpu_has(X86_FEATURE_HYPERVISOR));
 
 	/* RHEL supports single cpu on guests only */
 	if (((boot_cpu_data.x86_max_cores * smp_num_siblings) == 1) &&
@@ -874,6 +875,9 @@ static void rh_check_supported(void)
 	if (acpi_disabled && !guest)
 		pr_crit("ACPI has been disabled or is not available on this hardware.  This may result in a single cpu boot, incorrect PCI IRQ routing, or boot failure.\n");
 }
+#else
+static void rh_check_supported(void) { return; }
+#endif
 
 /*
  * Dump out kernel offset information on panic.
@@ -1366,9 +1370,7 @@ void __init setup_arch(char **cmdline_p)
 		efi_apply_memmap_quirks();
 #endif
 
-#ifdef CONFIG_RHEL_DIFFERENCES
 	rh_check_supported();
-#endif
 
 	unwind_init();
 }
