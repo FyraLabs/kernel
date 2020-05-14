@@ -822,7 +822,7 @@ static void rh_check_supported(void)
 {
 	bool guest;
 
-	guest = (x86_hyper_type != X86_HYPER_NATIVE || boot_cpu_has(X86_FEATURE_HYPERVISOR));
+	guest = (!hypervisor_is_type(X86_HYPER_NATIVE) || boot_cpu_has(X86_FEATURE_HYPERVISOR));
 
 	/* RHEL supports single cpu on guests only */
 	if (((boot_cpu_data.x86_max_cores * smp_num_siblings) == 1) &&
