@@ -1,0 +1,10 @@
+# The kernel workflow is growing in complexity.  Developers can not always
+# remember all the nuisances involved.
+# This file is meant to aid developers by providing wrappers around some
+# parts of the workflow that everyone can use.
+#
+# Examples include 'aliases' for git-push options or a shortcut for
+# executing workflow checks before pushing.
+#
+# Please do not include personal information here.
+[alias]
