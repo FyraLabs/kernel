@@ -1,3 +1,12 @@
+* Mon Jun 01 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-1]
+- v5.7 rebase
+- Fix update_scripts.sh unselective pattern sub (David Howells)
+- Updated changelog for the release based on b0c3ba31be3e ("CKI@GitLab")
+- Drop the static path configuration for the Sphinx docs (Jeremy Cline)
+- Sign off generated configuration patches (Jeremy Cline)
+- Use __make macro instead of make (Tom Stellard)
+- redhat/configs: Enable CONFIG_SMC91X and disable CONFIG_SMC911X (Prarit Bhargava) [http://bugzilla.redhat.com/1722136]
+
 * Thu May 28 2020 CKI@GitLab <cki-project@redhat.com> [5.7.0-0.rc7.20200528gitb0c3ba31be3e.1]
 - b0c3ba31be3e rebase
 - Updated changelog for the release based on 444fc5cde643 ("CKI@GitLab")
