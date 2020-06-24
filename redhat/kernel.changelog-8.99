@@ -1,3 +1,7 @@
+* Wed Jun 24 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc2.20200624git3e08a95294a4.1]
+- 3e08a95294a4 rebase
+- Updated changelog for the release based on dd0d718152e4 (Fedora Kernel Team)
+
 * Tue Jun 23 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc2.20200623gitdd0d718152e4.1]
 - dd0d718152e4 rebase
 - Add new bpf man pages ("Justin M. Forbes")
