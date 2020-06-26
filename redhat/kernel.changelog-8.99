@@ -1,3 +1,7 @@
+* Fri Jun 26 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc2.20200626git4a21185cda0f.1]
+- 4a21185cda0f rebase
+- Updated changelog for the release based on 8be3a53e18e0 (Fedora Kernel Team)
+
 * Thu Jun 25 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc2.20200625git8be3a53e18e0.1]
 - 8be3a53e18e0 rebase
 - redhat: Replace hardware.redhat.com link in Unsupported message (Prarit Bhargava)
