@@ -1,3 +1,7 @@
+* Tue Jun 30 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc3.20200630git7c30b859a947.1]
+- 7c30b859a947 rebase
+- Updated changelog for the release based on v5.8-rc3 (Fedora Kernel Team)
+
 * Mon Jun 29 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc3.1]
 - v5.8-rc3 rebase
 - s390x-zfcpdump: Handle missing Module.symvers file (Don Zickus)
