@@ -1,3 +1,9 @@
+* Sun Jul 12 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc4.20200712git0aea6d5c5be3.1]
+- 0aea6d5c5be3 rebase
+- Fixes "acpi: prefer booting with ACPI over DTS" to be RHEL only (Peter Robinson)
+- Enable SERIAL_SC16IS7XX for SPI interfaces (Peter Robinson)
+- Updated changelog for the release based on dcde237b9b0e (Fedora Kernel Team)
+
 * Wed Jul 08 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-0.rc4.20200708gitdcde237b9b0e.1]
 - dcde237b9b0e rebase
 - Updated changelog for the release based on v5.8-rc4 (Fedora Kernel Team)
