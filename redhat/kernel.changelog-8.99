@@ -1,3 +1,15 @@
+* Wed Aug 05 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-0.rc0.20200805git2324d50d051e.1]
+- 2324d50d051e rebase
+- redhat/configs/process_configs.sh: Remove *.config.orig files (Prarit Bhargava)
+- redhat/configs/process_configs.sh: Add process_configs_known_broken flag (Prarit Bhargava)
+- redhat/Makefile: Fix '*-configs' targets (Prarit Bhargava)
+- Updated changelog for the release based on v5.8 (Fedora Kernel Team)
+- Add ability to sync upstream through Makefile (Don Zickus)
+- Add master merge check (Don Zickus)
+- Replace hardcoded values 'os-build' and project id with variables (Don Zickus)
+- gitattributes: Remove unnecesary export restrictions (Prarit Bhargava)
+- redhat/Makefile.common: Fix MARKER (Prarit Bhargava)
+
 * Mon Aug 03 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.8.0-1]
 - v5.8 rebase
 - Updated changelog for the release based on ac3a0c847296 (Fedora Kernel Team)
