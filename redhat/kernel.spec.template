@@ -569,7 +569,7 @@ BuildRequires: asciidoc
 # xzcat -qq ${TARBALL} | git get-tar-commit-id
 Source0: linux-%%TARBALL_VERSION%%.tar.xz
 
-Source1: Makefile.rhelver
+Source1: Makefile.dist
 
 
 # Name of the packaged file containing signing key

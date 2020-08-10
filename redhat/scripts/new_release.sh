@@ -13,7 +13,7 @@ if [ -s "$RHPATH/linux-kernel-test.patch" ]; then
 	exit 1;
 fi
 
-RELEASE=$(sed -n -e 's/^RHEL_RELEASE\ =\ \(.*\)/\1/p' $RHPATH/../Makefile.rhelver)
+RELEASE=$(sed -n -e 's/^RHEL_RELEASE\ =\ \(.*\)/\1/p' $RHPATH/../Makefile.dist)
 
 YVER=$(echo $RELEASE | cut -d "." -f 1)
 YVER=${YVER:=$RELEASE}
@@ -26,15 +26,15 @@ if [ "$ZSTREAM_FLAG" == "no" ]; then
 	if [ "$YSTREAM_FLAG" == "yes" ]; then
 		NEW_RELEASE="$[RELEASE + 1]";
 	else
-		EARLY_YBUILD=$(sed -n -e 's/^EARLY_YBUILD:=\(.*\)/\1/p' $RHPATH/../Makefile.rhelver);
-		EARLY_YRELEASE=$(sed -n -e 's/^EARLY_YRELEASE:=\(.*\)/\1/p' $RHPATH/../Makefile.rhelver);
+		EARLY_YBUILD=$(sed -n -e 's/^EARLY_YBUILD:=\(.*\)/\1/p' $RHPATH/../Makefile.dist);
+		EARLY_YRELEASE=$(sed -n -e 's/^EARLY_YRELEASE:=\(.*\)/\1/p' $RHPATH/../Makefile.dist);
 		if [ "$EARLY_YBUILD" != "$RELEASE" ]; then
 			NEW_EARLY_YRELEASE=1;
 		else
 			NEW_EARLY_YRELEASE="$[EARLY_YRELEASE + 1]";
 		fi
-		sed -i -e "s/^EARLY_YBUILD:=$EARLY_YBUILD/EARLY_YBUILD:=$RELEASE/" $RHPATH/../Makefile.rhelver;
-		sed -i -e "s/^EARLY_YRELEASE:=$EARLY_YRELEASE/EARLY_YRELEASE:=$NEW_EARLY_YRELEASE/" $RHPATH/../Makefile.rhelver;
+		sed -i -e "s/^EARLY_YBUILD:=$EARLY_YBUILD/EARLY_YBUILD:=$RELEASE/" $RHPATH/../Makefile.dist;
+		sed -i -e "s/^EARLY_YRELEASE:=$EARLY_YRELEASE/EARLY_YRELEASE:=$NEW_EARLY_YRELEASE/" $RHPATH/../Makefile.dist;
 		NEW_RELEASE=$RELEASE;
 	fi
 elif [ "$ZSTREAM_FLAG" == "yes" ]; then
@@ -46,5 +46,5 @@ else
 	exit 1;
 fi
 
-sed -i -e "s/RHEL_RELEASE\ =.*/RHEL_RELEASE\ =\ $NEW_RELEASE/" $RHPATH/../Makefile.rhelver;
+sed -i -e "s/RHEL_RELEASE\ =.*/RHEL_RELEASE\ =\ $NEW_RELEASE/" $RHPATH/../Makefile.dist;
 

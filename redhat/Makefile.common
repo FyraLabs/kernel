@@ -1,6 +1,6 @@
 TOPDIR:=$(shell git rev-parse --show-toplevel)
 REDHAT:=$(TOPDIR)/redhat
-include $(TOPDIR)/Makefile.rhelver
+include $(TOPDIR)/Makefile.dist
 
 RPMBUILD := $(shell if [ -x "/usr/bin/rpmbuild" ]; then echo rpmbuild; \
                    else echo rpm; fi)

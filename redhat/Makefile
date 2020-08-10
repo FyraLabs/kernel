@@ -256,7 +256,7 @@ sources-rh: $(TARBALL)
 		configs/process_configs.sh \
 		parallel_xz.sh \
 		generate_bls_conf.sh \
-		../Makefile.rhelver \
+		../Makefile.dist \
 		README.rst \
 		$(SOURCES)/
 	@for KABIARCH in $(ARCH_LIST); do \
@@ -308,7 +308,7 @@ dist-release-finish: setup-source
 	@git add $(REDHAT)/$(CHANGELOG)
 	@echo $(MARKER) > $(REDHAT)/marker
 	@git add $(REDHAT)/marker
-	@git commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(BUILDID)"
+	@git commit -s ../Makefile.dist $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(BUILDID)"
 	@$(MAKE) dist-configs
 	@$(MAKE) dist-kabi
 	@$(MAKE) dist-kabi-dup

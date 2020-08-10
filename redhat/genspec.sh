@@ -253,7 +253,7 @@ if [ "$SINGLE_TARBALL" = 0 ]; then
 		":(exclude,top).gitignore" \
 		":(exclude,top).gitlab-ci.yml" \
 		":(exclude,top)makefile" \
-		":(exclude,top)Makefile.rhelver" \
+		":(exclude,top)Makefile.dist" \
 		":(exclude,top)redhat")
 	for c in $COMMITS; do
 		patch=$(git format-patch --zero-commit -1 "$c")

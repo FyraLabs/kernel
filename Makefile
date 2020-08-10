@@ -18,10 +18,6 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
 PHONY := __all
 __all:
 
-# Set RHEL variables
-# Use this spot to avoid future merge conflicts
-include Makefile.rhelver
-
 # We are using a recursive build, so we need to do a little thinking
 # to get the ordering right.
 #
@@ -272,6 +268,8 @@ no-dot-config-targets := $(clean-targets) \
 no-sync-config-targets := $(no-dot-config-targets) install %install \
 			   kernelrelease
 single-targets := %.a %.i %.ko %.lds %.ll %.lst %.mod %.o %.s %.symtypes %/
+
+-include Makefile.dist
 
 config-build	:=
 mixed-build	:=
