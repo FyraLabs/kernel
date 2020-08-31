@@ -1,10 +1,38 @@
-# CI definitions for ark-patches and internal are maintained in a single file
-# outside the main repository because the two branches are regularly merged
-# together in release branches. Rather than trying to keep the two branches in
-# sync or have merge conflicts each time we merge the two branches, the
-# definition is stored externally and included in each branch.
-#
-# To update any CI jobs, please submit any merge requests to
-# https://gitlab.com/cki-project/kernel-ark-ci/.
-include:
-  - remote: 'https://gitlab.com/cki-project/kernel-ark-ci/raw/master/gitlab-ci.yml'
+# This CI will only work for project members. CI for public contributors
+# runs via a webhook on the merge requests. There's nothing you have to do if
+# you want your changes tested -- created pipeline will be automatically
+# linked in the merge request and appropriate labels will be added to it.
+# Changes to this file will NOT be reflected in the webhook testing.
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE =~ /^(merge_request_event|web|api|trigger)$/'
+
+trigger_pipeline:
+  variables:
+    git_url: ${CI_MERGE_REQUEST_SOURCE_PROJECT_URL}
+    branch: ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+    commit_hash: ${CI_COMMIT_SHA}
+    name: kernel-ark-${CI_MERGE_REQUEST_ID}
+    child_pipeline: 'True'
+    target_repo: $CI_MERGE_REQUEST_PROJECT_URL
+    target_branch: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    mr_id: ${CI_MERGE_REQUEST_ID}
+    title: ${CI_COMMIT_TITLE}
+
+    kernel_type: upstream
+    make_target: rpm
+    builder_image: registry.gitlab.com/cki-project/containers/builder-rawhide
+    builder_image_tag: latest
+    srpm_make_target: dist-srpm
+    arch_override: 'x86_64 ppc64le aarch64 s390x'
+    tree_name: upstream
+    package_name: kernel
+    # We only need srpm so skip the rest of the stages
+    skip_build: 'true'
+    skip_publish: 'true'
+    skip_test: 'true'
+  trigger:
+    project: cki-runs/trusted-pipelines
+    branch: kernel-ark
+    strategy: depend
