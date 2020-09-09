@@ -4,7 +4,7 @@
 # random number generator running.
 
 echo -n "Trying hardware random number generator ..."
-if [ $(rngd -r /dev/hwrandom >& /dev/null) ]; then
+if [ "$(rngd -r /dev/hwrandom >& /dev/null)" ]; then
 	echo "failed"
 	# try the pseudo-random number generator
 	echo "Using pseudo-random number instead"
