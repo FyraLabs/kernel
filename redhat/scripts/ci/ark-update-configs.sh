@@ -31,7 +31,11 @@ To resolve this, do the following:
 4. git push
 "
 
-git checkout os-build
+# find where we are executing from
+TOPDIR=$(git rev-parse --show-toplevel)
+REDHAT=$TOPDIR/redhat
+
+# git checkout os-build
 BRANCH="$(git branch --show-current)"
 HEAD="$(git describe)"
 if ! git merge -m "Merge '$UPSTREAM_REF' into '$BRANCH'" "$UPSTREAM_REF"; then
@@ -57,11 +61,14 @@ test "$HEAD" != "$NEW_HEAD" || exit 0
 make FLAVOR=fedora dist-configs-commit
 make FLAVOR=rhel dist-configs-commit
 
+pwd
+ls -l ${REDHAT}/gen_config_patches.sh
+
 # Converts each new pending config from above into its finalized git
 # configs/<date>/<config> branch.  These commits are used for Merge
 # Requests.
 if git show -s --oneline HEAD | grep -q "AUTOMATIC: New configs"; then
-	./redhat/gen_config_patches.sh
+	${REDHAT}/gen_config_patches.sh
 else
 	printf "No new configuration values exposed from merging %s into $BRANCH\n" "$UPSTREAM_REF"
 fi
