@@ -1,3 +1,7 @@
+* Tue Oct 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201013git865c50e1d279.38]
+- Filter out LTO build options from the perl ccopts ("Justin M. Forbes")
+- Work around for gcc bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96377 ("Justin M. Forbes")
+
 * Tue Oct 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201013git865c50e1d279.37.test]
 - 865c50e1d279 rebase
 
