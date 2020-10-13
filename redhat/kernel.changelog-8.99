@@ -1,3 +1,8 @@
+* Tue Oct 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-36]
+- Filter out LTO build options from the perl ccopts ("Justin M. Forbes")
+- Temporarily remove cdomain from sphinx documentation ("Justin M. Forbes")
+- Work around for gcc bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96377 ("Justin M. Forbes")
+
 * Tue Oct 13 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.9.0-35.test]
 - Disable Speakup synth DECEXT ("Justin M. Forbes")
 - Enable Speakup for Fedora since it is out of staging ("Justin M. Forbes")
