@@ -1,3 +1,7 @@
+* Fri Oct 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201016git9ff9b0d392ea.44]
+- Filter out LTO build options from the perl ccopts ("Justin M. Forbes")
+- Work around for gcc bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96377 ("Justin M. Forbes")
+
 * Fri Oct 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201016git9ff9b0d392ea.43.test]
 - 9ff9b0d392ea rebase
 - Partial revert: Add master merge check (Don Zickus)
