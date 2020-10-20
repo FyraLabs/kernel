@@ -1,3 +1,7 @@
+* Tue Oct 20 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201020git071a0578b0ce.48]
+- Filter out LTO build options from the perl ccopts ("Justin M. Forbes")
+- Work around for gcc bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96377 ("Justin M. Forbes")
+
 * Tue Oct 20 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc0.20201020git071a0578b0ce.47.test]
 - Fix Fedora config locations ("Justin M. Forbes")
 - Fedora config updates ("Justin M. Forbes")
