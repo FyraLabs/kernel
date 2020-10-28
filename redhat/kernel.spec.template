@@ -1,5 +1,4 @@
-# We have to override the new %%install behavior because, well... the kernel is special.
-%global __spec_install_pre %{___build_pre}
+%global _lto_cflags %{nil}
 
 # Short-term fix so the package builds with GCC 10.
 # This should go away soon.
