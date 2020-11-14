@@ -1,3 +1,6 @@
+* Sat Nov 14 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.20201114gitf01c30de86f1.74]
+- No need to review, Temporary workarounds due to DEBUG_INFO_BTF not working ("Justin M. Forbes")
+
 * Sat Nov 14 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc3.20201114gitf01c30de86f1.73.test]
 - f01c30de86f1 rebase
 - Turn on ATH11K for Fedora ("Justin M. Forbes")
