@@ -1,3 +1,6 @@
+* Mon Nov 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.77]
+- No need to review, Temporary workarounds due to DEBUG_INFO_BTF not working ("Justin M. Forbes")
+
 * Mon Nov 16 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.76.test]
 - v5.10-rc4 rebase
 - Ath11k related config updates ("Justin M. Forbes")
