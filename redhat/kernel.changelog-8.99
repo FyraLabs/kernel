@@ -1,3 +1,6 @@
+* Wed Nov 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201118git0fa8ee0d9ab9.79]
+- No need to review, Temporary workarounds due to DEBUG_INFO_BTF not working ("Justin M. Forbes")
+
 * Wed Nov 18 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201118git0fa8ee0d9ab9.78.test]
 - 0fa8ee0d9ab9 rebase
 
