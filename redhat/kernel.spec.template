@@ -684,6 +684,7 @@ Source34: kernel-s390x-zfcpdump-rhel.config
 Source35: kernel-x86_64-rhel.config
 Source36: kernel-x86_64-debug-rhel.config
 
+%if 0%{?fedora}
 Source37: kernel-aarch64-fedora.config
 Source38: kernel-aarch64-debug-fedora.config
 Source39: kernel-armv7hl-fedora.config
@@ -698,6 +699,7 @@ Source47: kernel-s390x-fedora.config
 Source48: kernel-s390x-debug-fedora.config
 Source49: kernel-x86_64-fedora.config
 Source50: kernel-x86_64-debug-fedora.config
+%endif
 
 
 
