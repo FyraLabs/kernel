@@ -306,6 +306,8 @@ Summary: The Linux kernel
 
 %if %{with_vdso_install}
 %define use_vdso 1
+%else
+%define use_vdso 0
 %endif
 
 
