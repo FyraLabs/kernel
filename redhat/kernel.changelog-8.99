@@ -1,3 +1,6 @@
+* Tue Nov 24 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc5.20201124gitd5beb3140f91.84]
+- Temporarily backout parallel xz script ("Justin M. Forbes")
+
 * Fri Nov 20 2020 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.10.0-0.rc4.20201120git4d02da974ea8.81]
 - Fedora config update ("Justin M. Forbes")
 - redhat: generic  enable CONFIG_INET_MPTCP_DIAG (Davide Caratti)
