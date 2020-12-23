@@ -49,25 +49,39 @@ trigger_pipeline:
 # scheduled job
 merge_upstream:
   image: registry.gitlab.com/cki-project/containers/builder-fedora
-  stage: build
+  stage: test
   variables:
     GIT_STRATEGY: none
   before_script:
     - echo "CI_PROJECT_URL -> $CI_PROJECT_URL"
     - git clone --filter=blob:none $CI_PROJECT_URL $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
     - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+    - echo "source branch: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
   script:
+    - git describe && git branch && git branch -r
+    - dnf install -y flex bison which bzip2 rpm-build
+    - ln -s /usr/bin/python3 /usr/libexec/platform-python
+    - git config user.name "Fedora Kernel Team"
+    - git config user.email "kernel-team@fedoraproject.org"
     - git branch master origin/master && git describe
     - export PROJECT_ID="$CI_PROJECT_ID"
-    - make dist-srpm || exit 1
+    - |
+      make dist-srpm || exit 1
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RAWHIDE_RELEASE == "false"'
 
 testing:
   image: registry.gitlab.com/cki-project/containers/builder-fedora
+  variables:
+    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+    GIT_DEPTH: "1"
   stage: test
   script:
-    - git branch master origin/master && git describe
+    - dnf install -y flex bison which bzip2 rpm-build
+    - ln -s /usr/bin/python3 /usr/libexec/platform-python
+    - git config user.name "Fedora Kernel Team"
+    - git config user.email "kernel-team@fedoraproject.org"
+    - git fetch --depth 1 origin master:master
     - export PROJECT_ID="$CI_PROJECT_ID"
     - |
       make dist-srpm || exit 1
