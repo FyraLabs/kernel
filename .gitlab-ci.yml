@@ -36,3 +36,133 @@ trigger_pipeline:
     project: cki-runs/trusted-pipelines
     branch: kernel-ark
     strategy: depend
+
+
+stages:
+  - test
+  - build
+  - deploy
+
+merge_upstream:
+  variables:
+    GIT_DEPTH: "0"
+    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+  before_script:
+    - echo "fastestmirror=true" >> /etc/dnf/dnf.conf
+    - dnf -y install python3-gitlab git openssh-clients dnf-utils gnupg2
+    - git config user.name "Fedora Kernel Team"
+    - git config user.email "kernel-team@fedoraproject.org"
+    - echo "$PYTHON_GITLAB_CONFIG" >> ~/.python-gitlab.cfg
+    # Need SSH since the clone is set up without write access.
+    - eval $(ssh-agent -s)
+    - echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$GITLAB_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - git remote add gitlab git@gitlab.com:cki-project/kernel-ark.git
+    - gpg2 --import "$TORVALDS_GPG_KEY"
+  script:
+    - git checkout --track origin/master && git describe
+    - git checkout --track origin/os-build && git describe
+    - export PROJECT_ID="$CI_PROJECT_ID"
+    - make dist-merge-upstream || exit 1
+  retry: 2
+  only:
+    refs:
+      - schedules
+    variables:
+      - $RAWHIDE_RELEASE == "dummy"
+
+rawhide_release:
+  variables:
+    GIT_DEPTH: "0"
+    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+  before_script:
+    - echo "fastestmirror=true" >> /etc/dnf/dnf.conf
+    - dnf -y install python3-gitlab git openssh-clients dnf-utils gnupg2
+    - git config user.name "Fedora Kernel Team"
+    - git config user.email "kernel-team@fedoraproject.org"
+    - echo "$PYTHON_GITLAB_CONFIG" >> ~/.python-gitlab.cfg
+    # Need SSH since the clone is set up without write access.
+    - eval $(ssh-agent -s)
+    - echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$GITLAB_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - git remote add gitlab git@gitlab.com:cki-project/kernel-ark.git
+    - gpg2 --import "$TORVALDS_GPG_KEY"
+  script:
+    - git fetch --unshallow
+    # Hack to work around Makefile.common checking for a remote called linus
+    - git remote add -f linus https://gitlab.com/cki-project/kernel-ark.git
+    - git checkout --track linus/master && git describe
+    - git checkout --track origin/ark-latest && git describe
+    - git checkout --track origin/os-build && git describe
+    - export PROJECT_ID="$CI_PROJECT_ID"
+    - redhat/scripts/ci/ark-create-release.sh "master" "$CI_PROJECT_ID" || exit_code=$?
+    - if [ $exit_code -eq 3 ]; then echo "Tag exists, halting" && exit 0; fi;
+    - if [ $exit_code -ne 0 ]; then echo "Unable to create release tag" && exit 1; fi;
+    - git push gitlab os-build
+    - >
+      for branch in $(git branch | grep configs/"$(date +%F)"); do
+        git push \
+          -o merge_request.create \
+          -o merge_request.target=os-build \
+          -o merge_request.remove_source_branch \
+          gitlab "$branch"
+      done;
+    - git push gitlab "$(git describe)"
+    - git push gitlab ark/*
+    - git push -f gitlab ark-latest
+  retry: 2
+  only:
+    refs:
+      - schedules
+    variables:
+      - $RAWHIDE_RELEASE == "true"
+
+
+test_docs:
+  stage: test
+  before_script:
+    - python3 -m venv ~/docs-venv
+    - source ~/docs-venv/bin/activate
+    - pip install sphinx
+    - cd redhat/docs/
+    - mkdir _static
+  script: make SPHINXOPTS="-W" html
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "os-build"'
+      changes:
+        - redhat/docs/**/*
+
+
+docs:
+  stage: build
+  before_script:
+    - python3 -m venv ~/docs-venv
+    - source ~/docs-venv/bin/activate
+    - pip install sphinx
+    - cd redhat/docs/
+  script: make SPHINXOPTS="-W" html
+  artifacts:
+    paths:
+      - redhat/docs/_build/html/
+  only:
+    refs:
+      - os-build
+
+pages:
+  stage: deploy
+  dependencies:
+    - docs
+  script:
+    - mv redhat/docs/_build/html/ public/
+  artifacts:
+    paths:
+      - public
+  only:
+    refs:
+      - os-build
