@@ -1,10 +1,24 @@
-# CI definitions for ark-patches and internal are maintained in a single file
-# outside the main repository because the two branches are regularly merged
-# together in release branches. Rather than trying to keep the two branches in
-# sync or have merge conflicts each time we merge the two branches, the
-# definition is stored externally and included in each branch.
+# GitLab CI configuration file
 #
-# To update any CI jobs, please submit any merge requests to
-# https://gitlab.com/cki-project/kernel-ark-ci/.
-include:
-  - remote: 'https://gitlab.com/cki-project/kernel-ark-ci/raw/master/gitlab-ci.yml'
+# This contains CI definitions for https://gitlab.com/cki-project/kernel-ark.
+# It is stored outside the repository so that it's easy for all branches to
+# have a single CI definition across branches. Kernel patches are in one
+# branch, configuration in a separate branch, but these branches are merged for
+# release. Rather than making sure the two branches keep in sync, each branch
+# just has a CI definition that includes this file.
+
+image: registry.gitlab.com/cki-project/containers/python
+
+stages:
+  - test
+
+testing:
+  variables:
+    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+    GIT_DEPTH: "1"
+  stage: test
+  script:
+    - git config user.name "Fedora Kernel Team"
+    - git config user.email "kernel-team@fedoraproject.org"
+    - |
+      echo "PUBLIC KEY: $TORVALDS_GPG_KEY"
