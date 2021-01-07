@@ -1,3 +1,7 @@
+* Thu Jan 07 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210107git71c061d24438.118]
+- irq: export irq_check_status_bit (Levi Yun)
+- Turn off vdso_install for ppc ("Justin M. Forbes")
+
 * Thu Jan 07 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210107git71c061d24438.117]
 - Add gcc-c++ to BuildRequires ("Justin M. Forbes")
 
