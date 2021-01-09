@@ -1,3 +1,7 @@
+* Sat Jan 09 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210109git996e435fd401.120]
+- irq: export irq_check_status_bit (Levi Yun)
+- Turn off vdso_install for ppc ("Justin M. Forbes")
+
 * Sat Jan 09 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc2.20210109git996e435fd401.119]
 - Revert "Merge branch 'revert-29a48502' into 'os-build'" (Justin Forbes)
 
