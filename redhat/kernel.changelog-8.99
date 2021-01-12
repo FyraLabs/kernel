@@ -1,3 +1,7 @@
+* Tue Jan 12 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210112gita0d54b4f5b21.123]
+- irq: export irq_check_status_bit (Levi Yun)
+- Turn off vdso_install for ppc ("Justin M. Forbes")
+
 * Tue Jan 12 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210112gita0d54b4f5b21.122]
 - Enable the vkms module in Fedora (Jeremy Cline)
 
