@@ -144,7 +144,7 @@ rh-configs: dist-configs
 dist-configs-check: dist-configs-prep
 	cd $(REDHAT)/configs; ./process_configs.sh $(PROCESS_CONFIGS_CHECK_OPTS) $(PACKAGE_NAME)
 
-dist-configs-prep: dist-clean-configs
+dist-configs-prep: dist-clean-configs dist-buildreq-check
 	cd $(REDHAT)/configs; ./build_configs.sh "$(PACKAGE_NAME)" "$(ARCH_MACH)" "$(FLAVOR)"
 
 dist-configs-arch: ARCH_MACH = $(MACH)
@@ -210,6 +210,17 @@ dist-git-version-check:
 		exit 1; \
 	fi
 
+dist-buildreq-check: setup-source
+	@PKGLIST="rpm-build $(rpmspec -q --buildrequires $(SOURCES)/$(SPECFILE) | cut -d ' ' -f 1)"; \
+	MISSING=""; \
+	for pkg in $$PKGLIST; do \
+		rpm -q --whatprovides $$pkg >/dev/null || MISSING="$$MISSING $$pkg"; \
+	done; \
+	if [ -n "$$MISSING" ]; then \
+		echo "Error: please install $$MISSING"; \
+		exit 1; \
+	fi
+
 setup-source: dist-git-version-check dist-clean-sources
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
 	@if [ ! -e  $(REDHAT)/$(CHANGELOG) ]; then \
@@ -265,7 +276,7 @@ sources-rh: $(TARBALL) generate-testpatch-tmp
 	fi
 	@(cd kabi-dwarf && tar cjf $(SOURCES)/$(KABIDW_TARFILE) base run_kabi-dw.sh)
 
-dist-sources: setup-source dist-configs-check dist-kabi dist-kabi-dup sources-rh
+dist-sources: dist-configs-check dist-kabi dist-kabi-dup sources-rh
 
 dist-test-patch: generate-testpatch-tmp
 	@mv $(TESTPATCH).tmp $(TESTPATCH);
@@ -515,6 +526,7 @@ dist-full-help:
 
 	@echo  ''
 	@echo  'Misc targets:'
+	@echo  '  dist-buildreq-check - Checks for presence of packages required for build'
 	@echo  '  dist-get-latest - Returns the latest "known good" kernel from brew. This'
 	@echo  '                    should not be confused with the latest top-of-tree'
 	@echo  '                    development tag.'
