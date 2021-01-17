@@ -1,3 +1,7 @@
+* Sun Jan 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210117git0da0a8a0a0e1.128]
+- irq: export irq_check_status_bit (Levi Yun)
+- Turn off vdso_install for ppc ("Justin M. Forbes")
+
 * Sat Jan 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210116git1d94330a437a.126]
 - Fedora 5.11 configs pt 1 ("Justin M. Forbes")
 
