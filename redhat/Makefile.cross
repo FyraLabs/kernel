@@ -4,6 +4,7 @@ CROSS_PACKAGE_LIST = \
    cross-binutils-common cross-gcc-common diffstat \
    glibc-static ncurses-devel numactl-devel rng-tools
 
+
 ifeq ($(ARCH),arm64)
 CROSS_PACKAGE_LIST += binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu
 else ifeq ($(ARCH),powerpc)
