@@ -4,6 +4,7 @@ include Makefile.rhpkg
 
 LANG=C
 
+
 ifeq ("$(ZSTREAM)", "yes")
   __YSTREAM = no
   ifeq ("$(origin RHDISTGIT_BRANCH)", "command line")
