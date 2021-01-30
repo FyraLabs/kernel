@@ -1,3 +1,8 @@
+* Sat Jan 30 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210130git0e9bcda5d286.139]
+- redhat: replace inline awk script with genlog.py call (Herton R. Krzesinski)
+- redhat: add genlog.py script (Herton R. Krzesinski)
+- Turn off vdso_install for ppc (Justin M. Forbes)
+
 * Sat Jan 30 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210130git0e9bcda5d286.138]
 - New configs in lib/Kconfig.debug (Fedora Kernel Team)
 
