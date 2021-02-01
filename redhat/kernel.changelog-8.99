@@ -1,3 +1,47 @@
+* Sun Jan 31 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210131git0e9bcda5d286.139]
+- Remove bpf-helpers.7 from bpftool package (Jiri Olsa)
+
+* Sat Jan 30 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210130git0e9bcda5d286.138]
+- New configs in lib/Kconfig.debug (Fedora Kernel Team)
+
+* Fri Jan 29 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210129gitbec4c2968fce.137]
+- Turn off CONFIG_VIRTIO_CONSOLE for s390x zfcpdump ("Justin M. Forbes")
+
+* Thu Jan 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210128git76c057c84d28.136]
+- Keep VIRTIO_CONSOLE on s390x available. (=?UTF-8?q?Jakub=20=C4=8Cajka?=)
+- New configs in drivers/clk ("Justin M. Forbes")
+
+* Wed Jan 27 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.20210127git2ab38c17aac1.135]
+- New configs in lib/Kconfig.debug (Jeremy Cline)
+
+* Mon Jan 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc5.133]
+- Fedora 5.11 config updates part 4 ("Justin M. Forbes")
+- Fedora 5.11 config updates part 3 ("Justin M. Forbes")
+- Fedora 5.11 config updates part 2 ("Justin M. Forbes")
+- Update internal (test) module list from RHEL-8 (Joe Lawrence) [https://bugzilla.redhat.com/show_bug.cgi?id=1915073]
+
+* Thu Jan 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc4.20210121git9791581c049c.131]
+- Fix USB_XHCI_PCI regression ("Justin M. Forbes")
+- fedora: fixes for ARMv7 build issue by disabling HIGHPTE (Peter Robinson)
+
+* Tue Jan 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc4.20210119git1e2a199f6ccd.129]
+- all: s390x: Increase CONFIG_PCI_NR_FUNCTIONS to 512 (#1888735) (=?UTF-8?q?Dan=20Hor=C3=A1k?=)
+
+* Sat Jan 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210116git1d94330a437a.126]
+- Fedora 5.11 configs pt 1 ("Justin M. Forbes")
+
+* Fri Jan 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210115git5ee88057889b.125]
+- redhat: avoid conflict with mod-blacklist.sh and released_kernel defined ("Herton R. Krzesinski")
+- redhat: handle certificate files conditionally as done for src.rpm ("Herton R. Krzesinski")
+- Run MR testing in CKI pipeline (Veronika Kabatova)
+- specfile: add {?_smp_mflags} to "make headers_install" in tools/testing/selftests (Denys Vlasenko)
+- specfile: add {?_smp_mflags} to "make samples/bpf/" (Denys Vlasenko)
+
+* Thu Jan 14 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210114git65f0d2414b70.124]
+- Reword comment (Nicolas Chauvet)
+- Add with_cross_arm conditional (Nicolas Chauvet)
+- Redefines __strip if with_cross (Nicolas Chauvet)
+
 * Wed Jan 13 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc3.20210113gite609571b5ffa.123]
 - fedora: only enable ACPI_CONFIGFS, ACPI_CUSTOM_METHOD in debug kernels (Peter Robinson)
 - fedora: User the same EFI_CUSTOM_SSDT_OVERLAYS as ARK (Peter Robinson)

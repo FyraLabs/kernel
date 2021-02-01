@@ -239,7 +239,7 @@ generate-testpatch-tmp:
 		":(exclude,top)Makefile.rhelver" \
 		":(exclude,top)redhat" > $(TESTPATCH).tmp
 
-sources-rh: $(TARBALL) generate-testpatch-tmp
+sources-rh: $(TARBALL) generate-testpatch-tmp setup-source dist-configs-check
 	@cp -l $(TARBALL) $(SOURCES)/ || cp $(TARBALL) $(SOURCES)/
 	@touch $(TESTPATCH)
 	@diff $(TESTPATCH).tmp $(TESTPATCH) > /dev/null || \
@@ -252,7 +252,6 @@ sources-rh: $(TARBALL) generate-testpatch-tmp
 		keys/rhel*.x509 \
 		kabi/check-kabi \
 		configs/$(PACKAGE_NAME)-*.config \
-		keys/*.cer \
 		update_scripts.sh \
 		mod-blacklist.sh \
 		mod-internal.list \
@@ -266,6 +265,12 @@ sources-rh: $(TARBALL) generate-testpatch-tmp
 		../Makefile.rhelver \
 		README.rst \
 		$(SOURCES)/
+	@if [ "$(RELEASED_KERNEL)" -ne 0 ]; then \
+		cp keys/redhatsecureboot{301,501,ca5,ca1}.cer $(SOURCES)/; \
+		cp keys/secureboot_{ppc,s390}.cer $(SOURCES)/; \
+	else \
+		cp keys/redhatsecureboot{003,401,ca2,ca4}.cer $(SOURCES)/; \
+	fi
 	@for KABIARCH in $(ARCH_LIST); do \
 		cp kabi/Module.kabi_$$KABIARCH $(SOURCES)/; \
 		cp kabi/Module.kabi_dup_$$KABIARCH $(SOURCES)/; \
@@ -276,36 +281,38 @@ sources-rh: $(TARBALL) generate-testpatch-tmp
 	fi
 	@(cd kabi-dwarf && tar cjf $(SOURCES)/$(KABIDW_TARFILE) base run_kabi-dw.sh)
 
-dist-sources: dist-configs-check dist-kabi dist-kabi-dup sources-rh
+dist-sources: dist-kabi dist-kabi-dup sources-rh
 
 dist-test-patch: generate-testpatch-tmp
 	@mv $(TESTPATCH).tmp $(TESTPATCH);
 
-dist-all-rpms: dist-sources
-	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --target $(MACH) -ba $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+do-rpmbuild: dist-sources
+	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" $(RPMBUILDOPTS) $(RPM)/SOURCES/$(PACKAGE_NAME).spec
 
-dist-srpm: dist-sources
-	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --nodeps -bs $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+dist-all-rpms: RPMBUILDOPTS=--target $(MACH) -ba
+dist-all-rpms: dist-sources do-rpmbuild
+
+dist-srpm: RPMBUILDOPTS=--nodeps -bs
+dist-srpm: dist-sources do-rpmbuild
 
 dist-srpm-gcov:
 	make dist-sources BUILDID=".gcov" BUILDOPTS="+gcov"
-	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --nodeps -bs $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+	RPMBUILDOPTS="--nodeps -bs" make do-rpmbuild
 
-dist-rpms: dist-sources
-	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --target $(MACH) -bb $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+dist-rpms: RPMBUILDOPTS=--target $(MACH) -bb
+dist-rpms: dist-sources do-rpmbuild
 
 dist-kernel-%: dist-sources
-	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --target $(MACH) --with $* --without vdso_install --without perf --without tools -bb $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+	RPMBUILDOPTS="--target $(MACH) --with $* --without vdso_install --without perf --without tools -bb" make do-rpmbuild
 
-dist-prep: dist-sources
-	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --nodeps --target noarch -bp $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+dist-prep: RPMBUILDOPTS=--nodeps --target noarch -bp
+dist-prep: dist-sources do-rpmbuild
 
-dist-perf: dist-sources
-	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --without up --without smp --without zfcpdump --without debug --without doc --without headers --without  --without doc --without debuginfo --target $(MACH) -bb $(RPM)/SOURCES/$(PACKAGE_NAME).spec
+dist-perf: RPMBUILDOPTS=--without up --without smp --without zfcpdump --without debug --without doc --without headers --without  --without doc --without debuginfo --target $(MACH) -bb
+dist-perf: dist-sources do-rpmbuild
 
-dist-rpm-baseonly: dist-sources
-	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" --target $(MACH) --without debug --without debuginfo --without vdso_install --without bpftool --without perf --without tools -bb $(RPM)/SOURCES/$(PACKAGE_NAME).spec
-
+dist-rpm-baseonly: RPMBUILDOPTS=--target $(MACH) --without debug --without debuginfo --without vdso_install --without bpftool --without perf --without tools -bb
+dist-rpm-baseonly: dist-sources do-rpmbuild
 
 # unless you know what you're doing, you don't want to use the next four ones
 dist-release-finish: setup-source
