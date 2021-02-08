@@ -1,3 +1,6 @@
+* Mon Feb 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210208git825b5991a46e.148]
+- Bluetooth: L2CAP: Try harder to accept device not knowing options (Bastien Nocera)
+
 * Mon Feb 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc6.20210208git825b5991a46e.147]
 - The comments in CONFIG_USB_RTL8153_ECM actually turn off CONFIG_USB_RTL8152 (Justin M. Forbes)
 
