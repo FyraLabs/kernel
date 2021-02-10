@@ -1,4 +1,5 @@
 GIT ?= git
+# testing comment
 include Makefile.common
 include Makefile.rhpkg
 
