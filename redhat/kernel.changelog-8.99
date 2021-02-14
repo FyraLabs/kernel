@@ -1,3 +1,6 @@
+* Sun Feb 14 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.20210214gitc6d8570e4d64.153]
+- Bluetooth: L2CAP: Try harder to accept device not knowing options (Bastien Nocera)
+
 * Sat Feb 13 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.11.0-0.rc7.20210213gitdcc0b49040c7.151]
 - Fedora config update (Justin M. Forbes)
 
