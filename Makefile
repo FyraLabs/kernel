@@ -5,46 +5,7 @@ SUBLEVEL = 0
 EXTRAVERSION = -rc2
 NAME = Frozen Wasteland
 
-#
-#
-# Add some new lines of code.
-#
-#
-
-# Now add in a bunch of new code.  Empty lines as an example.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Now pretend some Other code was removed.
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
 # More info can be located in ./README
