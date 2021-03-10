@@ -1,3 +1,6 @@
+* Wed Mar 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc2.20210310git05a59d79793d.168]
+- Set CONFIG_MOUSE_SERIAL=n by default (Patrick Talbert)
+
 * Wed Mar 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc2.20210310git05a59d79793d.167]
 - Fedora: Turn on SND_SOC_INTEL_SKYLAKE_HDAUDIO_CODEC option (Hans de Goede)
 - Fedora: enable modules for surface devices (Dave Olsthoorn)
