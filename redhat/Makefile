@@ -127,6 +127,10 @@ dist-kabi-dw-check: dist-kabi
 	@echo "**** End of KABI DWARF-based comparison report ****"
 	@rm -rf $(KABIDW)/base/$(CURARCH).tmp
 
+dist-gitsetup:
+	@git config --get include.path | grep -q 'redhat/kernel.gitconfig' || \
+		git config --local --add include.path "../redhat/kernel.gitconfig"
+
 dist-configs-commit: dist-configs-prep
 	@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh "$(FLAVOR)" 1; \
 	./process_configs.sh -z $(PACKAGE_NAME) $(KVERSION) "" $(FLAVOR)
@@ -455,6 +459,7 @@ dist-help:
 	@echo  '                        compiler.'
 	@echo  ''
 	@echo  'Configuration targets:'
+	@echo  '  dist-gitsetup       - Adjust the git repo configuration for the Fedora/ARK workflow.'
 	@echo  '  dist-configs        - Create RHEL config files in redhat/config/.'
 	@echo  ''
 	@echo  'For detailed description and full list of targets, run `make dist-full-help`.'
@@ -544,6 +549,9 @@ dist-full-help:
 
 	@echo  ''
 	@echo  'Configuration targets:'
+	@echo  '  dist-gitsetup - Adjust the git repo configuration for the Fedora/ARK workflow'
+	@echo  '                  by including the redhat/kernel.gitconfig file.  This hook'
+	@echo  '                  allows the creation of git alias shortcuts.'
 	@echo  '  dist-configs  - Creates config files for RHEL $(RHEL_MAJOR) architectures,'
 	@echo  '                  cleans them by running make nonint_oldconfig, and copies'
 	@echo  '                  them to redhat/configs/ directory. This is the target to use'
