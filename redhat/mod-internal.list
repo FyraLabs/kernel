@@ -4,6 +4,7 @@ mac80211_hwsim
 netdevsim
 pktgen
 rcutorture
+refscale
 rocker
 test_klp_atomic_replace
 test_klp_callbacks_demo
