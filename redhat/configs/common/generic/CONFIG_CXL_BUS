@@ -1,1 +1,1 @@
-# CONFIG_CXL_BUS is not set
+CONFIG_CXL_BUS=y
