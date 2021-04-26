@@ -54,14 +54,8 @@ include Makefile.cross
 default: dist-help
 
 dist-python-check:
-	@if [ ! -f /usr/libexec/platform-python ]; then \
-		if ! which python3 > /dev/null 2>&1; then \
-			echo "ERROR: Python 3 is needed." ; \
-			exit 1; \
-		fi; \
-		echo "ERROR: your build environment is not compatible with this distribution."; \
-		echo "To fix this, run:"; \
-		echo "ln -s `which python3` /usr/libexec/platform-python"; \
+	@if [ ! -x /usr/bin/python3 ]; then \
+		echo "ERROR: Python 3 is needed." ; \
 		exit 1; \
 	fi
 
@@ -135,11 +129,13 @@ dist-configs: dist-configs-prep
 	@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh "$(FLAVOR)" 1; \
 	./process_configs.sh $(PROCESS_CONFIGS_OPTS) $(PACKAGE_NAME) $(KVERSION)
 
-fedora-configs: FLAVOR = fedora
-fedora-configs: dist-configs
+dist-fedora-configs: FLAVOR = fedora
+dist-fedora-configs: dist-configs
+fedora-configs: dist-fedora-configs
 
-rh-configs: FLAVOR = rhel
-rh-configs: dist-configs
+dist-rhel-configs: FLAVOR = rhel
+dist-rhel-configs: dist-configs
+rh-configs: dist-rhel-configs
 
 dist-configs-check: dist-configs-prep
 	cd $(REDHAT)/configs; ./process_configs.sh $(PROCESS_CONFIGS_CHECK_OPTS) $(PACKAGE_NAME)
@@ -404,6 +400,12 @@ dist-git: dist-srpm $(KABI_TARBALL) $(KABIDW_TARBALL)
 ifeq ("$(RHDISTGIT_BRANCH)", "")
  $(error RHDISTGIT_BRANCH unset)
 endif
+	if [ "$(DISTRO)" == "centos" ]; then \
+	if [ -z "$(GL_DISTGIT_USER)" ]; then \
+		echo "Error: please Please provide your gitlab username with GL_DISTGIT_USER"; \
+		exit 1; \
+	fi; \
+	fi
 	$(REDHAT)/scripts/rh-dist-git.sh "$(RHDISTGIT_BRANCH)" "$(RHDISTGIT_CACHE)" "$(RHDISTGIT_TMP)" "$(RHDISTGIT)" "$(TARBALL)" "$(KABI_TARBALL)" "$(KABIDW_TARBALL)" "$(__ZSTREAM)" "$(PACKAGE_NAME)" "$(RHEL_MAJOR)" "$(RHPKG_BIN)" "$(SRPMS)/$(PACKAGE_NAME)-$(KVERSION)-$(PKGRELEASE)$(DIST).src.rpm"
 
 dist-rtg: dist-release
@@ -422,7 +424,7 @@ dist-os-version:
 .EXPORT_ALL_VARIABLES:
 .PHONY: dist-dump-variables
 dist-dump-variables:
-	grep "^[ 	]*[a-zA-Z_][a-zA-Z_0-9]*[ 	]*[:?]*=" $(REDHAT)/Makefile.common | sed -e 's/[ 	]*\([a-zA-Z_][a-zA-Z_0-9]*\).*/echo "\1=$$\1"/' | sort | uniq > dist-dump-variables.sh
+	grep -h "^[ 	]*[a-zA-Z_][a-zA-Z_0-9]*[ 	]*[:?]*=" $(REDHAT)/Makefile.common $(REDHAT)/Makefile $(TOPDIR)/Makefile.rhelver | sed -e 's/[ 	]*\([a-zA-Z_][a-zA-Z_0-9]*\).*/echo "\1=$$\1"/' | sort | uniq > dist-dump-variables.sh
 	chmod +x $(REDHAT)/dist-dump-variables.sh
 	@$(REDHAT)/dist-dump-variables.sh
 
@@ -516,8 +518,8 @@ dist-full-help:
 	@echo  '  dist-cross-<arch>-rpms  - [x86_64 only] execute rpm builds for specified'
 	@echo  '                            <arch> using RHEL cross compiler.'
 	@echo  '                            See dist-cross-<arch>-build for the supported archs.'
-	@echo  '  rh-configs       - build ELN configs'
-	@echo  '  fedora-configs   - build Fedora configs'
+	@echo  '  dist-rhel-configs       - build ELN configs'
+	@echo  '  dist-fedora-configs     - build Fedora configs'
 
 	@echo  ''
 	@echo  'kABI targets:'

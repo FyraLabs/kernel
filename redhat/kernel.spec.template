@@ -6,6 +6,12 @@
 # Disable LTO in userspace packages.
 %global _lto_cflags %{nil}
 
+# Option to enable compiling with clang instead of gcc.
+%bcond_with toolchain_clang
+
+%if %{with toolchain_clang}
+%global toolchain clang
+%endif
 
 # Cross compile on copr for arm
 # See https://bugzilla.redhat.com/1879599
@@ -34,10 +40,6 @@
 # should be added above this line otherwise the %%install section
 # will not see them.
 %global __spec_install_pre %{___build_pre}
-
-# Short-term fix so the package builds with GCC 10.
-# This should go away soon.
-%define _legacy_common_support 1
 
 # At the time of this writing (2019-03), RHEL8 packages use w2.xzdio
 # compression for rpms (xz, level 2).
@@ -226,6 +228,12 @@ Summary: The Linux kernel
 %define make_opts V=1
 %else
 %define make_opts -s
+%endif
+
+%if %{with toolchain_clang}
+%global make_opts %{make_opts} HOSTCC=clang CC=clang
+# clang does not support the -fdump-ipa-clones option
+%global with_ipaclones 0
 %endif
 
 # turn off debug kernel and kabichk for gcov builds
@@ -432,6 +440,14 @@ Summary: The Linux kernel
 %define with_configchecks 0
 %endif
 
+# Setting the compiler to clang enables some different config options
+# than what is expected, so disable this check for now.
+# TODO: What's the best way to fix this?  Do wee need a different set of
+# configs for clang?
+%if %{with toolchain_clang}
+%define with_configchecks 0
+%endif
+
 # To temporarily exclude an architecture from being built, add it to
 # %%nobuildarches. Do _NOT_ use the ExclusiveArch: line, because if we
 # don't build kernel-headers then the new build system will no longer let
@@ -594,6 +610,10 @@ BuildRequires: xmlto
 %endif
 %if %{with_perf} || %{with_tools}
 BuildRequires: asciidoc
+%endif
+
+%if %{with toolchain_clang}
+BuildRequires: clang
 %endif
 
 # Because this is the kernel, it's hard to get a single upstream URL
@@ -1038,6 +1058,12 @@ AutoReqProv: no\
 Requires(pre): findutils\
 Requires: findutils\
 Requires: perl-interpreter\
+Requires: openssl-devel\
+Requires: elfutils-libelf-devel\
+Requires: bison\
+Requires: flex\
+Requires: make\
+Requires: gcc\
 %description %{?1:%{1}-}devel\
 This package provides kernel headers and makefiles sufficient to build modules\
 against the %{?2:%{2} }kernel package.\
@@ -1723,6 +1749,7 @@ BuildKernel() {
     cp --parents tools/lib/*.c $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp --parents tools/objtool/*.[ch] $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp --parents tools/objtool/Build $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
+    cp --parents tools/objtool/include/objtool/*.h $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp -a --parents tools/lib/bpf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp --parents tools/lib/bpf/Build $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
 
@@ -2467,10 +2494,12 @@ fi\
 #
 %define kernel_variant_posttrans() \
 %{expand:%%posttrans %{?1:%{1}-}core}\
+%if 0%{!?fedora:1}\
 if [ -x %{_sbindir}/weak-modules ]\
 then\
     %{_sbindir}/weak-modules --add-kernel %{KVERREL}%{?1:+%{1}} || exit $?\
 fi\
+%endif\
 /bin/kernel-install add %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
 %{nil}
 

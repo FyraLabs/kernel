@@ -1,3 +1,130 @@
+* Mon Apr 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-198]
+- mod-extra.list.fedora: remove 72 unused modules (Paul Bolle)
+
+* Mon Apr 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-197]
+- Create ark-latest branch last for CI scripts (Don Zickus)
+
+* Wed Apr 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.20210421git7af08140979a.193]
+- Replace /usr/libexec/platform-python with /usr/bin/python3 (David Ward)
+
+* Tue Apr 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.20210420git7af08140979a.192]
+- Turn off ADI_AXI_ADC and AD9467 which now require CONFIG_OF (Justin M. Forbes)
+- Export ark infrastructure files (Don Zickus)
+- docs: Update docs to reflect newer workflow. (Don Zickus)
+- Use upstream/master for merge-base with fallback to master (Don Zickus)
+- Fedora: Turn off the SND_INTEL_BYT_PREFER_SOF option (Hans de Goede)
+
+* Mon Apr 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc8.191]
+- filter-modules.sh.fedora: clean up "netprots" (Paul Bolle)
+- filter-modules.sh.fedora: clean up "scsidrvs" (Paul Bolle)
+- filter-*.sh.fedora: clean up "ethdrvs" (Paul Bolle)
+- filter-*.sh.fedora: clean up "driverdirs" (Paul Bolle)
+- filter-*.sh.fedora: remove incorrect entries (Paul Bolle)
+- filter-*.sh.fedora: clean up "singlemods" (Paul Bolle)
+- filter-modules.sh.fedora: drop unused list "iiodrvs" (Paul Bolle)
+
+* Fri Apr 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc7.20210416git7e25f40eab52.190]
+- Update mod-internal to fix depmod issue (Nico Pache)
+- Turn on CONFIG_VDPA_SIM_NET (rhbz 1942343) (Justin M. Forbes)
+- New configs in drivers/power (Fedora Kernel Team)
+- Turn on CONFIG_NOUVEAU_DEBUG_PUSH for debug configs (Justin M. Forbes)
+- Turn off KFENCE sampling by default for Fedora (Justin M. Forbes)
+- Fedora config updates round 2 (Justin M. Forbes)
+- New configs in drivers/soc (Jeremy Cline)
+- filter-modules.sh: Fix copy/paste error 'input' (Paul Bolle)
+- Update module filtering for 5.12 kernels (Justin M. Forbes)
+- Fix genlog.py to ensure that comments retain "%%" characters. (Mark Mielke)
+- New configs in drivers/leds (Fedora Kernel Team)
+- Limit CONFIG_USB_CDNS_SUPPORT to x86_64 and arm in Fedora (David Ward)
+
+* Sat Apr 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc6.20210410gitd4961772226d.187]
+- Fedora: Enable CHARGER_GPIO on aarch64 too (Peter Robinson)
+- Fedora config updates (Justin M. Forbes)
+- wireguard: mark as Tech Preview (Hangbin Liu) [1613522]
+- configs: enable CONFIG_WIREGUARD in ARK (Hangbin Liu) [1613522]
+- Remove duplicate configs acroos fedora, ark and common (Don Zickus)
+- Combine duplicate configs across ark and fedora into common (Don Zickus)
+
+* Wed Apr 07 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc6.20210407git2d743660786e.185]
+- common/ark: cleanup and unify the parport configs (Peter Robinson)
+- iommu/vt-d: enable INTEL_IDXD_SVM for both fedora and rhel (Jerry Snitselaar)
+- REDHAT: coresight: etm4x: Disable coresight on HPE Apollo 70 (Jeremy Linton)
+
+* Wed Mar 31 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc5.20210331git2bb25b3a748a.181]
+- configs/common/generic: disable CONFIG_SLAB_MERGE_DEFAULT (Rafael Aquini)
+- Remove _legacy_common_support (Justin M. Forbes)
+- redhat/mod-blacklist.sh: Fix floppy blacklisting (Hans de Goede)
+
+* Fri Mar 26 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc4.20210326gitdb24726bfefa.178]
+- New configs in fs/pstore (CKI@GitLab)
+
+* Thu Mar 25 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc4.20210325gite138138003eb.177]
+- New configs in arch/powerpc (Fedora Kernel Team)
+- configs: enable BPF LSM on Fedora and ARK (Ondrej Mosnacek)
+- configs: clean up LSM configs (Ondrej Mosnacek)
+
+* Wed Mar 24 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc4.20210324git7acac4b3196c.176]
+- New configs in drivers/platform (CKI@GitLab)
+- New configs in drivers/firmware (CKI@GitLab)
+- New configs in drivers/mailbox (Fedora Kernel Team)
+- New configs in drivers/net/phy (Justin M. Forbes)
+- Update CONFIG_DM_MULTIPATH_IOA (Augusto Caringi)
+- New configs in mm/Kconfig (CKI@GitLab)
+- New configs in arch/powerpc (Jeremy Cline)
+- New configs in arch/powerpc (Jeremy Cline)
+- New configs in drivers/input (Fedora Kernel Team)
+- New configs in net/bluetooth (Justin M. Forbes)
+- New configs in drivers/clk (Fedora Kernel Team)
+- New configs in init/Kconfig (Jeremy Cline)
+- redhat: allow running fedora-configs and rh-configs targets outside of redhat/ (Herton R. Krzesinski)
+- all: unify the disable of goldfish (android emulation platform) (Peter Robinson)
+- common: minor cleanup/de-dupe of dma/dmabuf debug configs (Peter Robinson)
+- common/ark: these drivers/arches were removed in 5.12 (Peter Robinson)
+- common: unset serial mouse for general config (Peter Robinson)
+- Correct kernel-devel make prepare build for 5.12. (Paulo E. Castro)
+- redhat: add initial support for centos stream dist-git sync on Makefiles (Herton R. Krzesinski)
+- redhat/configs: Enable CONFIG_SCHED_STACK_END_CHECK for Fedora and ARK (Josh Poimboeuf) [1856174]
+
+* Sat Mar 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc3.20210320git1c273e10bc0c.173]
+- CONFIG_VFIO now selects IOMMU_API instead of depending on it, causing several config mismatches for the zfcpdump kernel (Justin M. Forbes)
+
+* Thu Mar 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc3.20210318git6417f03132a6.171]
+- Turn off weak-modules for Fedora (Justin M. Forbes)
+- redhat: enable CONFIG_FW_LOADER_COMPRESS for ARK (Herton R. Krzesinski) [1939095]
+
+* Mon Mar 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc3.170]
+- Fedora: filters: update to move dfl-emif to modules (Peter Robinson)
+- drop duplicate DEVFREQ_GOV_SIMPLE_ONDEMAND config (Peter Robinson)
+- efi: The EFI_VARS is legacy and now x86 only (Peter Robinson)
+- common: enable RTC_SYSTOHC to supplement update_persistent_clock64 (Peter Robinson)
+- generic: arm: enable SCMI for all options (Peter Robinson)
+- fedora: the PCH_CAN driver is x86-32 only (Peter Robinson)
+- common: disable legacy CAN device support (Peter Robinson)
+- common: Enable Microchip MCP251x/MCP251xFD CAN controllers (Peter Robinson)
+- common: Bosch MCAN support for Intel Elkhart Lake (Peter Robinson)
+- common: enable CAN_PEAK_PCIEFD PCI-E driver (Peter Robinson)
+- common: disable CAN_PEAK_PCIEC PCAN-ExpressCard (Peter Robinson)
+- common: enable common CAN layer 2 protocols (Peter Robinson)
+- ark: disable CAN_LEDS option (Peter Robinson)
+
+* Wed Mar 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc2.20210310git05a59d79793d.167]
+- Fedora: Turn on SND_SOC_INTEL_SKYLAKE_HDAUDIO_CODEC option (Hans de Goede)
+- Fedora: enable modules for surface devices (Dave Olsthoorn)
+- Turn on SND_SOC_INTEL_SOUNDWIRE_SOF_MACH for Fedora again (Justin M. Forbes)
+- common: fix WM8804 codec dependencies (Peter Robinson)
+- Build SERIO_SERPORT as a module (Peter Robinson)
+- input: touchscreen: move ELO and Wacom serial touchscreens to x86 (Peter Robinson)
+- Sync serio touchscreens for non x86 architectures to the same as ARK (Peter Robinson)
+- Only enable SERIO_LIBPS2 on x86 (Peter Robinson)
+- Only enable PC keyboard controller and associated keyboard on x86 (Peter Robinson)
+- Generic: Mouse: Tweak generic serial mouse options (Peter Robinson)
+- Only enable PS2 Mouse options on x86 (Peter Robinson)
+- Disable bluetooth highspeed by default (Peter Robinson)
+- Fedora: A few more general updates for 5.12 window (Peter Robinson)
+- Fedora: Updates for 5.12 merge window (Peter Robinson)
+- Fedora: remove dead options that were removed upstream (Peter Robinson)
+- Revert "mm/kmemleak: skip late_init if not skip disable" (Herton R. Krzesinski)
+
 * Fri Mar 05 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.12.0-0.rc1.20210305git280d542f6ffa.164]
 - Revert "ARM: fix __get_user_check() in case uaccess_* calls are not inlined" (Herton R. Krzesinski)
 
