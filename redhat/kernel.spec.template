@@ -1047,6 +1047,7 @@ Provides: kernel-devel-%{_target_cpu} = %{version}-%{release}%{?1:+%{1}}\
 Provides: kernel-devel-uname-r = %{KVERREL}%{?1:+%{1}}\
 Provides: installonlypkg(kernel)\
 AutoReqProv: no\
+Requires: kernel-core-uname-r = %{KVERREL}\
 Requires(pre): findutils\
 Requires: findutils\
 Requires: perl-interpreter\
