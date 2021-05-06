@@ -35,8 +35,19 @@ trigger_pipeline:
     # skip_build: 'true'
     # skip_publish: 'true'
     # skip_test: 'true'
-    test_set: trace
-    architectures: ppc64le
+    test_set: acpi
+    architectures: x86_64
+
+
+    send_ready_for_test_pre: 'True'
+    send_ready_for_test_post: 'True'
+    # build_kabi_whitelist: 'true'
+    tree_yaml_name: rawhide
+    kpet_tree_family: rawhide
+    package_name: kernel
+    publish_elsewhere: 'true'
+    native_tools: 'true'
+    # ystream_distro: RHEL-8.4.0-20201209.n.0
 
   trigger:
     project: redhat/red-hat-ci-tools/kernel/cki-internal-pipelines/cki-trusted-contributors
