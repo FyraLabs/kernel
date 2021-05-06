@@ -32,9 +32,11 @@ trigger_pipeline:
     builder_image: registry.gitlab.com/cki-project/containers/builder-rawhide
     builder_image_tag: latest
     srpm_make_target: dist-srpm
-    skip_build: 'true'
-    skip_publish: 'true'
-    skip_test: 'true'
+    # skip_build: 'true'
+    # skip_publish: 'true'
+    # skip_test: 'true'
+    test_set: trace
+    architectures: ppc64le
 
   trigger:
     project: redhat/red-hat-ci-tools/kernel/cki-internal-pipelines/cki-trusted-contributors
