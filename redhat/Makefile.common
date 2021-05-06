@@ -75,7 +75,7 @@ ifeq ($(SNAPSHOT),1)
   endif
   # Obtain the date that HEAD was committed (not the snapshot commit).
   HEAD_DATE:=$(shell $(GIT) show -s --format=%cd --date=format:%Y%m%d $(HEAD))
-  PREBUILD:=$(PREBUILD)$(HEAD_DATE)git$(MARKER).
+  PREBUILD:=$(PREBUILD)$(HEAD_DATE).
   UPSTREAM_TARBALL_NAME:=$(patsubst v%,%,$(_TAG))
 endif
 
@@ -131,6 +131,7 @@ endif
 
 PKGRELEASE:=$(PREBUILD)$(BUILD)$(BUILDID)
 SPECRELEASE:=$(PREBUILD)$(BUILD)%{?buildid}%{?dist}
+$(info PKGRELEASE is "$(PKGRELEASE)".)
 
 ifeq ("$(SINGLE_TARBALL)", "0")
   TARFILE_RELEASE:=$(UPSTREAM_TARBALL_NAME)
