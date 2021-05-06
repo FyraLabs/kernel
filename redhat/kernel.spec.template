@@ -1886,7 +1886,7 @@ BuildKernel() {
 
 %if %{with_cross}
     # Remove native host binaries as they won't work in the cross arch env
-    find . -type f -executable -exec file {} \;|grep x86-64|cut -d':' -f1|xargs rm
+    find . -type f -executable -exec file {} \;|grep x86-64|cut -d':' -f1| grep -v sign-file|xargs rm
 %endif
 
     # Make sure the Makefile and version.h have a matching timestamp so that
