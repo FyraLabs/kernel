@@ -714,22 +714,50 @@ EXPORT_SYMBOL(page_mapping);
 /* Slow path of page_mapcount() for compound pages */
 int __page_mapcount(struct page *page)
 {
+	unsigned int seqcount;
 	int ret;
 
-	ret = atomic_read(&page->_mapcount) + 1;
 	/*
 	 * For file THP page->_mapcount contains total number of mapping
 	 * of the page: no need to look into compound_mapcount.
 	 */
 	if (!PageAnon(page) && !PageHuge(page))
-		return ret;
+		return atomic_read(&page->_mapcount) + 1;
 	page = compound_head(page);
+again:
+	seqcount = page_mapcount_seq_begin(page);
+
+	ret = atomic_read(&page->_mapcount) + 1;
 	ret += atomic_read(compound_mapcount_ptr(page)) + 1;
 	if (PageDoubleMap(page))
 		ret--;
+
+	if (page_mapcount_seq_retry(page, seqcount))
+		goto again;
 	return ret;
 }
 EXPORT_SYMBOL_GPL(__page_mapcount);
+
+bool __page_anon_shared_irqsafe(struct page *page)
+{
+	unsigned int seqcount;
+	int ret;
+
+	if (!PageAnon(page) && !PageHuge(page))
+		return atomic_read(&page->_mapcount) > 0;
+	page = compound_head(page);
+	if (page_mapcount_seq_begin_irqsafe(page, &seqcount, true))
+		return true;
+
+	ret = atomic_read(&page->_mapcount);
+	ret += atomic_read(compound_mapcount_ptr(page)) + 1;
+	if (PageDoubleMap(page))
+		ret--;
+
+	if (page_mapcount_seq_retry_irqsafe(page, seqcount, true))
+		return true;
+	return ret > 0;
+}
 
 int sysctl_overcommit_memory __read_mostly = OVERCOMMIT_GUESS;
 int sysctl_overcommit_ratio __read_mostly = 50;

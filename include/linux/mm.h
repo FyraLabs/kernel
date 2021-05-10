@@ -481,6 +481,8 @@ enum fault_flag {
 	FAULT_FLAG_REMOTE =		1 << 7,
 	FAULT_FLAG_INSTRUCTION =	1 << 8,
 	FAULT_FLAG_INTERRUPTIBLE =	1 << 9,
+	FAULT_FLAG_UNSHARE =		1 << 30,
+	FAULT_FLAG_UNSHARE_MM_SYNC =	1 << 31,
 };
 
 /*
@@ -872,6 +874,15 @@ static inline int page_mapcount(struct page *page)
 	if (unlikely(PageCompound(page)))
 		return __page_mapcount(page);
 	return atomic_read(&page->_mapcount) + 1;
+}
+
+extern bool __page_anon_shared_irqsafe(struct page *);
+
+static inline bool page_anon_shared_irqsafe(struct page *page)
+{
+	if (unlikely(PageCompound(page)))
+		return __page_anon_shared_irqsafe(page);
+	return atomic_read(&page->_mapcount) > 0;
 }
 
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
@@ -1341,7 +1352,7 @@ static inline bool page_needs_cow_for_dma(struct vm_area_struct *vma,
 	if (!is_cow_mapping(vma->vm_flags))
 		return false;
 
-	if (!atomic_read(&vma->vm_mm->has_pinned))
+	if (!test_bit(MMF_HAS_PINNED, &vma->vm_mm->flags))
 		return false;
 
 	return page_maybe_dma_pinned(page);
@@ -2833,6 +2844,8 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
 #define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
 #define FOLL_PIN	0x40000	/* pages must be released via unpin_user_page */
 #define FOLL_FAST_ONLY	0x80000	/* gup_fast: prevent fall-back to slow gup */
+#define FOLL_UNSHARE	0x40000000 /* gup: unshare anon page with mapcount > 1 */
+#define FOLL_MM_SYNC	0x80000000 /* gup: long term mm coherency to page pins */
 
 /*
  * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
@@ -2900,6 +2913,11 @@ static inline int vm_fault_to_errno(vm_fault_t vm_fault, int foll_flags)
 		return -EFAULT;
 	return 0;
 }
+
+extern bool gup_page_unshare(unsigned int flags, struct page *page,
+			     bool is_head, struct vm_area_struct *vma);
+extern bool gup_page_unshare_irqsafe(unsigned int flags, struct page *page,
+				     bool is_head);
 
 typedef int (*pte_fn_t)(pte_t *pte, unsigned long addr, void *data);
 extern int apply_to_page_range(struct mm_struct *mm, unsigned long address,

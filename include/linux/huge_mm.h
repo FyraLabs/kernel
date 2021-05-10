@@ -321,6 +321,97 @@ static inline struct list_head *page_deferred_list(struct page *page)
 	return &page[2].deferred_list;
 }
 
+static __always_inline unsigned int *__page_mapcount_seq(struct page *page)
+{
+	/*
+	 * mapcount_seqcount serializes the mapcount transfer from
+	 * head to tail pages in __split_huge_pmd_locked() against THP
+	 * mapcount readers like page_trans_huge_map_swapcount() and
+	 * page_trans_huge_mapcount() that need full accuracy to
+	 * decide if to COW write protected THP anon pages.
+	 *
+	 * Ideally we should use a "struct seqcount" and we could use
+	 * another tail page to gain more space, but if the debug in
+	 * the structure grows it might not fit in the page struct. So
+	 * using an "unsigned long" looks safer here.
+	 *
+	 * The writer is serialized by the &page[1].flags PG_lock bit
+	 * spinlock (page_mapcount_lock/page_mapcount_unlock).
+	 */
+	return &page[1].mapcount_seqcount;
+}
+
+static inline void page_mapcount_seq_init(struct page *page)
+{
+	*__page_mapcount_seq(page) = 0;
+}
+
+/* return false if it succeeded as page_mapcount_seq_retry_irqsafe */
+static inline bool page_mapcount_seq_begin_irqsafe(struct page *page,
+						   unsigned int *seqcount,
+						   bool irq_safe)
+{
+	unsigned int _seqcount;
+	for (;;) {
+		_seqcount = READ_ONCE(*__page_mapcount_seq(page));
+		if (likely(!(_seqcount & 1)))
+			break;
+		if (irq_safe)
+			return true;
+		cpu_relax();
+	}
+	smp_rmb();
+	*seqcount = _seqcount;
+	return false;
+}
+
+static inline bool page_mapcount_seq_retry_irqsafe(struct page *page,
+						   unsigned int seqcount,
+						   bool irq_safe)
+{
+	smp_rmb();
+	if (unlikely(seqcount != READ_ONCE(*__page_mapcount_seq(page)))) {
+		if (!irq_safe)
+			cpu_relax();
+		return true;
+	}
+	return false;
+}
+
+static inline unsigned long page_mapcount_seq_begin(struct page *page)
+{
+	unsigned int seqcount;
+	for (;;) {
+		seqcount = READ_ONCE(*__page_mapcount_seq(page));
+		if (likely(!(seqcount & 1)))
+			break;
+		cpu_relax();
+	}
+	smp_rmb();
+	return seqcount;
+}
+
+static __always_inline bool page_mapcount_seq_retry(struct page *page,
+						    unsigned int seqcount)
+{
+	return page_mapcount_seq_retry_irqsafe(page, seqcount, false);
+}
+
+static inline void page_mapcount_lock(struct page *page)
+{
+	/* The page lock of THP tail subpages is not used */
+	bit_spin_lock(PG_locked, &page[1].flags);
+	*__page_mapcount_seq(page) += 1;
+	smp_wmb();
+}
+
+static inline void page_mapcount_unlock(struct page *page)
+{
+	smp_wmb();
+	*__page_mapcount_seq(page) += 1;
+	bit_spin_unlock(PG_locked, &page[1].flags);
+}
+
 #else /* CONFIG_TRANSPARENT_HUGEPAGE */
 #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
 #define HPAGE_PMD_MASK ({ BUILD_BUG(); 0; })
@@ -466,7 +557,44 @@ static inline bool thp_migration_supported(void)
 {
 	return false;
 }
+
+static inline unsigned long page_mapcount_seq_begin(struct page *page)
+{
+	return 0;
+}
+
+static inline bool page_mapcount_seq_retry(struct page *page,
+					   unsigned int seqcount)
+{
+	return false;
+}
+
+static inline bool page_mapcount_seq_begin_irqsafe(struct page *page,
+						   unsigned int *seqcount,
+						   bool irq_safe)
+{
+	return false;
+}
+
+static inline bool page_mapcount_seq_retry_irqsafe(struct page *page,
+						   unsigned int seqcount,
+						   bool irq_safe)
+{
+	return false;
+}
+
+static inline void page_mapcount_lock(struct page *page)
+{
+}
+
+static inline void page_mapcount_unlock(struct page *page)
+{
+}
+
 #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+
+extern bool page_trans_huge_anon_shared(struct page *);
+extern bool page_trans_huge_anon_shared_irqsafe(struct page *);
 
 /**
  * thp_size - Size of a transparent huge page.

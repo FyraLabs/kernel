@@ -28,6 +28,93 @@ struct follow_page_context {
 	unsigned int page_mask;
 };
 
+/*
+ * For a page wrprotected in the pgtable, which pages do we need to
+ * unshare with copy-on-read (COR) for the GUP pin to remain coherent
+ * with the MM?
+ *
+ * This function provides full MM coherency to short term
+ * pins. FOLL_LONGTERM must be instead combined with FOLL_MM_SYNC to
+ * achieve full MM coherency by the specs.
+ *
+ * When FOLL_MM_SYNC is specified PageKsm, MAP_PRIVATE pagecache and
+ * the zeropage are always unshared with COR before taking the pin.
+ *
+ * Short term pins don't generally require FOLL_MM_SYNC and they can
+ * remain zerocopy in the aforementioned three cases. It's not a bug
+ * to specify FOLL_MM_SYNC for short term pins, but it is slower
+ * because it would trigger unnecessary COR faults.
+ *
+ * The reason short term pins don't lose coherency even if they don't
+ * unshare those three kind of readonly page types, is that they will
+ * refresh the physaddr from the the pgtable before each DMA (or even
+ * if they issue many DMA from the same GUP they are ok that the
+ * snapshot of the data payload is taken at GUP time and that the
+ * coherency with the CPU may be temorarily lost until the next GUP
+ * invocation). So the MM coherency won't break for them even if a COW
+ * happens after the short term pin has been taken by GUP.
+ *
+ * The COR fault will then disambiguate a long term pin requested with
+ * FOLL_MM_SYNC from a short term pin using the
+ * FAULT_FLAG_UNSHARE_MM_SYNC flag.
+ *
+ * The below table assumes !FOLL_WRITE (readonly GUP pins) and answers
+ * when FOLL_UNSHARE is activated during GUP to generate exclusive
+ * anonymous memory mapped readonly through the COR fault.
+ *
+ * page/mapping type	 | short term   | FOLL_MM_SYNC
+ * ------------------------------------------------------
+ * PageAnon && !PageKsm  | mapcount > 1 | mapcount > 1
+ * PageAnon && PageKsm   | never	| always
+ * zeropage		 | never	| always
+ * MAP_PRIVATE !PageAnon | never	| always
+ * MAP_SHARED  !PageAnon | never	| never
+ */
+static __always_inline bool __gup_page_unshare(unsigned int flags,
+					       struct page *page,
+					       bool is_head, bool irq_safe,
+					       struct vm_area_struct *vma)
+{
+	if (flags & FOLL_WRITE)
+		return false;
+	/* mmu notifier doesn't need unshare */
+	if (!(flags & (FOLL_GET|FOLL_PIN)))
+		return false;
+	if (PageHuge(page)) /* FIXME */
+		return false;
+	if (!PageAnon(page))
+		return (flags & FOLL_MM_SYNC) &&
+			(irq_safe || !(vma->vm_flags & VM_SHARED));
+	if (PageKsm(page))
+		return !!(flags & FOLL_MM_SYNC);
+	if (is_head) {
+		if (PageTransHuge(page)) {
+			if (!irq_safe || likely(!irq_count()))
+				return page_trans_huge_anon_shared(page);
+			return page_trans_huge_anon_shared_irqsafe(page);
+		}
+		BUG();
+	} else {
+		if (!irq_safe || likely(!irq_count()))
+			return page_mapcount(page) > 1;
+		return page_anon_shared_irqsafe(page);
+	}
+}
+
+/* requires full accuracy */
+bool gup_page_unshare(unsigned int flags, struct page *page, bool is_head,
+		      struct vm_area_struct *vma)
+{
+	return __gup_page_unshare(flags, page, is_head, false, vma);
+}
+
+/* false positives are allowed, false negatives not allowed */
+bool gup_page_unshare_irqsafe(unsigned int flags, struct page *page,
+			      bool is_head)
+{
+	return __gup_page_unshare(flags, page, is_head, true, NULL);
+}
+
 static void hpage_pincount_add(struct page *page, int refs)
 {
 	VM_BUG_ON_PAGE(!hpage_pincount_available(page), page);
@@ -517,6 +604,20 @@ retry:
 		}
 	}
 
+	/*
+	 * Anon COW shared pages with another mm must be un-shared
+	 * before GUP pinning. Otherwise if the shared page is
+	 * unmapped from this mm the other mm could re-use it while
+	 * this mm can still read it through the GUP pin.
+	 *
+	 * This needs to set FOLL_UNSHARE and keep retrying the
+	 * unshare until the page becomes exclusive.
+	 */
+	if (!pte_write(pte) &&
+	    gup_page_unshare(flags, page, false, vma)) {
+		page = ERR_PTR(-EMLINK);
+		goto out;
+	}
 	/* try_grab_page() does nothing unless FOLL_GET or FOLL_PIN is set. */
 	if (unlikely(!try_grab_page(page, flags))) {
 		page = ERR_PTR(-ENOMEM);
@@ -904,6 +1005,13 @@ static int faultin_page(struct vm_area_struct *vma,
 		 */
 		fault_flags |= FAULT_FLAG_TRIED;
 	}
+	if (*flags & FOLL_UNSHARE) {
+		fault_flags |= FAULT_FLAG_UNSHARE;
+		if (unlikely(*flags & FOLL_MM_SYNC))
+			fault_flags |= FAULT_FLAG_UNSHARE_MM_SYNC;
+		/* FAULT_FLAG_WRITE and FAULT_FLAG_UNSHARE are incompatible */
+		VM_BUG_ON(fault_flags & FAULT_FLAG_WRITE);
+	}
 
 	ret = handle_mm_fault(vma, address, fault_flags, NULL);
 	if (ret & VM_FAULT_ERROR) {
@@ -1124,6 +1232,7 @@ retry:
 
 		page = follow_page_mask(vma, start, foll_flags, &ctx);
 		if (!page) {
+faultin_page:
 			ret = faultin_page(vma, start, &foll_flags, locked);
 			switch (ret) {
 			case 0:
@@ -1145,6 +1254,9 @@ retry:
 			 * struct page.
 			 */
 			goto next_page;
+		} else if (PTR_ERR(page) == -EMLINK) {
+			foll_flags |= FOLL_UNSHARE;
+			goto faultin_page;
 		} else if (IS_ERR(page)) {
 			ret = PTR_ERR(page);
 			goto out;
@@ -1292,8 +1404,8 @@ static __always_inline long __get_user_pages_locked(struct mm_struct *mm,
 		BUG_ON(*locked != 1);
 	}
 
-	if (flags & FOLL_PIN)
-		atomic_set(&mm->has_pinned, 1);
+	if (flags & FOLL_PIN && !test_bit(MMF_HAS_PINNED, &mm->flags))
+		set_bit(MMF_HAS_PINNED, &mm->flags);
 
 	/*
 	 * FOLL_PIN and FOLL_GET are mutually exclusive. Traditional behavior
@@ -2082,6 +2194,12 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
 			goto pte_unmap;
 		}
 
+		if (!pte_write(pte) &&
+		    gup_page_unshare_irqsafe(flags, page, false)) {
+			put_compound_head(head, 1, flags);
+			goto pte_unmap;
+		}
+
 		VM_BUG_ON_PAGE(compound_head(page) != head, page);
 
 		/*
@@ -2322,6 +2440,12 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
 		return 0;
 
 	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
+		put_compound_head(head, refs, flags);
+		return 0;
+	}
+
+	if (!pmd_write(orig) &&
+	    gup_page_unshare_irqsafe(flags, head, true)) {
 		put_compound_head(head, refs, flags);
 		return 0;
 	}
@@ -2617,8 +2741,9 @@ static int internal_get_user_pages_fast(unsigned long start,
 				       FOLL_FAST_ONLY)))
 		return -EINVAL;
 
-	if (gup_flags & FOLL_PIN)
-		atomic_set(&current->mm->has_pinned, 1);
+	if (gup_flags & FOLL_PIN &&
+	    !test_bit(MMF_HAS_PINNED, &current->mm->flags))
+		set_bit(MMF_HAS_PINNED, &current->mm->flags);
 
 	if (!(gup_flags & FOLL_FAST_ONLY))
 		might_lock_read(&current->mm->mmap_lock);

@@ -137,6 +137,12 @@ struct page {
 			unsigned char compound_order;
 			atomic_t compound_mapcount;
 			unsigned int compound_nr; /* 1 << compound_order */
+			/*
+			 * mapcount_seqcount is serialized by the
+			 * PG_locked bit spinlock from the first tail
+			 * page.
+			 */
+			unsigned int mapcount_seqcount;
 		};
 		struct {	/* Second tail page of compound page */
 			unsigned long _compound_pad_1;	/* compound_head */
@@ -436,16 +442,6 @@ struct mm_struct {
 		atomic_t mm_count;
 
 		/**
-		 * @has_pinned: Whether this mm has pinned any pages.  This can
-		 * be either replaced in the future by @pinned_vm when it
-		 * becomes stable, or grow into a counter on its own. We're
-		 * aggresive on this bit now - even if the pinned pages were
-		 * unpinned later on, we'll still keep this bit set for the
-		 * lifecycle of this mm just for simplicity.
-		 */
-		atomic_t has_pinned;
-
-		/**
 		 * @write_protect_seq: Locked when any thread is write
 		 * protecting pages mapped by this mm to enforce a later COW,
 		 * for instance during page table copying for fork().
@@ -460,7 +456,7 @@ struct mm_struct {
 		spinlock_t page_table_lock; /* Protects page tables and some
 					     * counters
 					     */
-		struct rw_semaphore mmap_lock;
+		struct rw_semaphore mmap_lock ____cacheline_aligned_in_smp;
 
 		struct list_head mmlist; /* List of maybe swapped mm's.	These
 					  * are globally strung together off
