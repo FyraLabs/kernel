@@ -1270,7 +1270,7 @@ void __init setup_arch(char **cmdline_p)
 #endif
 
 	rh_check_supported();
-
+	BUG();
 	unwind_init();
 }
 
