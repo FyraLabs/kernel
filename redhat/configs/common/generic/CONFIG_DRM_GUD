@@ -1,1 +1,1 @@
-# CONFIG_DRM_GUD is not set
+CONFIG_DRM_GUD=m
