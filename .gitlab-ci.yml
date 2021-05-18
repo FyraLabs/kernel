@@ -32,9 +32,15 @@ trigger_pipeline:
     builder_image: registry.gitlab.com/cki-project/containers/builder-rawhide
     builder_image_tag: latest
     srpm_make_target: dist-srpm
-    skip_build: 'true'
-    skip_publish: 'true'
-    skip_test: 'true'
+    # skip_build: 'true'
+    # skip_publish: 'true'
+    # skip_test: 'true'
+
+    # Not sure about 'rawhide' below, I don't see it out in
+    # https://gitlab.com/cki-project/cki-tools/-/blob/main/cki/cki_tools/select_kpet_tree.py
+    # give it a whirl anyways
+    kpet_tree_family: rawhide
+    architectures: 'x86_64 ppc64le aarch64 s390x'
 
   trigger:
     project: redhat/red-hat-ci-tools/kernel/cki-internal-pipelines/cki-trusted-contributors
