@@ -2,6 +2,7 @@ ifeq ($(filter dist-% distg-%,$(MAKECMDGOALS)),)
 	include Makefile
 endif
 
+
 _OUTPUT := "."
 # this section is needed in order to make O= to work
 ifeq ("$(origin O)", "command line")
