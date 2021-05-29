@@ -1,4 +1,4 @@
-* Fri May 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210528git97e5bf604b7a.29]
+* Sat May 29 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210529git6799d4f2da49.30]
 - spec: Enable sefltests rpm build (Jiri Olsa)
 - spec: Allow bpf selftest/samples to fail (Jiri Olsa)
 - kvm: Add kvm_stat.service file and kvm_stat logrotate config to the tools (Jiri Benc)
