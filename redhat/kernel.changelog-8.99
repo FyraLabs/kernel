@@ -1,4 +1,4 @@
-* Mon May 31 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.32]
+* Tue Jun 01 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.20210601gitc2131f7e73c9.33]
 - spec: Enable sefltests rpm build (Jiri Olsa)
 - spec: Allow bpf selftest/samples to fail (Jiri Olsa)
 - kvm: Add kvm_stat.service file and kvm_stat logrotate config to the tools (Jiri Benc)
@@ -29,6 +29,9 @@
 - kernel.spec: selftests should not depend on modules-internal (Jiri Benc)
 - kernel.spec: build samples (Jiri Benc)
 - kernel.spec: tools: sync missing options with RHEL 8 (Jiri Benc)
+
+* Tue Jun 01 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc4.20210601gitc2131f7e73c9.32]
+- configs/common/s390: disable CONFIG_QETH_{OSN,OSX} (Philipp Rudo) [1903201]
 
 * Fri May 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc3.20210528git97e5bf604b7a.28]
 - nvme: nvme_mpath_init remove multipath check (Mike Snitzer)
