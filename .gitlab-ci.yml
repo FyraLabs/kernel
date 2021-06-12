@@ -32,9 +32,18 @@ trigger_pipeline:
     builder_image: registry.gitlab.com/cki-project/containers/builder-rawhide
     builder_image_tag: latest
     srpm_make_target: dist-srpm
-    skip_build: 'true'
-    skip_publish: 'true'
-    skip_test: 'true'
+
+    # send_ready_for_test_pre: 'True'
+    # send_ready_for_test_post: 'True'
+    architectures: 'x86_64 ppc64le aarch64 s390x'
+    # build_kabi_whitelist: 'true'
+    tree_yaml_name: rawhide
+    kpet_tree_family: rawhide
+    package_name: kernel
+    publish_elsewhere: 'true'
+    native_tools: 'true'
+    # ystream_distro: RHEL-8.4.0-20201209.n.0
+ 
 
   trigger:
     project: redhat/red-hat-ci-tools/kernel/cki-internal-pipelines/cki-trusted-contributors
