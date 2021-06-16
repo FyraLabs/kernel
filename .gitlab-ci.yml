@@ -49,32 +49,42 @@ trigger_pipeline:
 # scheduled job
 merge_upstream:
   image: registry.gitlab.com/cki-project/containers/builder-fedora
+  stage: test
   variables:
-    GIT_DEPTH: "0"
-    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+    GIT_STRATEGY: none
   before_script:
-    - echo "fastestmirror=true" >> /etc/dnf/dnf.conf
-    - dnf -y install python3-gitlab git openssh-clients dnf-utils gnupg2
+    - echo "CI_PROJECT_URL -> $CI_PROJECT_URL"
+    - git clone --filter=blob:none $CI_PROJECT_URL $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+    - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+    - echo "source branch: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+  script:
+    - git describe && git branch && git branch -r
+    - dnf install -y flex bison which bzip2 rpm-build
+    - ln -s /usr/bin/python3 /usr/libexec/platform-python
     - git config user.name "Fedora Kernel Team"
     - git config user.email "kernel-team@fedoraproject.org"
-    - echo "$PYTHON_GITLAB_CONFIG" >> ~/.python-gitlab.cfg
-    # Need SSH since the clone is set up without write access.
-    - eval $(ssh-agent -s)
-    - echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$GITLAB_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - git remote add gitlab git@gitlab.com:cki-project/kernel-ark.git
-    - gpg2 --import "$TORVALDS_GPG_KEY"
-  script:
-    - git checkout --track origin/master && git describe
-    - git checkout --track origin/os-build && git describe
+    - git branch master origin/master && git describe
     - export PROJECT_ID="$CI_PROJECT_ID"
-    - make dist-merge-upstream-push || exit 1
-  retry: 2
+    - |
+      make dist-srpm || exit 1
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RAWHIDE_RELEASE == "false"'
+
+testing:
+  image: registry.gitlab.com/cki-project/containers/builder-fedora
+  variables:
+    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+    GIT_DEPTH: "1"
+  stage: test
+  script:
+    - dnf install -y flex bison which bzip2 rpm-build
+    - ln -s /usr/bin/python3 /usr/libexec/platform-python
+    - git config user.name "Fedora Kernel Team"
+    - git config user.email "kernel-team@fedoraproject.org"
+    - git fetch --depth 1 origin master:master
+    - export PROJECT_ID="$CI_PROJECT_ID"
+    - |
+      make dist-srpm || exit 1
 
 # scheduled job
 rawhide_release:

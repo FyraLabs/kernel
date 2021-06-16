@@ -243,6 +243,7 @@ generate-testpatch-tmp:
 	@$(GIT) diff --no-renames HEAD ":(exclude,top).get_maintainer.conf" \
 		":(exclude,top).gitattributes" \
 		":(exclude,top).gitignore" \
+		":(exclude,top).gitlab-ci.yml" \
 		":(exclude,top)makefile" \
 		":(exclude,top)Makefile.rhelver" \
 		":(exclude,top)redhat" > $(TESTPATCH).tmp
