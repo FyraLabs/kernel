@@ -211,8 +211,6 @@ Summary: The Linux kernel
 # Kernel headers are being split out into a separate package
 %define with_headers 0
 %define with_cross_headers 0
-# no selftests for now
-%define with_selftests 0
 # no ipa_clone for now
 %define with_ipaclones 0
 # no whitelist
@@ -220,7 +218,6 @@ Summary: The Linux kernel
 # Fedora builds these separately
 %define with_perf 0
 %define with_tools 0
-%define with_bpftool 0
 %endif
 
 %if %{with_verbose}
@@ -531,6 +528,7 @@ BuildRequires: net-tools, hostname, bc, elfutils-devel
 BuildRequires: dwarves
 BuildRequires: python3-devel
 BuildRequires: gcc-plugin-devel
+BuildRequires: bpftool
 %if %{with_headers}
 BuildRequires: rsync
 %endif
@@ -2003,6 +2001,11 @@ BuildKernel() {
     # the F17 UsrMove feature.
     ln -sf $DevelDir $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
 
+%ifnarch armv7hl
+    # Generate vmlinux.h and put it to kernel-devel path
+    bpftool btf dump file vmlinux format c > $RPM_BUILD_ROOT/$DevelDir/vmlinux.h
+%endif
+
     # prune junk from kernel-devel
     find $RPM_BUILD_ROOT/usr/src/kernels -name ".*.cmd" -delete
 
@@ -2127,8 +2130,14 @@ pushd tools/gpio/
 popd
 %endif
 
+%if 0%{?artifacts:1}
+if [ -f %{artifacts}/vmlinux.h ]; then
+  RPM_VMLINUX_H=%{artifacts}/vmlinux.h
+fi
+%endif
+
 %global bpftool_make \
-  %{__make} EXTRA_CFLAGS="${RPM_OPT_FLAGS}" EXTRA_LDFLAGS="%{__global_ldflags}" DESTDIR=$RPM_BUILD_ROOT %{?make_opts}
+  %{__make} EXTRA_CFLAGS="${RPM_OPT_FLAGS}" EXTRA_LDFLAGS="%{__global_ldflags}" DESTDIR=$RPM_BUILD_ROOT %{?make_opts} VMLINUX_H="${RPM_VMLINUX_H}" V=1
 %if %{with_bpftool}
 pushd tools/bpf/bpftool
 %{bpftool_make}
@@ -2140,7 +2149,7 @@ popd
 pushd tools/testing/selftests
 # We need to install here because we need to call make with ARCH set which
 # doesn't seem possible to do in the install section.
-%{make} -s %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="bpf livepatch net" INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests install
+%{make} -s %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="bpf livepatch net" INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests VMLINUX_H="${RPM_VMLINUX_H}" install
 popd
 %endif
 
@@ -2360,6 +2369,12 @@ pushd tools/kvm/kvm_stat
 %{__make} INSTALL_ROOT=%{buildroot} install-tools
 %{__make} INSTALL_ROOT=%{buildroot} install-man
 popd
+%endif
+
+%if 0%{?artifacts:1}
+if [ -f %{artifacts}/vmlinux.h ]; then
+  RPM_VMLINUX_H=%{artifacts}/vmlinux.h
+fi
 %endif
 
 %if %{with_bpftool}
