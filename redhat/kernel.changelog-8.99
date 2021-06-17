@@ -1,8 +1,8 @@
-* Wed Jun 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210616git94f0b2d4a1d0.46]
-- Fix version requirement from opencsd-devel buildreq (Justin M. Forbes)
+* Thu Jun 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210617git94f0b2d4a1d0.47]
 - Revert "powerpc: Switch to relative jump labels" (Don Zickus)
 - spec: Enable sefltests rpm build (Jiri Olsa)
 - spec: Allow bpf selftest/samples to fail (Jiri Olsa)
+- bpf, selftests: Disable tests that need clang13 (Toke Høiland-Jørgensen)
 - kvm: Add kvm_stat.service file and kvm_stat logrotate config to the tools (Jiri Benc)
 - kernel.spec: Add missing source files to kernel-selftests-internal (Jiri Benc)
 - kernel.spec: selftests: add net/forwarding to TARGETS list (Jiri Benc)
@@ -31,6 +31,16 @@
 - kernel.spec: selftests should not depend on modules-internal (Jiri Benc)
 - kernel.spec: build samples (Jiri Benc)
 - kernel.spec: tools: sync missing options with RHEL 8 (Jiri Benc)
+
+* Thu Jun 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210617git94f0b2d4a1d0.46]
+- fedora: enable the Rockchip rk3399 pcie drivers (Peter Robinson)
+- PCI: rockchip: Register IRQs just before pci_host_probe() (Javier Martinez Canillas)
+- arm64: dts: rockchip: Update PCI host bridge window to 32-bit address memory (Punit Agrawal)
+- PCI: of: Refactor the check for non-prefetchable 32-bit window (Punit Agrawal)
+- PCI: of: Relax the condition for warning about non-prefetchable memory aperture size (Punit Agrawal)
+- PCI: of: Clear 64-bit flag for non-prefetchable memory below 4GB (Punit Agrawal)
+- Fedora 5.13 config updates pt 1 (Justin M. Forbes)
+- Fix version requirement from opencsd-devel buildreq (Justin M. Forbes)
 
 * Wed Jun 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210616git94f0b2d4a1d0.45]
 - configs/ark/s390: set CONFIG_MARCH_Z14 and CONFIG_TUNE_Z15 (Philipp Rudo) [1876435]
