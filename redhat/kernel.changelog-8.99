@@ -1,4 +1,4 @@
-* Thu Jun 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210617git94f0b2d4a1d0.47]
+* Thu Jun 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210617git70585216fe77.48]
 - Revert "powerpc: Switch to relative jump labels" (Don Zickus)
 - spec: Enable sefltests rpm build (Jiri Olsa)
 - spec: Allow bpf selftest/samples to fail (Jiri Olsa)
@@ -31,6 +31,9 @@
 - kernel.spec: selftests should not depend on modules-internal (Jiri Benc)
 - kernel.spec: build samples (Jiri Benc)
 - kernel.spec: tools: sync missing options with RHEL 8 (Jiri Benc)
+
+* Thu Jun 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210617git70585216fe77.47]
+- Move CONFIG_ARCH_INTEL_SOCFPGA up a level for Fedora (Justin M. Forbes)
 
 * Thu Jun 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210617git94f0b2d4a1d0.46]
 - fedora: enable the Rockchip rk3399 pcie drivers (Peter Robinson)
