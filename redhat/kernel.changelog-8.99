@@ -1,3 +1,6 @@
+* Fri Jun 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210618gitfd0aa1a4567d.49]
+- Revert "powerpc: Switch to relative jump labels" (Don Zickus)
+
 * Fri Jun 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210618gitfd0aa1a4567d.48]
 - all: enable ath11k wireless modules (Peter Robinson)
 - all: Enable WWAN and associated MHI bus pieces (Peter Robinson)
