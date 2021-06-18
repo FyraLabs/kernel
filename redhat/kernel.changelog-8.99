@@ -1,5 +1,9 @@
-* Thu Jun 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210617git70585216fe77.48]
+* Fri Jun 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210618gitfd0aa1a4567d.49]
 - Revert "powerpc: Switch to relative jump labels" (Don Zickus)
+
+* Fri Jun 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210618gitfd0aa1a4567d.48]
+- all: enable ath11k wireless modules (Peter Robinson)
+- all: Enable WWAN and associated MHI bus pieces (Peter Robinson)
 - spec: Enable sefltests rpm build (Jiri Olsa)
 - spec: Allow bpf selftest/samples to fail (Jiri Olsa)
 - bpf, selftests: Disable tests that need clang13 (Toke Høiland-Jørgensen)
@@ -31,6 +35,9 @@
 - kernel.spec: selftests should not depend on modules-internal (Jiri Benc)
 - kernel.spec: build samples (Jiri Benc)
 - kernel.spec: tools: sync missing options with RHEL 8 (Jiri Benc)
+- redhat/configs: nftables: Enable extra flowtable symbols (Phil Sutter)
+- redhat/configs: Sync netfilter options with RHEL8 (Phil Sutter)
+- Fedora 5.13 config updates pt 2 (Justin M. Forbes)
 
 * Thu Jun 17 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210617git70585216fe77.47]
 - Move CONFIG_ARCH_INTEL_SOCFPGA up a level for Fedora (Justin M. Forbes)
