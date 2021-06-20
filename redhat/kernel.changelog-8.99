@@ -1,4 +1,4 @@
-* Sat Jun 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210619gitfd0aa1a4567d.50]
+* Sun Jun 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210620git913ec3c22ef4.51]
 - Revert "powerpc: Switch to relative jump labels" (Don Zickus)
 
 * Sat Jun 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.13.0-0.rc6.20210619gitfd0aa1a4567d.49]
