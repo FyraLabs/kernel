@@ -1,3 +1,6 @@
+* Tue Jun 29 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210629gitc54b245d0118.3]
+- kernel.spec: Add kernel-debug-matched meta package (Timothée Ravier)
+
 * Tue Jun 29 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210629gitc54b245d0118.2]
 - redhat/configs: Consolidate CONFIG_HMC_DRV in the common s390x folder (Thomas Huth) [1976270]
 - redhat/configs: Consolidate CONFIG_EXPOLINE_OFF in the common folder (Thomas Huth) [1976270]
