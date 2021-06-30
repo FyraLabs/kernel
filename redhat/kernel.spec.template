@@ -281,10 +281,6 @@ Summary: The Linux kernel
 %define debugbuildsenabled 1
 %endif
 
-%if !%{debugbuildsenabled}
-%define with_debug 0
-%endif
-
 %if !%{with_debuginfo}
 %define _enable_debug_packages 0
 %endif
@@ -508,6 +504,18 @@ Summary: The Linux kernel
 %define _use_vdso 0
 %endif
 
+# If build of debug packages is disabled, we need to know if we want to create
+# meta debug packages or not, after we define with_debug for all specific cases
+# above. So this must be at the end here, after all cases of with_debug or not.
+%define with_debug_meta 0
+%if !%{debugbuildsenabled}
+%if %{with_debug}
+%define with_debug_meta 1
+%endif
+%define with_debug 0
+%endif
+
+
 #
 # Packages that need to be installed before the kernel is, because the %%post
 # scripts use them.
@@ -545,7 +553,9 @@ BuildRequires: net-tools, hostname, bc, elfutils-devel
 BuildRequires: dwarves
 BuildRequires: python3-devel
 BuildRequires: gcc-plugin-devel
+%ifnarch %{nobuildarches}
 BuildRequires: bpftool
+%endif
 %if %{with_headers}
 BuildRequires: rsync
 %endif
@@ -1090,20 +1100,6 @@ against the %{?2:%{2} }kernel package.\
 %{nil}
 
 #
-# This macro creates an empty kernel-<subpackage>-devel-matched package that
-# requires both the core and debug-devel packages locked on the same version.
-#	%%kernel_devel_matched_package [-m] <subpackage> <pretty-name>
-#
-%define kernel_devel_matched_package(m) \
-%package %{?1:%{1}-}devel-matched\
-Summary: Meta package to install matching core and debug-devel packages for a given %{?2:%{2} }kernel package\
-Requires: kernel%{?1:-%{1}}-devel = %{version}-%{release}\
-Requires: kernel-core = %{version}-%{release}\
-%description %{?1:%{1}-}devel\
-This meta package is used to install matching core and debug-devel packages for a given %{?2:%{2} }kernel package.\
-%{nil}
-
-#
 # kernel-<variant>-ipaclones-internal package
 #
 %define kernel_ipaclones_package() \
@@ -1213,7 +1209,6 @@ Requires: kernel-core-uname-r = %{KVERREL}\
 %{expand:%%kernel_meta_package %{?1:%{1}}}\
 %endif\
 %{expand:%%kernel_devel_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
-%{expand:%%kernel_devel_matched_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
 %{expand:%%kernel_modules_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
 %{expand:%%kernel_modules_extra_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
 %if %{-m:0}%{!-m:1}\
@@ -2869,11 +2864,10 @@ fi
 
 %kernel_variant_files %{_use_vdso} %{with_up}
 %kernel_variant_files %{_use_vdso} %{with_debug} debug
-%if !%{debugbuildsenabled}
+%if %{with_debug_meta}
 %files debug
 %files debug-core
 %files debug-devel
-%files debug-devel-matched
 %files debug-modules
 %files debug-modules-extra
 %endif
