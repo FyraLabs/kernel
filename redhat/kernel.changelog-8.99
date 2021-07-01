@@ -1,3 +1,6 @@
+* Thu Jul 01 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210701gitdbe69e433722.6]
+- Fix location of syscall scripts for kernel-devel (Justin M. Forbes)
+
 * Thu Jul 01 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210630git007b350a5875.4]
 - fedora: arm: Enable some i.MX8 options (Peter Robinson)
 - Enable Landlock for Fedora (Justin M. Forbes)
