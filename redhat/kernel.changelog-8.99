@@ -1,4 +1,4 @@
-* Sat Jul 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210703git3dbdb38e2869.8]
+* Sun Jul 04 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210704git303392fd5c16.9]
 - drm/amdgpu/dc: Really fix DCN3.1 Makefile for PPC64 (Michal Suchanek)
 
 * Sat Jul 03 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210702git3dbdb38e2869.7]
