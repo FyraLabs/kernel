@@ -1,3 +1,6 @@
+* Sat Jul 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210710git50be9417e23a.15]
+- Fix the perf trace link location (Justin M. Forbes)
+
 * Fri Jul 09 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc0.20210709gitf55966571d5e.13]
 - redhat/configs: enable KEXEC_SIG which is already enabled in RHEL8 for s390x and x86_64 (Coiby Xu) [1976835]
 
