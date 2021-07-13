@@ -1889,6 +1889,11 @@ BuildKernel() {
     # Clean up intermediate tools files
     find $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/tools \( -iname "*.o" -o -iname "*.cmd" \) -exec rm -f {} +
 
+%if %{with_cross}
+    # Remove native host binaries as they won't work in the cross arch env
+    find . -type f -executable -exec file {} \;|grep x86-64|cut -d':' -f1| grep -v sign-file|xargs rm
+%endif
+
     # Make sure the Makefile and version.h have a matching timestamp so that
     # external modules can be built
     touch -r $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/Makefile $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/include/generated/uapi/linux/version.h
