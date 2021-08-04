@@ -1,4 +1,7 @@
-* Mon Aug 02 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc4.36]
+* Wed Aug 04 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc4.20210804gitd5ad8ec3cfb5.36]
+- Revert "Merge branch 'releasefix' into 'os-build'" (Justin M. Forbes)
+- Fedora 5.14 configs round 1 (Justin M. Forbes)
+- redhat: add gating configuration for centos stream/rhel9 (Herton R. Krzesinski)
 - kernel-5.14.0-0.rc4.35 (Fedora Kernel Team)
 - kernel-5.14.0-0.rc3.20210801gitf3438b4c4e69.34 (Fedora Kernel Team)
 - kernel-5.14.0-0.rc3.20210731gitc7d102232649.33 (Fedora Kernel Team)

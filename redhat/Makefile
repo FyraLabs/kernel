@@ -260,6 +260,7 @@ sources-rh: $(TARBALL) generate-testpatch-tmp setup-source dist-configs-check
 		keys/rhel*.x509 \
 		kabi/check-kabi \
 		configs/$(PACKAGE_NAME)-*.config \
+		gating.yaml \
 		rpminspect.yaml \
 		update_scripts.sh \
 		kvm_stat.logrotate \
@@ -329,7 +330,7 @@ dist-release-finish: setup-source
 	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
 	@$(GIT) add $(REDHAT)/$(CHANGELOG)
 	@$(GIT) add $(REDHAT)/marker
-	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "$(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(BUILDID)"
+	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(STAMP_VERSION)-$(PREBUILD)$(BUILD)$(BUILDID)"
 dist-release-changed: setup-source
 	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
 	@echo $(MARKER) > $(REDHAT)/marker
