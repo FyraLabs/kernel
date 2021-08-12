@@ -1,4 +1,4 @@
-* Wed Aug 11 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc5.20210811git761c6d7ec820.44]
+* Thu Aug 12 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc5.20210812git1746f4db5135.45]
 - pinctrl: tigerlake: Fix GPIO mapping for newer version of software (Andy Shevchenko)
 
 * Tue Aug 10 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc5.20210810git9a73fa375d58.42]
