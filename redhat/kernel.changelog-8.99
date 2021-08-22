@@ -1,4 +1,4 @@
-* Sat Aug 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc6.20210821gitfa54d366a6e4.52]
+* Sun Aug 22 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc6.20210822git9ff50bf2f2ff.53]
 - redhat: drop certificates that were deprecated after GRUB's BootHole flaw (Herton R. Krzesinski) [1994849]
 
 * Sat Aug 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc6.20210821gitfa54d366a6e4.51]
