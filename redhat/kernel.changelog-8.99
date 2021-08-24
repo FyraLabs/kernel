@@ -1,3 +1,6 @@
+* Tue Aug 24 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210824gitd5ae8d7f85b7.55]
+- redhat: drop certificates that were deprecated after GRUB's BootHole flaw (Herton R. Krzesinski) [1994849]
+
 * Tue Aug 24 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.14.0-0.rc7.20210824gitd5ae8d7f85b7.54]
 - arm64: dts: rockchip: Disable CDN DP on Pinebook Pro (Matthias Brugger)
 - arm64: dts: rockchip: Setup USB typec port as datarole on (Dan Johansen)
