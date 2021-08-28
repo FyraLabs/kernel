@@ -2914,7 +2914,7 @@ fi
 /usr/src/kernels/%{KVERREL}%{?3:+%{3}}\
 %{expand:%%files %{?3:%{3}-}devel-matched}\
 %{expand:%%files -f kernel-%{?3:%{3}-}modules-extra.list %{?3:%{3}-}modules-extra}\
-%config(noreplace) /etc/modprobe.d/*-blacklist.conf\
+%config(noreplace) /etc/modprobe.d/*-denylist.conf\
 %{expand:%%files -f kernel-%{?3:%{3}-}modules-internal.list %{?3:%{3}-}modules-internal}\
 %if %{with_debuginfo}\
 %ifnarch noarch\
