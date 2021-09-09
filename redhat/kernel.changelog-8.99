@@ -1,4 +1,4 @@
-* Wed Sep 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc0.20210908gitac08b1c68d1b.7]
+* Thu Sep 09 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc0.20210909gita3fa7a101dcf.8]
 - Temporarily stop building perf with LIBBPF_DYNAMIC=1 (Justin M. Forbes)
 
 * Wed Sep 08 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc0.20210908gitac08b1c68d1b.6]
