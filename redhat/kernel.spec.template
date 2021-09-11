@@ -54,7 +54,9 @@
 # This is disabled on i686 as it triggers oom errors
 
 %ifnarch i686
+%if 0%{?fedora} == 0
 %define _binary_payload w3T.xzdio
+%endif
 %endif
 
 Summary: The Linux kernel
