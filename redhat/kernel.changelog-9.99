@@ -1,3 +1,6 @@
+* Sat Oct 16 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc5.20211016git8fe31e0995f0.45]
+- Temporarily turn off selftests for bpf on ppc (Justin M. Forbes)
+
 * Fri Oct 15 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc5.20211015gitec681c53f8d2.43]
 - Fix dist-srpm-gcov (Don Zickus)
 - redhat: configs: add CONFIG_NTB and related items (John W. Linville)
