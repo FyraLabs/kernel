@@ -1,6 +1,5 @@
-* Wed Oct 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc6.20211020gitd9abdee5fd5a.49]
+* Thu Oct 21 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc6.20211021git2f111a6fd5b5.49]
 - Revert "bpf, selftests: Disable tests that need clang13" (Jiri Olsa)
-- Revert "Turn off with_selftests for Fedora" (Jiri Olsa)
 - spec: Don't fail spec build if ksamples fails (Jiri Olsa)
 - Enable CONFIG_QCOM_SCM for arm (Justin M. Forbes)
 
