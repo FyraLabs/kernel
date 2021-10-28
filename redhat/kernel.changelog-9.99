@@ -1,3 +1,7 @@
+* Thu Oct 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc7.20211028git1fc596a56b33.56]
+- redhat/kernel.spec.template: don't hardcode gcov arches (Jan Stancek)
+- redhat/configs: create a separate config for gcov options (Jan Stancek)
+
 * Thu Oct 28 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc7.20211028git1fc596a56b33.55]
 - Build CONFIG_SPI_PXA2XX as a module on x86 (Justin M. Forbes)
 - redhat/configs: enable CONFIG_BCMGENET as module (Joel Savitz)
