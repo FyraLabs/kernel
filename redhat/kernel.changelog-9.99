@@ -1,3 +1,7 @@
+* Sun Oct 31 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc7.20211031git180eca540ae0.59]
+- redhat/kernel.spec.template: don't hardcode gcov arches (Jan Stancek)
+- redhat/configs: create a separate config for gcov options (Jan Stancek)
+
 * Fri Oct 29 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.15-0.rc7.20211029gitf25a5481af12.56]
 - redhat/configs/evaluate_configs: walk cfgvariants line by line (Jan Stancek)
 - redhat/configs/evaluate_configs: insert EMPTY tags at correct place (Jan Stancek)
