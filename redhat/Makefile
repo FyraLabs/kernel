@@ -299,6 +299,12 @@ dist-sources: dist-kabi dist-kabi-dup sources-rh
 dist-test-patch: generate-testpatch-tmp
 	@mv $(TESTPATCH).tmp $(TESTPATCH);
 
+%-baseonly: RPMBUILDOPTS=--target $(MACH) --without debug --without debuginfo --without vdso_install --without bpftool --without perf --without tools --without selftests -bb
+%-baseonly: BUILDOPTS+=-debug -debuginfo -vdso_install -bpftool -perf -tools -selftests
+
+%-gcov: BUILDID=".gcov"
+%-gcov: BUILDOPTS+="+gcov"
+
 do-rpmbuild: dist-sources
 	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" $(RPMBUILDOPTS) $(RPM)/SOURCES/$(PACKAGE_NAME).spec
 
@@ -308,9 +314,9 @@ dist-all-rpms: dist-sources do-rpmbuild
 dist-srpm: RPMBUILDOPTS=--nodeps -bs
 dist-srpm: dist-sources do-rpmbuild
 
-dist-srpm-gcov: BUILDID=".gcov"
-dist-srpm-gcov: BUILDOPTS+="+gcov"
-dist-srpm-gcov: dist-srpm
+dist-srpm-%: dist-srpm
+	@# phony command to force this to be a target and not variable
+	@FOO=BAR
 
 dist-rpms: RPMBUILDOPTS=--target $(MACH) -bb
 dist-rpms: dist-sources do-rpmbuild
@@ -324,8 +330,7 @@ dist-prep: dist-sources do-rpmbuild
 dist-perf: RPMBUILDOPTS=--without up --without smp --without zfcpdump --without debug --without doc --without headers --without  --without doc --without debuginfo --target $(MACH) -bb
 dist-perf: dist-sources do-rpmbuild
 
-dist-rpm-baseonly: RPMBUILDOPTS=--target $(MACH) --without debug --without debuginfo --without vdso_install --without bpftool --without perf --without tools -bb
-dist-rpm-baseonly: dist-sources do-rpmbuild
+dist-rpm-%: dist-sources do-rpmbuild
 
 # unless you know what you're doing, you don't want to use the next four ones
 dist-release-finish: setup-source
@@ -390,8 +395,24 @@ distg-koji: BUILD_FLAGS ?= $(KOJI_FLAGS) $(TEST_FLAGS)
 dist-brew dist-koji: dist-%: dist-srpm
 	$* $(BUILD_PROFILE) build $(BUILD_FLAGS) $(BUILD_TARGET) $(SRPMS)/$(PACKAGE_NAME)-$(KVERSION)-$(PKGRELEASE)$(DIST).src.rpm $(OUTPUT_FILE)
 
+dist-brew-%: dist-brew
+	@# phony command to force this to be a target and not variable
+	@FOO=BAR
+
+dist-koji-%: dist-koji
+	@# phony command to force this to be a target and not variable
+	@FOO=BAR
+
 distg-brew distg-koji: distg-%:
 	$* $(BUILD_PROFILE) build $(BUILD_FLAGS) $(BUILD_TARGET) "$(RHGITURL)?redhat/koji#$(RHGITCOMMIT)"
+
+distg-brew-%: dist-brew
+	@# phony command to force this to be a target and not variable
+	@FOO=BAR
+
+distg-koji-%: dist-koji
+	@# phony command to force this to be a target and not variable
+	@FOO=BAR
 
 .PHONY: $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec
 $(REDHAT)/rpm/SOURCES/$(PACKAGE_NAME).spec:
@@ -471,34 +492,30 @@ dist-full-help:
 	@echo  'Building targets:'
 	@echo  ' All RPM/SRPM files will be put under the redhat/rpm/ directory.'
 	@echo  ''
-	@echo  '  dist-srpm       - Create a source RPM and put it into the redhat/rpm/SRPMS/'
+	@echo  '  dist-srpm@      - Create a source RPM and put it into the redhat/rpm/SRPMS/'
 	@echo  '                    directory.  See the dist-brew target for available options.'
-	@echo  '  dist-srpm-gcov  - Create a source RPM with gcov enabled and put it into the'
-	@echo  '                    redhat/rpm/SRPMS/ directory.'
-	@echo  '  dist-brew       - Create a kernel SRPM and then call brew to build the'
+	@echo  '  dist-brew@      - Create a kernel SRPM and then call brew to build the'
 	@echo  '                    created SRPM.  Add BUILDOPTS="+<opt> -<opt> [...]" to'
 	@echo  '                    enable/disable build options.'
 	@echo  '                    Available <opt>s and their default values:' \
 		$$(sed -n -e 's/^%define with_\([^ \t]*\).*\?_without_.*/+\1/p' \
 		          -e 's/^%define with_\([^ \t]*\).*\?_with_.*/-\1/p' kernel.spec.template | \
 		grep -v 'only$$') | fmt -80
-	@echo  '  dist-koji       - Create a kernel SRPM and then call koji to build the'
+	@echo  '  dist-koji@      - Create a kernel SRPM and then call koji to build the'
 	@echo  '                    created SRPM.  See the dist-brew target for available'
 	@echo  '                    options.'
-	@echo  '  distg-brew      - Pass HEAD of the current git branch to brew to build an'
+	@echo  '  distg-brew@     - Pass HEAD of the current git branch to brew to build an'
 	@echo  '                    RPM set.  Do not forget to push to the remote repository'
 	@echo  '                    first.  Preceed make command by RHGITCOMMIT=<commitID>'
 	@echo  '                    specify commit ID to use.'
 	@echo  '                    To set the remote repo, invoke:'
 	@echo  '                         git config rhg.url git://<repo_path>'
-	@echo  '  distg-koji      - Pass HEAD of the current git branch to koji to build an'
+	@echo  '  distg-koji@     - Pass HEAD of the current git branch to koji to build an'
 	@echo  '                    RPM set.  Do not forget to push to the remote repository'
 	@echo  '                    first.  See the distg-brew target for options and'
 	@echo  '                    configuration.'
-	@echo  '  dist-rpms       - Create the binary RPMS for the kernel.'
+	@echo  '  dist-rpms@      - Create the binary RPMS for the kernel.'
 	@echo  '                    See the dist-brew target for available options.'
-	@echo  '  dist-rpm-baseonly  - Create the binary RPMS for the kernel and modules'
-	@echo  '                       (no userspace tools or debuginfo).'
 	@echo  '  dist-kernel-<type> - Create  binary RPMS for a particular kernel type.'
 	@echo  '                       Available <type>s:'\
 		$$(sed -n 's/^%define with_\([^ ]*only\).*/\1/p' kernel.spec.template)
@@ -526,6 +543,12 @@ dist-full-help:
 	@echo  '  dist-rhel-configs       - build ELN configs'
 	@echo  '  dist-fedora-configs     - build Fedora configs'
 
+	@echo  ''
+	@echo  'Wildcard targets: [indicated by '@' above]'
+	@echo  '  *-baseonly     - builds only the kernel (disables userspace and debuginfo)'
+	@echo  '                 - Examples: dist-srpm-baseonly, dist-brew-baseonly'
+	@echo  '  *-gcov         - builds a kernel with gcov enabled'
+	@echo  '                 - Examples: dist-srpm-gcov, dist-brew-gcov'
 	@echo  ''
 	@echo  'kABI targets:'
 	@echo  '  dist-kabi           - Create kABI stablelist files in redhat/kabi/kabi-rhel*/'
