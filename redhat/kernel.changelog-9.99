@@ -1,4 +1,4 @@
-* Thu Nov 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.16-0.rc1.20211118git42eb8fdac2fc.16]
+* Fri Nov 19 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.16-0.rc1.20211119git4c388a8e740d.17]
 - kasan: test: Silence intentional read overflow warnings (Kees Cook)
 
 * Thu Nov 18 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.16-0.rc1.20211118git42eb8fdac2fc.15]
