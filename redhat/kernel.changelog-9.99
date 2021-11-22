@@ -1,6 +1,3 @@
-* Sat Nov 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.16-0.rc1.20211120gita90af8f15bdc.18]
-- kasan: test: Silence intentional read overflow warnings (Kees Cook)
-
 * Sat Nov 20 2021 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.16-0.rc1.20211120gita90af8f15bdc.17]
 - spec: add bpf_testmod.ko to kselftests/bpf (Viktor Malik)
 
