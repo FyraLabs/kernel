@@ -1,3 +1,6 @@
+* Wed Jan 12 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc0.20220112gitdaadb3bd0e8d.63]
+- lib/crypto: add prompts back to crypto libraries (Justin M. Forbes)
+
 * Wed Jan 12 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc0.20220112gitdaadb3bd0e8d.62]
 - redhat: ignore ksamples and kselftests on the badfuncs rpminspect test (Herton R. Krzesinski)
 - redhat: disable upstream check for rpminspect (Herton R. Krzesinski)
