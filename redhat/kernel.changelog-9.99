@@ -1,3 +1,6 @@
+* Mon Jan 17 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc0.20220117git0c947b893d69.68]
+- lib/crypto: add prompts back to crypto libraries (Justin M. Forbes)
+
 * Fri Jan 14 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc0.20220114gitfb3b0673b7d5.64]
 - Add dev_addr_lists_test to mod-internal.list (Justin M. Forbes)
 
