@@ -1,3 +1,6 @@
+* Fri Jan 21 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc0.20220121gitc2c94b3b187d.73]
+- objtool: check: give big enough buffer for pv_ops (Sergei Trofimovich)
+
 * Thu Jan 20 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc0.20220120gitfa2e1ba3e9e3.71]
 - Fixup merge in random.c (Justin M. Forbes)
 
