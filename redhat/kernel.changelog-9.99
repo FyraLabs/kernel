@@ -1,4 +1,4 @@
-* Sun Jan 23 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc1.75]
+* Mon Jan 24 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc1.20220124gitdd81e1c7d5fb.76]
 - objtool: check: give big enough buffer for pv_ops (Sergei Trofimovich)
 
 * Sat Jan 22 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc0.20220122git1c52283265a4.73]
