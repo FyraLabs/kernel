@@ -1,4 +1,4 @@
-* Sun Jan 30 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc1.20220130git8dd71685dcb7.82]
+* Sun Jan 30 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc2.83]
 - Workaround for gcc12 compile issues in ubcmd-util.h (Justin M. Forbes)
 
 * Sat Jan 29 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc1.20220129git169387e2aa29.80]
