@@ -1,5 +1,9 @@
-* Sun Jan 30 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc2.83]
+* Wed Feb 02 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc2.20220202git9f7fb8de5d9b.84]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
 - Workaround for gcc12 compile issues in ubcmd-util.h (Justin M. Forbes)
+
+* Wed Feb 02 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc2.20220202git9f7fb8de5d9b.83]
+- spec: don't overwrite auto.conf with .config (Ondrej Mosnacek)
 
 * Sat Jan 29 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc1.20220129git169387e2aa29.80]
 - New configs in drivers/crypto (Fedora Kernel Team)
