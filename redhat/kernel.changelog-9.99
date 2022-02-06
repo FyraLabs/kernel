@@ -1,3 +1,7 @@
+* Sun Feb 06 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc2.20220206git90c9e950c0de.88]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+- Workaround for gcc12 compile issues in ubcmd-util.h (Justin M. Forbes)
+
 * Sat Feb 05 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc2.20220205git0457e5153e0e.86]
 - Enable iSER on s390x (Stefan Schulze Frielinghaus)
 
