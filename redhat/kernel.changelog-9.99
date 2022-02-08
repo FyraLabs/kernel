@@ -1,3 +1,7 @@
+* Tue Feb 08 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc3.555f3d7be91a.90]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+- Workaround for gcc12 compile issues in ubcmd-util.h (Justin M. Forbes)
+
 * Tue Feb 08 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc3.555f3d7be91a.89]
 - redhat/configs: Enable CONFIG_TEST_BPF (Viktor Malik)
 - Enable KUNIT tests for testing (Nico Pache)
