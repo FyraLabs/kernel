@@ -1,3 +1,7 @@
+* Thu Feb 10 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc3.f4bc5bbb5fef.92]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+- Workaround for gcc12 compile issues in ubcmd-util.h (Justin M. Forbes)
+
 * Thu Feb 10 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc3.f4bc5bbb5fef.91]
 - redhat: move CONFIG_ARM64_MTE to aarch64 config directory (Herton R. Krzesinski)
 
