@@ -1,3 +1,7 @@
+* Sat Feb 12 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc3.83e396641110.94]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+- Workaround for gcc12 compile issues in ubcmd-util.h (Justin M. Forbes)
+
 * Sat Feb 12 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc3.83e396641110.93]
 - [fedora] Turn on CONFIG_VIDEO_OV5693 for sensor support (Dave Olsthoorn)
 
