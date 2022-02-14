@@ -1,4 +1,4 @@
-* Sun Feb 13 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc3.b81b1829e7e3.95]
+* Mon Feb 14 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc4.96]
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
 - Workaround for gcc12 compile issues in ubcmd-util.h (Justin M. Forbes)
 
