@@ -1,6 +1,6 @@
-* Mon Feb 14 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc4.96]
+* Tue Feb 15 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc4.d567f5db412e.97]
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
-- Workaround for gcc12 compile issues in ubcmd-util.h (Justin M. Forbes)
+- tools: Fix use-after-free for realloc(..., 0) (Kees Cook)
 
 * Sun Feb 13 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc3.b81b1829e7e3.94]
 - redhat: fix make {distg-brew,distg-koji} (Andrea Claudi)
