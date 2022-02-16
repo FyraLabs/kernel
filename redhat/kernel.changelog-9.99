@@ -1,4 +1,4 @@
-* Tue Feb 15 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc4.d567f5db412e.97]
+* Wed Feb 16 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc4.c5d9ae265b10.98]
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
 - tools: Fix use-after-free for realloc(..., 0) (Kees Cook)
 
