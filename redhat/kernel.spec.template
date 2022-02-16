@@ -877,6 +877,7 @@ Provides: kernel-uname-r = %{KVERREL}%{?1:+%{1}}\
 Requires(post): coreutils, sed\
 Requires: dracut >= 027\
 Requires(posttrans,preun): /usr/bin/kernel-install\
+Requires(posttrans,preun): /usr/bin/systemd-detect-virt\
 Recommends: linux-firmware\
 Requires: ((linux-firmware >= 20150904-56.git6ebf5d57) if linux-firmware)\
 Conflicts: xfsprogs < 4.3.0-1\
@@ -2688,12 +2689,13 @@ fi\
 %define kernel_variant_posttrans() \
 %{expand:%%posttrans %{?1:%{1}-}core}\
 %if 0%{!?fedora:1}\
-if [ -x %{_sbindir}/weak-modules ]\
-then\
+if [ -x %{_sbindir}/weak-modules ]; then\
     %{_sbindir}/weak-modules --add-kernel %{KVERREL}%{?1:+%{1}} || exit $?\
 fi\
 %endif\
-/bin/kernel-install add %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
+if ! systemd-detect-virt -q --chroot 2>/dev/null && ! systemd-detect-virt -q --container 2>/dev/null; then\
+  kernel-install add %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
+fi\
 %{nil}
 
 #
@@ -2721,7 +2723,9 @@ fi}\
 #
 %define kernel_variant_preun() \
 %{expand:%%preun %{?1:%{1}-}core}\
-/bin/kernel-install remove %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
+if ! systemd-detect-virt -q --chroot 2>/dev/null && ! systemd-detect-virt -q --container 2>/dev/null; then\
+  kernel-install remove %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
+fi\
 if [ -x %{_sbindir}/weak-modules ]\
 then\
     %{_sbindir}/weak-modules --remove-kernel %{KVERREL}%{?1:+%{1}} || exit $?\
