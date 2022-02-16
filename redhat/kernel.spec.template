@@ -548,14 +548,6 @@ Summary: The Linux kernel
 %endif
 
 
-#
-# Packages that need to be installed before the kernel is, because the %%post
-# scripts use them.
-#
-%define kernel_prereq  coreutils, systemd >= 203-2, /usr/bin/kernel-install
-%define initrd_prereq  dracut >= 027
-
-
 Name: kernel
 License: GPLv2 and Redistributable, no modification permitted
 URL: https://www.kernel.org/
@@ -882,11 +874,11 @@ Provides: kernel = %{rpmversion}-%{pkg_release}\
 Provides: kernel-%{_target_cpu} = %{rpmversion}-%{pkg_release}%{?1:+%{1}}\
 Provides: kernel-drm-nouveau = 16\
 Provides: kernel-uname-r = %{KVERREL}%{?1:+%{1}}\
-Requires(pre): %{kernel_prereq}\
-Requires(pre): %{initrd_prereq}\
-Requires(pre): ((linux-firmware >= 20150904-56.git6ebf5d57) if linux-firmware)\
+Requires(post): coreutils, sed\
+Requires: dracut >= 027\
+Requires(posttrans,preun): /usr/bin/kernel-install\
 Recommends: linux-firmware\
-Requires(preun): systemd >= 200\
+Requires: ((linux-firmware >= 20150904-56.git6ebf5d57) if linux-firmware)\
 Conflicts: xfsprogs < 4.3.0-1\
 Conflicts: xorg-x11-drv-vmmouse < 13.0.99\
 %{expand:%%{?kernel%{?1:_%{1}}_conflicts:Conflicts: %%{kernel%{?1:_%{1}}_conflicts}}}\
