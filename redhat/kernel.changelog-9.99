@@ -1,3 +1,6 @@
+* Mon Feb 21 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc5.102]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
 * Fri Feb 18 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc4.9195e5e0adbb.99]
 - redhat: configs: Disable team driver (Hangbin Liu) [1945477]
 
