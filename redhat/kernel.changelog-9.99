@@ -1,3 +1,6 @@
+* Wed Feb 23 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc5.5c1ee569660d.104]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
 * Wed Feb 23 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc5.5c1ee569660d.103]
 - redhat: configs: Disable CONFIG_MPLS for s390x/zfcpdump (Guillaume Nault)
 - Fedora 5.17 configs round 1 (Justin M. Forbes)
