@@ -41,21 +41,6 @@
     [ "$status" = 0 ]
 }
 
-@test "dist-release test 3" {
-    # Test whether the version in the commit message matches
-    # the version in the change log.
-    cd $BATS_TMPDIR/distrelease
-    # Extract just the version part (the part between [ ]) on the first line of
-    # the change log:
-    changelogversion=$(head -1 ./redhat/kernel.changelog-8.99 | sed -e 's/.*\[\(.*\)\].*/\1/')
-    commit="$(git log --oneline -n 1)"
-    # Extract just the commit message part AFTER "[redhat] ":
-    title=${commit##*\[redhat\] }
-    # This time, strip off "kernel-" also:
-    title=${title/kernel-/}
-    [ "$changelogversion" = "$title" ]
-}
-
 @test "dist-release epilogue" {
     git worktree remove --force $BATS_TMPDIR/distrelease
     git branch -D distrelease
