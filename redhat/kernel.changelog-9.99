@@ -1,4 +1,4 @@
-* Sat Feb 26 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc5.9137eda53752.107]
+* Sun Feb 27 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc5.2293be58d6a1.108]
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
 
 * Sat Feb 26 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc5.9137eda53752.106]
