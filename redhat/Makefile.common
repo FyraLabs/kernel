@@ -159,11 +159,7 @@ else
   RHPRODUCT:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
 endif
 
-ifeq ("$(DISTRO)", "fedora")
-  BUILD_SCRATCH_TARGET ?= temp-ark-rhel-8-test
-else ifeq ("$(DISTRO)", "centos")
+BUILD_SCRATCH_TARGET ?= rhel-$(RHEL_MAJOR)-scratch
+ifeq ("$(DISTRO)", "centos")
   BUILD_PROFILE ?= -p stream
-  BUILD_SCRATCH_TARGET ?= c$(RHEL_MAJOR)s-candidate
-else
-  BUILD_SCRATCH_TARGET ?= rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
 endif
