@@ -1,5 +1,8 @@
-* Tue Mar 01 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.719fce7539cd.110]
+* Wed Mar 02 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.fb184c4af9b9.111]
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
+* Wed Mar 02 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.fb184c4af9b9.110]
+- redhat: Fix "make dist-release-finish" to use the correct NVR variables (Neal Gompa) [2053836]
 
 * Tue Mar 01 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.719fce7539cd.109]
 - Build CROS_EC Modules (Jason Montleon)
