@@ -1,5 +1,8 @@
-* Wed Mar 02 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.fb184c4af9b9.111]
+* Thu Mar 03 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.5859a2b19911.112]
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
+* Thu Mar 03 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.5859a2b19911.111]
+- redhat/configs: Disable CONFIG_MACINTOSH_DRIVERS in RHEL. (Prarit Bhargava)
 
 * Wed Mar 02 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.fb184c4af9b9.110]
 - redhat: Fix "make dist-release-finish" to use the correct NVR variables (Neal Gompa) [2053836]
