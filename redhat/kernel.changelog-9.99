@@ -1,4 +1,4 @@
-* Fri Mar 04 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.38f80f42147f.113]
+* Sat Mar 05 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.ac84e82f78cb.114]
 - redhat/configs/build_configs.sh: Parallelize execution (Prarit Bhargava)
 - redhat/configs/build_configs.sh: Provide better messages (Prarit Bhargava)
 - redhat/configs/build_configs.sh: Create unique output files (Prarit Bhargava)
@@ -8,6 +8,10 @@
 - redhat/configs/process_configs.sh: Create unique output files (Prarit Bhargava)
 - redhat/configs/process_configs.sh: Add processing config function (Prarit Bhargava)
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
+* Sat Mar 05 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.ac84e82f78cb.113]
+- Add rebase note for 5.17 on Fedora stable (Justin M. Forbes)
+- More Fedora config updates for 5.17 (Justin M. Forbes)
 
 * Thu Mar 03 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.5859a2b19911.111]
 - redhat/configs: Disable CONFIG_MACINTOSH_DRIVERS in RHEL. (Prarit Bhargava)
