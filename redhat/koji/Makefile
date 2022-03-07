@@ -17,8 +17,6 @@
 #	  set it with - git notes --ref buildid -m ".buildid" HEAD
 ######################################################################
 
-include ../Makefile.common
-
 notes:
 	$(GIT) fetch --force origin refs/notes/*:refs/notes/*
 
@@ -29,8 +27,8 @@ sources: buildid
 	echo $(BUILDID) > ../../localversion
 	$(MAKE) -C ../ dist-sources
 	mv -f ../rpm/SOURCES/* .
-	rm -f ./$(PACKAGE_NAME).spec
-	mv ../rpm/SPECS/$(PACKAGE_NAME).spec .
+	rm -f ./kernel.spec
+	mv ../rpm/SPECS/kernel.spec .
 
 test:	buildid
 	echo $(BUILDID)
