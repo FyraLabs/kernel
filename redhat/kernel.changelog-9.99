@@ -1,4 +1,4 @@
-* Sun Mar 06 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc6.dcde98da9970.115]
+* Mon Mar 07 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc7.116]
 - redhat/configs/build_configs.sh: Parallelize execution (Prarit Bhargava)
 - redhat/configs/build_configs.sh: Provide better messages (Prarit Bhargava)
 - redhat/configs/build_configs.sh: Create unique output files (Prarit Bhargava)
