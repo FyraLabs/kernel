@@ -206,18 +206,12 @@ SRPM:=$(SRPMS)/$(PACKAGE_NAME)-$(RPMVERSION)$(DIST).src.rpm
 # specific values should be set.
 #
 ifeq ("$(DISTRO)", "fedora")
-  # A non-unified tarball means that the tarball is only upstream sources
-  # and the patches get applied as a diff in the spec file
-  SINGLE_TARBALL:=0
   TARFILE_RELEASE:=$(UPSTREAM_TARBALL_NAME)
   RHDISTGIT_BRANCH:=rawhide
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=temp-ark-rhel-8-test
   endif
 else ifeq ("$(DISTRO)", "centos")
-  # A unified tarball means that the tarball in the srpm contains both the
-  # upstream sources and RHEL specific patches.
-  SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=c$(RHEL_MAJOR)s
   ifndef BUILD_PROFILE
     BUILD_PROFILE:= -p stream
@@ -227,9 +221,6 @@ else ifeq ("$(DISTRO)", "centos")
   endif
   TARFILE_RELEASE:=$(RPMVERSION)
 else
-  # A unified tarball means that the tarball in the srpm contains both the
-  # upstream sources and RHEL specific patches.
-  SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
@@ -396,11 +387,7 @@ dist-stub-key:
 # force tarball to be regenerated if HEAD changes
 .PHONY:	$(TARBALL)
 $(TARBALL):
-	@if [ $(SINGLE_TARBALL) -eq 1 ]; then \
-		scripts/create-tarball.sh $(GITID) linux-$(RPMVERSION); \
-	else \
-		scripts/create-tarball.sh $(MARKER) linux-$(TARFILE_RELEASE); \
-	fi
+	scripts/create-tarball.sh $(GITID) linux-$(TARFILE_RELEASE)
 
 .PHONY: $(KABI_TARBALL)
 $(KABI_TARBALL):
