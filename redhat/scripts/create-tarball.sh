@@ -1,7 +1,6 @@
 #!/bin/sh
 
-GITID=$1
-DIR=$2
+DIR=linux-$TARFILE_RELEASE
 
 # shellcheck disable=SC1083
 XZ_THREADS=$(rpm --eval %{_smp_mflags} | sed -e 's!^-j!--threads !')

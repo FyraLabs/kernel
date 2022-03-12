@@ -387,7 +387,7 @@ dist-stub-key:
 # force tarball to be regenerated if HEAD changes
 .PHONY:	$(TARBALL)
 $(TARBALL):
-	scripts/create-tarball.sh $(GITID) linux-$(TARFILE_RELEASE)
+	scripts/create-tarball.sh
 
 .PHONY: $(KABI_TARBALL)
 $(KABI_TARBALL):
