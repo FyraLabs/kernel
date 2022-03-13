@@ -1,3 +1,6 @@
+* Sun Mar 13 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc7.aad611a868d1.122]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
 * Sat Mar 12 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc7.68453767131a.120]
 - Last of the Fedora 5.17 configs initial pass (Justin M. Forbes)
 - redhat/Makefile: Silence dist-clean-configs output (Prarit Bhargava)
