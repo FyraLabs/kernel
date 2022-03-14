@@ -548,14 +548,6 @@ Summary: The Linux kernel
 %endif
 
 
-#
-# Packages that need to be installed before the kernel is, because the %%post
-# scripts use them.
-#
-%define kernel_prereq  coreutils, systemd >= 203-2, /usr/bin/kernel-install
-%define initrd_prereq  dracut >= 027
-
-
 Name: kernel
 License: GPLv2 and Redistributable, no modification permitted
 URL: https://www.kernel.org/
@@ -882,11 +874,12 @@ Provides: kernel = %{rpmversion}-%{pkg_release}\
 Provides: kernel-%{_target_cpu} = %{rpmversion}-%{pkg_release}%{?1:+%{1}}\
 Provides: kernel-drm-nouveau = 16\
 Provides: kernel-uname-r = %{KVERREL}%{?1:+%{1}}\
-Requires(pre): %{kernel_prereq}\
-Requires(pre): %{initrd_prereq}\
-Requires(pre): ((linux-firmware >= 20150904-56.git6ebf5d57) if linux-firmware)\
+Requires(post): coreutils, sed\
+Requires: dracut >= 027\
+Requires(posttrans,preun): (/usr/bin/kernel-install if systemd-udev)\
+Requires(posttrans,preun): (/usr/bin/systemd-detect-virt if systemd-udev)\
 Recommends: linux-firmware\
-Requires(preun): systemd >= 200\
+Requires: ((linux-firmware >= 20150904-56.git6ebf5d57) if linux-firmware)\
 Conflicts: xfsprogs < 4.3.0-1\
 Conflicts: xorg-x11-drv-vmmouse < 13.0.99\
 %{expand:%%{?kernel%{?1:_%{1}}_conflicts:Conflicts: %%{kernel%{?1:_%{1}}_conflicts}}}\
@@ -2696,12 +2689,14 @@ fi\
 %define kernel_variant_posttrans() \
 %{expand:%%posttrans %{?1:%{1}-}core}\
 %if 0%{!?fedora:1}\
-if [ -x %{_sbindir}/weak-modules ]\
-then\
+if [ -x %{_sbindir}/weak-modules ]; then\
     %{_sbindir}/weak-modules --add-kernel %{KVERREL}%{?1:+%{1}} || exit $?\
 fi\
 %endif\
-/bin/kernel-install add %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
+if command -v kernel-install >/dev/null &&\
+    ! systemd-detect-virt -q --chroot 2>/dev/null && ! systemd-detect-virt -q --container 2>/dev/null; then\
+  kernel-install add %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
+fi\
 %{nil}
 
 #
@@ -2729,7 +2724,10 @@ fi}\
 #
 %define kernel_variant_preun() \
 %{expand:%%preun %{?1:%{1}-}core}\
-/bin/kernel-install remove %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
+if command -v kernel-install >/dev/null &&\
+    ! systemd-detect-virt -q --chroot 2>/dev/null && ! systemd-detect-virt -q --container 2>/dev/null; then\
+  kernel-install remove %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
+fi\
 if [ -x %{_sbindir}/weak-modules ]\
 then\
     %{_sbindir}/weak-modules --remove-kernel %{KVERREL}%{?1:+%{1}} || exit $?\
