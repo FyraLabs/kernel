@@ -1,4 +1,4 @@
-* Wed Mar 16 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc8.56e337f2cf13.123]
+* Fri Mar 18 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc8.551acdc3c3d2.124]
 - redhat/Makefile: Reorganize variables (Prarit Bhargava)
 - redhat/Makefile: Add some descriptions (Prarit Bhargava)
 - redhat/Makefile: Move SNAPSHOT check (Prarit Bhargava)
@@ -24,6 +24,9 @@
 - redhat: Combine Makefile and Makefile.common (Prarit Bhargava)
 - redhat/koji/Makefile: Decouple koji Makefile from Makefile.common (Prarit Bhargava)
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
+* Fri Mar 18 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc8.551acdc3c3d2.124]
+- Set CONFIG_SND_SOC_SOF_MT8195 for Fedora and turn on VDPA_SIM_BLOCK (Justin M. Forbes)
 
 * Wed Mar 16 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc8.56e337f2cf13.123]
 - Add asus_wmi_sensors modules to filters for Fedora (Justin M. Forbes)
