@@ -1,3 +1,6 @@
+* Mon Mar 21 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-127]
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
 * Sat Mar 19 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17-0.rc8.34e047aa16c0.124]
 - Enable net reference count trackers in all debug kernels (Jiri Benc)
 - redhat/Makefile: Reorganize variables (Prarit Bhargava)
