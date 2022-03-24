@@ -1,3 +1,9 @@
+* Thu Mar 24 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18-0.rc0.ed4643521e6a.5]
+- Add new kunit tests for 5.18 to mod-internal.list (Justin M. Forbes)
+- redhat/configs/process_configs.sh: Fix race with tools generation (Prarit Bhargava)
+- Avoid creating files in $RPM_SOURCE_DIR (Nicolas Chauvet)
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
 * Thu Mar 24 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18-0.rc0.ed4643521e6a.4]
 - Fix up rng merge (Justin M. Forbes)
 - Define SNAPSHOT correctly when VERSION_ON_UPSTREAM is 0 (Justin M. Forbes)
