@@ -1,3 +1,7 @@
+* Fri Mar 25 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18-0.rc0.34af78c4e616.6]
+- Avoid creating files in $RPM_SOURCE_DIR (Nicolas Chauvet)
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
 * Fri Mar 25 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18-0.rc0.34af78c4e616.5]
 - redhat/configs: Disable watchdog components (Prarit Bhargava)
 - redhat/README.Makefile: Add a Makefile README file (Prarit Bhargava)
