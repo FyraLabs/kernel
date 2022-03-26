@@ -1,7 +1,6 @@
 #!/usr/bin/bash
 
-target_dir=$1
-[ -z "${target_dir}" ] && echo "Missing target directory." && exit 1
+[ -z "${RHDISTDATADIR}" ] && echo "ERROR: RHDISTDATADIR undefined." && exit 1
 
 # This script generates 'dist-dump-variables' output for various configurations
 # using known ark commit IDs.  It uses this information as well as setting
@@ -15,21 +14,19 @@ target_dir=$1
 #    fce15c45d3fb := 5.16 + 2 additional commits
 #
 
-[ -z "$REDHAT" ] && echo "ERROR: execution only supported through 'make dist-self-test-data'" && exit 1
-
 for DISTRO in fedora rhel centos
 do
 	for commit in 78e36f3b0dae 2585cf9dfaad df0cc57e057f fce15c45d3fb
 	do
 		for DIST in .fc25 .el7
 		do
-			varfilename="${DISTRO}-${commit}${DIST}"
+			varfilename="${RHDISTDATADIR}/${DISTRO}-${commit}${DIST}"
 			# Have to unset environment variables that may be inherited from supra-make:
 			make dist-dump-variables | grep "=" | cut -d"=" -f1 | while read VAR; do unset "$VAR"; done
 			echo "building $varfilename"
 			# CURDIR is a make special target and cannot be easily changed.
 			# Omit it from the output.
-			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} dist-dump-variables | grep "=" | grep -v CURDIR >& ${target_dir}/${varfilename}
+			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} dist-dump-variables | grep "=" | grep -v CURDIR >& ${varfilename}
 		done
 	done
 done
