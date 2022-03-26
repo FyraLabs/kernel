@@ -27,6 +27,11 @@ do
 			# CURDIR is a make special target and cannot be easily changed.
 			# Omit it from the output.
 			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} dist-dump-variables | grep "=" | grep -v CURDIR >& ${varfilename}
+
+
+			echo "building ${varfilename}.spec"
+			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} setup-source
+			cp ${SOURCES}/kernel.spec ${varfilename}.spec
 		done
 	done
 done
