@@ -1,4 +1,4 @@
-* Sat Mar 26 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc0.52d543b5497c.7]
+* Sun Mar 27 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc0.f022814633e1.8]
 - Avoid creating files in $RPM_SOURCE_DIR (Nicolas Chauvet)
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
 
