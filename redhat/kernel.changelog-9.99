@@ -1,3 +1,7 @@
+* Tue Mar 29 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc0.1930a6e739c4.10]
+- Avoid creating files in $RPM_SOURCE_DIR (Nicolas Chauvet)
+- mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
+
 * Tue Mar 29 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc0.1930a6e739c4.9]
 - redhat/configs: remove unnecessary GPIO options for aarch64 (Brian Masney)
 - redhat/configs: remove viperboard related Kconfig options (Brian Masney)
