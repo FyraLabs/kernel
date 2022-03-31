@@ -1,4 +1,5 @@
-* Thu Mar 31 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc0.787af64d05cd.12]
+* Thu Mar 31 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc0.b4a5ea09b293.13]
+- Add clk_test and clk-gate_test to mod-internal.list (Justin M. Forbes)
 - redhat/kernel.spec.template: Fix intel-speed-select compile (Prarit Bhargava)
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
 
