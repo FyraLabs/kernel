@@ -1,4 +1,4 @@
-* Fri Apr 01 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc0.e8b767f5e04097a.14]
+* Sat Apr 02 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc0.88e6c0207623874.15]
 - redhat/kernel.spec.template: Fix intel-speed-select compile (Prarit Bhargava)
 - mm/sparsemem: Fix 'mem_section' will never be NULL gcc 12 warning (Waiman Long)
 
