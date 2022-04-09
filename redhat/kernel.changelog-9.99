@@ -1,3 +1,6 @@
+* Sat Apr 09 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc1.f1b45d8ccb9839b.20]
+- tools/power/x86/intel-speed-select: fix build failure when using -Wl,--as-needed (Herton R. Krzesinski)
+
 * Sat Apr 09 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc1.f1b45d8ccb9839b.19]
 - configs: enable CONFIG_RMI4_F3A (Benjamin Tissoires)
 - redhat: configs: Disable TPM 1.2 specific drivers (Jerry Snitselaar)
