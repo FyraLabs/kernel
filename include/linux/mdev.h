@@ -18,6 +18,9 @@ struct mdev_device {
 	void *driver_data;
 	struct list_head next;
 	struct mdev_type *type;
+#ifdef CONFIG_RHEL_DIFFERENCES
+	struct device *iommu_device;
+#endif
 	bool active;
 };
 
@@ -25,6 +28,27 @@ static inline struct mdev_device *to_mdev_device(struct device *dev)
 {
 	return container_of(dev, struct mdev_device, dev);
 }
+
+#ifdef CONFIG_RHEL_DIFFERENCES
+/*
+ * Called by the parent device driver to set the device which represents
+ * this mdev in iommu protection scope. By default, the iommu device is
+ * NULL, that indicates using vendor defined isolation.
+ *
+ * @dev: the mediated device that iommu will isolate.
+ * @iommu_device: a pci device which represents the iommu for @dev.
+ */
+static inline void mdev_set_iommu_device(struct mdev_device *mdev,
+					 struct device *iommu_device)
+{
+	mdev->iommu_device = iommu_device;
+}
+
+static inline struct device *mdev_get_iommu_device(struct mdev_device *mdev)
+{
+	return mdev->iommu_device;
+}
+#endif
 
 unsigned int mdev_get_type_group_id(struct mdev_device *mdev);
 unsigned int mtype_get_type_group_id(struct mdev_type *mtype);
