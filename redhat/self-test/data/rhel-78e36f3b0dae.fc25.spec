@@ -115,7 +115,6 @@ Summary: The Linux kernel
 %if %{zipmodules}
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 # for parallel xz processes, replace with 1 to go back to single process
-%global zcpu `nproc --all`
 %endif
 
 %define buildid .test
@@ -778,7 +777,6 @@ Source33: kernel-x86_64-debug-rhel.config
 
 Source34: filter-x86_64.sh.rhel
 Source35: filter-armv7hl.sh.rhel
-Source36: filter-i686.sh.rhel
 Source37: filter-aarch64.sh.rhel
 Source38: filter-ppc64le.sh.rhel
 Source39: filter-s390x.sh.rhel
@@ -797,8 +795,6 @@ Source54: kernel-armv7hl-fedora.config
 Source55: kernel-armv7hl-debug-fedora.config
 Source56: kernel-armv7hl-lpae-fedora.config
 Source57: kernel-armv7hl-lpae-debug-fedora.config
-Source58: kernel-i686-fedora.config
-Source59: kernel-i686-debug-fedora.config
 Source60: kernel-ppc64le-fedora.config
 Source61: kernel-ppc64le-debug-fedora.config
 Source62: kernel-s390x-fedora.config
@@ -808,7 +804,6 @@ Source65: kernel-x86_64-debug-fedora.config
 
 Source67: filter-x86_64.sh.fedora
 Source68: filter-armv7hl.sh.fedora
-Source69: filter-i686.sh.fedora
 Source70: filter-aarch64.sh.fedora
 Source71: filter-ppc64le.sh.fedora
 Source72: filter-s390x.sh.fedora
@@ -1451,7 +1446,7 @@ cp %{SOURCE80} .
 cp %{SOURCE3000} .
 # kernel-local
 cp %{SOURCE3001} .
-VERSION=%{version} ./generate_all_configs.sh %{primary_target} %{debugbuildsenabled}
+FLAVOR=%{primary_target} KVERSION=%{version} ./generate_all_configs.sh %{debugbuildsenabled}
 
 # Merge in any user-provided local config option changes
 %ifnarch %nobuildarches
@@ -1502,7 +1497,7 @@ for opt in %{clang_make_opts}; do
   OPTS="$OPTS -m $opt"
 done
 %endif
-./process_configs.sh $OPTS kernel %{rpmversion}
+RHJOBS=$RPM_BUILD_NCPUS PACKAGE_NAME=kernel ./process_configs.sh $OPTS ${rpmversion}
 
 cp %{SOURCE82} .
 RPM_SOURCE_DIR=$RPM_SOURCE_DIR ./update_scripts.sh %{primary_target}
@@ -1582,7 +1577,7 @@ InitBuildVars() {
     cp configs/$Config .config
 
     %if %{signkernel}%{signmodules}
-    cp $RPM_SOURCE_DIR/x509.genkey certs/.
+    cp configs/x509.genkey certs/.
     %endif
 
     Arch=`head -1 .config | cut -b 3-`
@@ -2037,7 +2032,7 @@ BuildKernel() {
     remove_depmod_files
 
     # Identify modules in the kernel-modules-extras package
-    %{SOURCE20} $RPM_BUILD_ROOT lib/modules/$KernelVer $RPM_SOURCE_DIR/mod-extra.list
+    %{SOURCE20} $RPM_BUILD_ROOT lib/modules/$KernelVer $(realpath configs/mod-extra.list)
     # Identify modules in the kernel-modules-extras package
     %{SOURCE20} $RPM_BUILD_ROOT lib/modules/$KernelVer %{SOURCE84} internal
 
@@ -2048,6 +2043,7 @@ BuildKernel() {
     # Copy the System.map file for depmod to use, and create a backup of the
     # full module tree so we can restore it after we're done filtering
     cp System.map $RPM_BUILD_ROOT/.
+    cp configs/filter-*.sh $RPM_BUILD_ROOT/.
     pushd $RPM_BUILD_ROOT
     mkdir restore
     cp -r lib/modules/$KernelVer/* restore/.
@@ -2062,7 +2058,6 @@ BuildKernel() {
 	# modules lists.  This actually removes anything going into -modules
 	# from the dir.
 	find lib/modules/$KernelVer/kernel -name *.ko | sort -n > modules.list
-	cp $RPM_SOURCE_DIR/filter-*.sh .
 	./filter-modules.sh modules.list %{_target_cpu}
 	rm filter-*.sh
 
@@ -2349,7 +2344,7 @@ find Documentation -type d | xargs chmod u+w
     fi \
   fi \
   if [ "%{zipmodules}" -eq "1" ]; then \
-    find $RPM_BUILD_ROOT/lib/modules/ -type f -name '*.ko' | xargs -P%{zcpu} xz; \
+    find $RPM_BUILD_ROOT/lib/modules/ -type f -name '*.ko' | xargs -P${RPM_BUILD_NCPUS} xz; \
   fi \
 %{nil}
 

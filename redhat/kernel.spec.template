@@ -115,7 +115,6 @@ Summary: The Linux kernel
 %if %{zipmodules}
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 # for parallel xz processes, replace with 1 to go back to single process
-%global zcpu `nproc --all`
 %endif
 
 %%BUILDID%%
@@ -411,11 +410,6 @@ Summary: The Linux kernel
 # zfcpdump mechanism is s390 only
 %ifnarch s390x
 %define with_zfcpdump 0
-%endif
-
-# skip BTF in kernel modules for s390x
-%ifnarch s390x
-%define with_kmod_btf --keep-section '.BTF'
 %endif
 
 %if 0%{?fedora}
@@ -1121,7 +1115,7 @@ AutoReqProv: no\
 %description %{?1:%{1}-}debuginfo\
 This package provides debug information for package %{name}%{?1:-%{1}}.\
 This is required to use SystemTap with %{name}%{?1:-%{1}}-%{KVERREL}.\
-%{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} %{?with_kmod_btf} -p '.*\/usr\/src\/kernels/.*|XXX' -o ignored-debuginfo.list -p '/.*/%%{KVERREL_RE}%{?1:[+]%{1}}/.*|/.*%%{KVERREL_RE}%{?1:\+%{1}}(\.debug)?' -o debuginfo%{?1}.list}\
+%{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} --keep-section '.BTF' -p '.*\/usr\/src\/kernels/.*|XXX' -o ignored-debuginfo.list -p '/.*/%%{KVERREL_RE}%{?1:[+]%{1}}/.*|/.*%%{KVERREL_RE}%{?1:\+%{1}}(\.debug)?' -o debuginfo%{?1}.list}\
 %{nil}
 
 #
@@ -1447,7 +1441,7 @@ cp %{SOURCE80} .
 cp %{SOURCE3000} .
 # kernel-local
 cp %{SOURCE3001} .
-VERSION=%{version} ./generate_all_configs.sh %{primary_target} %{debugbuildsenabled}
+FLAVOR=%{primary_target} KVERSION=%{version} ./generate_all_configs.sh %{debugbuildsenabled}
 
 # Merge in any user-provided local config option changes
 %ifnarch %nobuildarches
@@ -1498,7 +1492,7 @@ for opt in %{clang_make_opts}; do
   OPTS="$OPTS -m $opt"
 done
 %endif
-./process_configs.sh $OPTS kernel %{rpmversion}
+RHJOBS=$RPM_BUILD_NCPUS PACKAGE_NAME=kernel ./process_configs.sh $OPTS ${rpmversion}
 
 cp %{SOURCE82} .
 RPM_SOURCE_DIR=$RPM_SOURCE_DIR ./update_scripts.sh %{primary_target}
@@ -1856,6 +1850,14 @@ BuildKernel() {
     cp -a scripts $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     rm -rf $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts/tracing
     rm -f $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/scripts/spdxcheck.py
+
+%ifarch s390x
+    # CONFIG_EXPOLINE_EXTERN=y produces arch/s390/lib/expoline.o
+    # which is needed during external module build.
+    if [ -f arch/s390/lib/expoline.o ]; then
+      cp -a --parents arch/s390/lib/expoline.o $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
+    fi
+%endif
 
     # Files for 'make scripts' to succeed with kernel-devel.
     mkdir -p $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/security/selinux/include
@@ -2348,7 +2350,7 @@ find Documentation -type d | xargs chmod u+w
     fi \
   fi \
   if [ "%{zipmodules}" -eq "1" ]; then \
-    find $RPM_BUILD_ROOT/lib/modules/ -type f -name '*.ko' | xargs -P%{zcpu} xz; \
+    find $RPM_BUILD_ROOT/lib/modules/ -type f -name '*.ko' | xargs -P${RPM_BUILD_NCPUS} xz; \
   fi \
 %{nil}
 

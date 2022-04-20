@@ -1,7 +1,6 @@
 #!/bin/sh
 
-GITID=$1
-DIR=$2
+DIR=linux-$TARFILE_RELEASE
 
 # shellcheck disable=SC1083
 XZ_THREADS=$(rpm --eval %{_smp_mflags} | sed -e 's!^-j!--threads !')
@@ -16,8 +15,7 @@ fi
 
 if [ -f "$TARBALL" ]; then
 	TARID=$(xzcat -qq "$TARBALL" | git get-tar-commit-id 2>/dev/null)
-	GITID_NORMALIZE=$(git log --max-count=1 --pretty=format:%H "$GITID")
-	if [ "${GITID_NORMALIZE}" = "${TARID}" ]; then
+	if [ "${GITID}" = "${TARID}" ]; then
 		echo "$(basename "$TARBALL") unchanged..."
 		exit 0
 	fi
