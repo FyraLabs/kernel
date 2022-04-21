@@ -219,12 +219,14 @@ SRPM:=$(SRPMS)/$(PACKAGE_NAME)-$(RPMVERSION)$(DIST).src.rpm
 # specific values should be set.
 #
 ifeq ("$(DISTRO)", "fedora")
+  SINGLE_TARBALL:=0
   TARFILE_RELEASE:=$(UPSTREAM_TARBALL_NAME)
   RHDISTGIT_BRANCH:=rawhide
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=temp-ark-rhel-8-test
   endif
 else ifeq ("$(DISTRO)", "centos")
+  SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=c$(RHEL_MAJOR)s
   ifndef BUILD_PROFILE
     BUILD_PROFILE:= -p stream
@@ -234,6 +236,7 @@ else ifeq ("$(DISTRO)", "centos")
   endif
   TARFILE_RELEASE:=$(RPMVERSION)
 else
+  SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
@@ -400,7 +403,7 @@ dist-stub-key:
 # force tarball to be regenerated if HEAD changes
 .PHONY:	$(TARBALL)
 $(TARBALL):
-	scripts/create-tarball.sh
+	@scripts/create-tarball.sh
 
 .PHONY: $(KABI_TARBALL)
 $(KABI_TARBALL):

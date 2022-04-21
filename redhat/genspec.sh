@@ -162,7 +162,7 @@ mv -f "$clogf.full" "$SOURCES/$CHANGELOG"
 
 echo "MARKER is $MARKER"
 
-if [ "$DISTRO" == "fedora" ] || [ -n "$SINGLE_TARBALL" ]; then
+if [ "$SINGLE_TARBALL" = 0 ]; then
 	# The tarball in the SRPM contains only the upstream sources.
 
 	# May need to preserve word splitting in EXCLUDE_FILES

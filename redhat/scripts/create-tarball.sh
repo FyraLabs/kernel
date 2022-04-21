@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIR=linux-$TARFILE_RELEASE
+[ "$SINGLE_TARBALL" -eq 1 ] && _GITID="$GITID" || _GITID="$MARKER"
 
 # shellcheck disable=SC1083
 XZ_THREADS=$(rpm --eval %{_smp_mflags} | sed -e 's!^-j!--threads !')
@@ -15,7 +15,7 @@ fi
 
 if [ -f "$TARBALL" ]; then
 	TARID=$(xzcat -qq "$TARBALL" | git get-tar-commit-id 2>/dev/null)
-	if [ "${GITID}" = "${TARID}" ]; then
+	if [ "$_GITID" == "$TARID" ]; then
 		echo "$(basename "$TARBALL") unchanged..."
 		exit 0
 	fi
@@ -27,4 +27,4 @@ trap 'rm -vf "$TARBALL"' INT
 # XZ_OPTIONS and XZ_THREADS DEPEND on word splitting, so don't disable it here:
 # shellcheck disable=SC2086
 cd ../ &&
-  git archive --prefix="$DIR"/ --format=tar "$GITID" | xz $XZ_OPTIONS $XZ_THREADS > "$TARBALL";
+  git archive --prefix="linux-$TARFILE_RELEASE"/ --format=tar "$_GITID" | xz $XZ_OPTIONS $XZ_THREADS > "$TARBALL";
