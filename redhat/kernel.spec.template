@@ -115,7 +115,6 @@ Summary: The Linux kernel
 %if %{zipmodules}
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 # for parallel xz processes, replace with 1 to go back to single process
-%global zcpu `nproc --all`
 %endif
 
 %%BUILDID%%
@@ -1442,7 +1441,7 @@ cp %{SOURCE80} .
 cp %{SOURCE3000} .
 # kernel-local
 cp %{SOURCE3001} .
-VERSION=%{version} ./generate_all_configs.sh %{primary_target} %{debugbuildsenabled}
+FLAVOR=%{primary_target} KVERSION=%{version} ./generate_all_configs.sh %{debugbuildsenabled}
 
 # Merge in any user-provided local config option changes
 %ifnarch %nobuildarches
@@ -1493,7 +1492,7 @@ for opt in %{clang_make_opts}; do
   OPTS="$OPTS -m $opt"
 done
 %endif
-./process_configs.sh $OPTS kernel %{rpmversion}
+RHJOBS=$RPM_BUILD_NCPUS PACKAGE_NAME=kernel ./process_configs.sh $OPTS ${rpmversion}
 
 cp %{SOURCE82} .
 RPM_SOURCE_DIR=$RPM_SOURCE_DIR ./update_scripts.sh %{primary_target}
@@ -2351,7 +2350,7 @@ find Documentation -type d | xargs chmod u+w
     fi \
   fi \
   if [ "%{zipmodules}" -eq "1" ]; then \
-    find $RPM_BUILD_ROOT/lib/modules/ -type f -name '*.ko' | xargs -P%{zcpu} xz; \
+    find $RPM_BUILD_ROOT/lib/modules/ -type f -name '*.ko' | xargs -P${RPM_BUILD_NCPUS} xz; \
   fi \
 %{nil}
 
