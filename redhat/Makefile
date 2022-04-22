@@ -18,14 +18,27 @@ ifdef TEST_FLAGS
   $(warning WARNING: TEST_FLAGS will be deprecated in a later release, use BUILD_FLAGS instead.)
 endif
 
+ifdef SINGLE_TARBALL
+  # The commit that introduced this code can be reverted if there are users of
+  # this variable.
+  # deprecated in 5.18.0
+  $(warning WARNING: SINGLE_TARBALL will be deprecated in a later release.)
+endif
+
 include Makefile.variables
 
 LANG=C
+
 ifndef RHSELFTESTDATA
   TOPDIR:=$(shell $(GIT) rev-parse --show-toplevel)
 else
+  # change TOPDIR to be relative
   TOPDIR:=..
+  # RHEL_RELEASE may be updated which will cause a difference with the BUILD variable
+  RHEL_RELEASE:=6
+  BUILD:=$(RHEL_RELEASE)
 endif
+
 REDHAT:=$(TOPDIR)/redhat
 include $(TOPDIR)/Makefile.rhelver
 
@@ -199,15 +212,13 @@ KABIDW_TARBALL:=$(SOURCES)/kernel-kabi-dw-$(KVERSION)-$(DISTRO_BUILD).tar.bz2
 PKGRELEASE:=$(PREBUILD)$(BUILD)$(BUILDID)
 RPMVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)-$(PKGRELEASE)
 SPECRELEASE:=$(PREBUILD)$(BUILD)%{?buildid}%{?dist}
-SRPM:=$(SRPMS)/$(PACKAGE_NAME)-$(KVERSION)-$(PKGRELEASE)$(DIST).src.rpm
+SRPM:=$(SRPMS)/$(PACKAGE_NAME)-$(RPMVERSION)$(DIST).src.rpm
 
 #
 # This conditional statement is where fedora, centos, and other (aka RHEL)
 # specific values should be set.
 #
 ifeq ("$(DISTRO)", "fedora")
-  # A non-unified tarball means that the tarball is only upstream sources
-  # and the patches get applied as a diff in the spec file
   SINGLE_TARBALL:=0
   TARFILE_RELEASE:=$(UPSTREAM_TARBALL_NAME)
   RHDISTGIT_BRANCH:=rawhide
@@ -215,8 +226,6 @@ ifeq ("$(DISTRO)", "fedora")
     BUILD_SCRATCH_TARGET:=temp-ark-rhel-8-test
   endif
 else ifeq ("$(DISTRO)", "centos")
-  # A unified tarball means that the tarball in the srpm contains both the
-  # upstream sources and RHEL specific patches.
   SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=c$(RHEL_MAJOR)s
   ifndef BUILD_PROFILE
@@ -225,16 +234,14 @@ else ifeq ("$(DISTRO)", "centos")
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=c$(RHEL_MAJOR)s-candidate
   endif
-  TARFILE_RELEASE:=$(KVERSION)-$(PKGRELEASE)
+  TARFILE_RELEASE:=$(RPMVERSION)
 else
-  # A unified tarball means that the tarball in the srpm contains both the
-  # upstream sources and RHEL specific patches.
   SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
   endif
-  TARFILE_RELEASE:=$(KVERSION)-$(PKGRELEASE)
+  TARFILE_RELEASE:=$(RPMVERSION)
 endif
 
 ifndef BUILD_TARGET
@@ -344,12 +351,12 @@ dist-kabi-dw-check: dist-kabi
 	@rm -rf $(KABIDW)/base/$(CURARCH).tmp
 
 dist-configs-commit: dist-configs-prep
-	+@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh "$(FLAVOR)" 1; \
-	./process_configs.sh -z "$(PACKAGE_NAME)" "$(KVERSION)" "" "$(FLAVOR)" "$(RHJOBS)"
+	+@cd $(REDHAT)/configs; ./generate_all_configs.sh 1;\
+	./process_configs.sh -z "$(KVERSION)" "$(FLAVOR)"
 
 dist-configs: dist-configs-prep
-	+@cd $(REDHAT)/configs; VERSION=$(KVERSION) ./generate_all_configs.sh "$(FLAVOR)" 1; \
-	./process_configs.sh $(PROCESS_CONFIGS_OPTS) "$(PACKAGE_NAME)" "$(KVERSION)" "" "" "$(RHJOBS)"
+	+@cd $(REDHAT)/configs; ./generate_all_configs.sh 1;\
+	./process_configs.sh $(PROCESS_CONFIGS_OPTS) "$(KVERSION)" ""
 
 dist-fedora-configs: FLAVOR = fedora
 dist-fedora-configs: dist-configs
@@ -360,11 +367,11 @@ dist-rhel-configs: dist-configs
 rh-configs: dist-rhel-configs
 
 dist-configs-check: dist-configs-prep
-	+cd $(REDHAT)/configs; ./process_configs.sh $(PROCESS_CONFIGS_CHECK_OPTS) $(PACKAGE_NAME) "" "" "" "$(RHJOBS)"
+	+cd $(REDHAT)/configs; ./process_configs.sh $(PROCESS_CONFIGS_CHECK_OPTS) "" ""
 
 dist-configs-prep: dist-clean-configs dist-buildreq-check
-	+cd $(REDHAT)/configs; ./build_configs.sh "partial" "$(ARCH_MACH)" "snip" "$(RHJOBS)"
-	+cd $(REDHAT)/configs; ./build_configs.sh "$(PACKAGE_NAME)" "$(ARCH_MACH)" "$(FLAVOR)" "$(RHJOBS)"
+	+cd $(REDHAT)/configs; ./build_configs.sh "partial" "snip"
+	+cd $(REDHAT)/configs; ./build_configs.sh "$(PACKAGE_NAME)" "$(FLAVOR)"
 
 dist-configs-arch: ARCH_MACH = $(MACH)
 dist-configs-arch: dist-configs
@@ -396,11 +403,7 @@ dist-stub-key:
 # force tarball to be regenerated if HEAD changes
 .PHONY:	$(TARBALL)
 $(TARBALL):
-	@if [ $(SINGLE_TARBALL) -eq 1 ]; then \
-		scripts/create-tarball.sh $(GITID) linux-$(KVERSION)-$(PKGRELEASE); \
-	else \
-		scripts/create-tarball.sh $(MARKER) linux-$(TARFILE_RELEASE); \
-	fi
+	@scripts/create-tarball.sh
 
 .PHONY: $(KABI_TARBALL)
 $(KABI_TARBALL):
@@ -558,7 +561,7 @@ dist-release-finish: setup-source
 	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
 	@$(GIT) add $(REDHAT)/$(CHANGELOG)
 	@$(GIT) add $(REDHAT)/marker
-	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(KVERSION)-$(PKGRELEASE)"
+	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(RPMVERSION)"
 dist-release-changed: setup-source
 	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
 	@echo $(MARKER) > $(REDHAT)/marker
@@ -574,7 +577,7 @@ dist-release-changed: setup-source
 dist-release: dist-clean-sources
 	@$(MAKE) dist-release-changed
 dist-release-tag:
-	@$(GIT) tag -a -m "$(PACKAGE_NAME)-$(RPMVERSION)" $(PACKAGE_NAME)-$(KVERSION)-$(PKGRELEASE)
+	@$(GIT) tag -a -m "$(PACKAGE_NAME)-$(RPMVERSION)" $(PACKAGE_NAME)-$(RPMVERSION)
 
 git-tree-check:
 	@if test -n "$(DIST_PUSH)" && test -z "$(shell $(GIT) remote get-url gitlab 2>/dev/null)"; then \
@@ -616,7 +619,7 @@ dist-vr-check:
 	fi
 
 dist-brew dist-koji: dist-%: dist-vr-check dist-srpm
-	$* $(BUILD_PROFILE) build $(BUILD_FLAGS) $(BUILD_TARGET) $(SRPMS)/$(PACKAGE_NAME)-$(KVERSION)-$(PKGRELEASE)$(DIST).src.rpm $(OUTPUT_FILE)
+	$* $(BUILD_PROFILE) build $(BUILD_FLAGS) $(BUILD_TARGET) $(SRPMS)/$(PACKAGE_NAME)-$(RPMVERSION)$(DIST).src.rpm $(OUTPUT_FILE)
 
 distg-brew distg-koji: distg-%: dist-vr-check
 	$* $(BUILD_PROFILE) build $(BUILD_FLAGS) $(BUILD_TARGET) "$(RHGITURL)?redhat/koji#$(RHGITCOMMIT)"
@@ -639,7 +642,7 @@ endif
 		exit 1; \
 	fi; \
 	fi
-	$(REDHAT)/scripts/rh-dist-git.sh "$(RHDISTGIT_BRANCH)" "$(RHDISTGIT_CACHE)" "$(RHDISTGIT_TMP)" "$(RHDISTGIT)" "$(TARBALL)" "$(KABI_TARBALL)" "$(KABIDW_TARBALL)" "$(__ZSTREAM)" "$(PACKAGE_NAME)" "$(RHEL_MAJOR)" "$(RHPKG_BIN)" "$(SRPMS)/$(PACKAGE_NAME)-$(KVERSION)-$(PKGRELEASE)$(DIST).src.rpm"
+	$(REDHAT)/scripts/rh-dist-git.sh
 
 dist-rtg: dist-release
 	@$(MAKE) dist-release-tag
