@@ -56,6 +56,8 @@ BUMP_RELEASE:=yes
 # to '0'.
 INCLUDE_FEDORA_FILES:=1
 INCLUDE_RHEL_FILES:=1
+INCLUDE_RT_FILES:=1
+INCLUDE_AUTO_FILES:=1
 
 # In case PATCHLIST_URL is not set to "none", Patchlist.changelog is added to
 # the kernel src.rpm, which will contain shas and commits not upstream. The
