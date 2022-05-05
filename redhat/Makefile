@@ -26,6 +26,12 @@ ifdef SINGLE_TARBALL
 endif
 
 include Makefile.variables
+# These entries are 'duplicates' of variables specified in Makefile.variables
+# that are used in the SPEC file.  Specifying these with a SPEC prefix indicates
+# that the value is passed through to the spec file.
+SPECRELEASED_KERNEL=$(RELEASED_KERNEL)
+SPECINCLUDE_FEDORA_FILES=$(INCLUDE_FEDORA_FILES)
+SPECINCLUDE_RHEL_FILES=$(INCLUDE_RHEL_FILES)
 
 LANG=C
 
@@ -50,10 +56,10 @@ RPMBUILD:=$(shell if [ -x "/usr/bin/rpmbuild" ]; then echo rpmbuild; \
                   else echo rpm; fi)
 
 MACH:=$(shell uname -m)
-RPMKVERSION:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^VERSION\ =\ /{s///;p;q}')
-RPMKPATCHLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^PATCHLEVEL\ =\ /{s///;p;q}')
-RPMKSUBLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^SUBLEVEL\ =\ /{s///;p;q}')
-RPMKEXTRAVERSION:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^EXTRAVERSION\ =\ /{s///;p;q}')
+SPECKVERSION:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^VERSION\ =\ /{s///;p;q}')
+SPECKPATCHLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^PATCHLEVEL\ =\ /{s///;p;q}')
+SPECKSUBLEVEL:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^SUBLEVEL\ =\ /{s///;p;q}')
+SPECKEXTRAVERSION:=$(shell $(GIT) show $(HEAD):Makefile | sed -ne '/^EXTRAVERSION\ =\ /{s///;p;q}')
 GITID:= $(shell $(GIT) log --max-count=1 --pretty=format:%H $(HEAD))
 ifndef BUILD
   BUILD:=$(RHEL_RELEASE)
@@ -69,7 +75,7 @@ RPM:=$(REDHAT)/rpm
 SRPMS:=$(RPM)/SRPMS
 SOURCES:=$(RPM)/SOURCES
 TESTPATCH:=$(REDHAT)/linux-kernel-test.patch
-CHANGELOG:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(RHEL_MINOR)
+SPECCHANGELOG:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(RHEL_MINOR)
 CHANGELOG_PREV:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(shell expr $(RHEL_MINOR) - 1)
 ARCH_LIST=aarch64 ppc64le s390x x86_64
 
@@ -131,21 +137,24 @@ ifeq ("$(origin O)", "command line")
 endif
 
 # MARKER is the git tag which we base off of for exporting patches
-# Make sure MARKER uses RPMKPATCHLEVEL and RPMKEXTRAVERSION from the kernel
-# makefile as opposed to any adjusted version for snapshotting.
-ifneq ($(RPMKEXTRAVERSION),)
-  MARKER:=v$(RPMKVERSION).$(RPMKPATCHLEVEL)$(RPMKEXTRAVERSION)
-  KEXTRAVERSION:=$(shell echo $(RPMKEXTRAVERSION) | sed -e s/-/./)
+# Make sure MARKER uses SPECKVERSION, SPECKPATCHLEVEL and SPECKEXTRAVERSION
+# from makefile as opposed to any adjusted version for snapshotting.
+ifneq ($(SPECKEXTRAVERSION),)
+  MARKER:=v$(SPECKVERSION).$(SPECKPATCHLEVEL)$(SPECKEXTRAVERSION)
+  KEXTRAVERSION:=$(shell echo $(SPECKEXTRAVERSION) | sed -e s/-/./)
   PREBUILD:=0$(KEXTRAVERSION).
-  UPSTREAM_TARBALL_NAME:=$(RPMKVERSION).$(RPMKPATCHLEVEL)$(RPMKEXTRAVERSION)
+  UPSTREAM_TARBALL_NAME:=$(SPECKVERSION).$(SPECKPATCHLEVEL)$(SPECKEXTRAVERSION)
 else
   KEXTRAVERSION:=
-  ifeq ($(RPMKSUBLEVEL),0)
-    MARKER:=v$(RPMKVERSION).$(RPMKPATCHLEVEL)
-    UPSTREAM_TARBALL_NAME:=$(RPMKVERSION).$(RPMKPATCHLEVEL)
+  ifeq ($(SPECKSUBLEVEL),0)
+    MARKER:=v$(SPECKVERSION).$(SPECKPATCHLEVEL)
+    UPSTREAM_TARBALL_NAME:=$(SPECKVERSION).$(SPECKPATCHLEVEL)
   else
-    MARKER:=v$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)
-    UPSTREAM_TARBALL_NAME:=$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)
+    # Make sure MARKER uses SPECKVERSION, SPECKPATCHLEVEL, and SPECKSUBLEVEL
+    # from the kernel makefile as opposed to any adjusted version for snapshotting.
+    # IOW, these variables are *NOT* equivalent to the SPECVERSION variable.
+    MARKER:=v$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)
+    UPSTREAM_TARBALL_NAME:=$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)
   endif
   PREBUILD:=
 endif
@@ -179,10 +188,10 @@ ifeq ($(VERSION_ON_UPSTREAM),1)
     # been updated but we still need something that works for
     # packaging. Fix this by bumping the patch level and marking
     # this as rc0
-    ifeq ($(RPMKEXTRAVERSION),)
+    ifeq ($(SPECKEXTRAVERSION),)
       KEXTRAVERSION:=.rc0
       PREBUILD:=0$(KEXTRAVERSION).
-      RPMKPATCHLEVEL:=$(shell expr $(RPMKPATCHLEVEL) + 1)
+      SPECKPATCHLEVEL:=$(shell expr $(SPECKPATCHLEVEL) + 1)
     endif
     ifndef PREBUILD_GIT_ONLY
       ifneq ($(filter $(MAKECMDGOALS),dist-git-test dist-git),)
@@ -204,12 +213,12 @@ else
   SNAPSHOT:=0
 endif
 
-KVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)
-PKGRELEASE:=$(PREBUILD)$(BUILD)$(BUILDID)
-KABI_TARBALL:=$(SOURCES)/kernel-abi-stablelists-$(KVERSION)-$(PKGRELEASE).tar.bz2
+SPECVERSION:=$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)
+SPECBUILD:=$(PREBUILD)$(BUILD)$(BUILDID)
+KABI_TARBALL:=$(SOURCES)/kernel-abi-stablelists-$(SPECVERSION)-$(SPECBUILD).tar.bz2
 KABIDW := $(REDHAT)/kabi-dwarf
-KABIDW_TARBALL:=$(SOURCES)/kernel-kabi-dw-$(KVERSION)-$(PKGRELEASE).tar.bz2
-RPMVERSION:=$(RPMKVERSION).$(RPMKPATCHLEVEL).$(RPMKSUBLEVEL)-$(PKGRELEASE)
+KABIDW_TARBALL:=$(SOURCES)/kernel-kabi-dw-$(SPECVERSION)-$(SPECBUILD).tar.bz2
+RPMVERSION:=$(SPECVERSION)-$(SPECBUILD)
 SPECRELEASE:=$(PREBUILD)$(BUILD)%{?buildid}%{?dist}
 SRPM:=$(SRPMS)/$(PACKAGE_NAME)-$(RPMVERSION)$(DIST).src.rpm
 
@@ -219,7 +228,7 @@ SRPM:=$(SRPMS)/$(PACKAGE_NAME)-$(RPMVERSION)$(DIST).src.rpm
 #
 ifeq ("$(DISTRO)", "fedora")
   SINGLE_TARBALL:=0
-  TARFILE_RELEASE:=$(UPSTREAM_TARBALL_NAME)
+  SPECTARFILE_RELEASE:=$(UPSTREAM_TARBALL_NAME)
   RHDISTGIT_BRANCH:=rawhide
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=temp-ark-rhel-8-test
@@ -233,21 +242,21 @@ else ifeq ("$(DISTRO)", "centos")
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=c$(RHEL_MAJOR)s-candidate
   endif
-  TARFILE_RELEASE:=$(RPMVERSION)
+  SPECTARFILE_RELEASE:=$(RPMVERSION)
 else
   SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
   ifndef BUILD_SCRATCH_TARGET
     BUILD_SCRATCH_TARGET:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
   endif
-  TARFILE_RELEASE:=$(RPMVERSION)
+  SPECTARFILE_RELEASE:=$(RPMVERSION)
 endif
 
 ifndef BUILD_TARGET
   BUILD_TARGET:=--scratch $(BUILD_SCRATCH_TARGET)
 endif
 
-TARFILE:=linux-$(TARFILE_RELEASE).tar.xz
+TARFILE:=linux-$(SPECTARFILE_RELEASE).tar.xz
 TARBALL:=$(REDHAT)/$(TARFILE)
 
 include Makefile.rhpkg
@@ -351,11 +360,11 @@ dist-kabi-dw-check: dist-kabi
 
 dist-configs-commit: dist-configs-prep
 	+@cd $(REDHAT)/configs; ./generate_all_configs.sh 1;\
-	./process_configs.sh -z "$(KVERSION)" "$(FLAVOR)"
+	./process_configs.sh -z "$(SPECVERSION)" "$(FLAVOR)"
 
 dist-configs: dist-configs-prep
 	+@cd $(REDHAT)/configs; ./generate_all_configs.sh 1;\
-	./process_configs.sh $(PROCESS_CONFIGS_OPTS) "$(KVERSION)" ""
+	./process_configs.sh $(PROCESS_CONFIGS_OPTS) "$(SPECVERSION)" ""
 
 dist-fedora-configs: FLAVOR = fedora
 dist-fedora-configs: dist-configs
@@ -417,15 +426,23 @@ $(KABIDW_TARBALL):
 
 
 dist-tarball: $(TARBALL)
+	# deprecated at 5.17.0
+	@echo "WARNING: This target will be deprecated in a future release."
 	@echo "redhat/$(TARFILE)"
 
 dist-kernelrelease:
-	@echo $(PACKAGE_NAME)-$(KVERSION)-$(PKGRELEASE)
+	# deprecated at 5.17.0
+	@echo "WARNING: This target will be deprecated in a future release."
+	@echo $(PACKAGE_NAME)-$(SPECVERSION)-$(SPECBUILD)
 
 dist-kernelversion:
-	@echo $(KVERSION)-$(PKGRELEASE)
+	# deprecated at 5.17.0
+	@echo "WARNING: This target will be deprecated in a future release."
+	@echo $(SPECVERSION)-$(SPECBUILD)
 
 dist-specfile: setup-source
+	# deprecated at 5.17.0
+	@echo "WARNING: This target will be deprecated in a future release."
 	@echo $(SOURCES)/$(SPECFILE)
 
 dist-git-version-check:
@@ -451,14 +468,14 @@ dist-buildreq-check: setup-source
 
 setup-source: dist-git-version-check dist-clean-sources
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
-	@if [ ! -e  $(REDHAT)/$(CHANGELOG) ]; then \
-		echo "Creating $(CHANGELOG) as copy of $(CHANGELOG_PREV)"; \
-		cp $(REDHAT)/$(CHANGELOG_PREV) $(REDHAT)/$(CHANGELOG); \
+	@if [ ! -e  $(REDHAT)/$(SPECCHANGELOG) ]; then \
+		echo "Creating $(SPECCHANGELOG) as copy of $(CHANGELOG_PREV)"; \
+		cp $(REDHAT)/$(CHANGELOG_PREV) $(REDHAT)/$(SPECCHANGELOG); \
 	fi
 	@if [ -z "$(RHSELFTESTDATA)" ]; then \
-		cp $(REDHAT)/$(CHANGELOG) $(SOURCES)/$(CHANGELOG); \
+		cp $(REDHAT)/$(SPECCHANGELOG) $(SOURCES)/$(SPECCHANGELOG); \
 	else \
-		echo "Mon Mar 28 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [$(RPMVERSION)]" > $(SOURCES)/$(CHANGELOG); \
+		echo "Mon Mar 28 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [$(RPMVERSION)]" > $(SOURCES)/$(SPECCHANGELOG); \
 	fi
 	@if [ -z "$(PATCHLIST_URL)" ]; then \
 		echo "Error: PATCHLIST_URL must be set (to 'none' or any URL)"; \
@@ -483,8 +500,8 @@ sources-rh: $(TARBALL) generate-testpatch-tmp setup-source dist-configs-check
 	@rm $(TESTPATCH).tmp
 	@cp $(TESTPATCH) $(SOURCES)/linux-kernel-test.patch
 	@cat configs/flavors | while read flavor; do echo "Copying sources for $${flavor}"; [ -e $${flavor}_files ] && cp $${flavor}_files/* $(SOURCES); done
-	@sed -e "s/%%RPMKVERSION%%/$(RPMKVERSION)/" \
-		-e "s/%%RPMKPATCHLEVEL%%/$(RPMKPATCHLEVEL)/" \
+	@sed -e "s/%%SPECKVERSION%%/$(SPECKVERSION)/" \
+		-e "s/%%SPECKPATCHLEVEL%%/$(SPECKPATCHLEVEL)/" \
 		rpminspect.yaml > $(SOURCES)/rpminspect.yaml
 	@cp cpupower.* \
 		keys/rhel*.x509 \
@@ -557,19 +574,19 @@ dist-rpm-baseonly: dist-sources do-rpmbuild
 
 # unless you know what you're doing, you don't want to use the next four ones
 dist-release-finish: setup-source
-	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
-	@$(GIT) add $(REDHAT)/$(CHANGELOG)
+	@cp $(SOURCES)/$(SPECCHANGELOG) $(REDHAT)/$(SPECCHANGELOG)
+	@$(GIT) add $(REDHAT)/$(SPECCHANGELOG)
 	@$(GIT) add $(REDHAT)/marker
-	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(CHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(RPMVERSION)"
+	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(SPECCHANGELOG) $(PACKAGE_NAME).spec.template -m "[redhat] $(PACKAGE_NAME)-$(RPMVERSION)"
 dist-release-changed: setup-source
-	@cp $(SOURCES)/$(CHANGELOG) $(REDHAT)/$(CHANGELOG)
+	@cp $(SOURCES)/$(SPECCHANGELOG) $(REDHAT)/$(SPECCHANGELOG)
 	@echo $(MARKER) > $(REDHAT)/marker
 	@# if neither changelog nor marker was updated, skip bumping a release
 	@$(GIT) update-index -q --really-refresh
 	@if $(GIT) diff-index --quiet HEAD; then \
 		echo "Nothing changed, skipping updates"; \
 	else \
-		$(GIT) checkout -- $(REDHAT)/$(CHANGELOG); \
+		$(GIT) checkout -- $(REDHAT)/$(SPECCHANGELOG); \
 		$(REDHAT)/scripts/new_release.sh $(REDHAT) $(__YSTREAM) $(__ZSTREAM) $(BUMP_RELEASE); \
 		$(MAKE) dist-release-finish; \
 	fi
@@ -611,9 +628,9 @@ dist-fedora-release-push: dist-fedora-release
 dist-vr-check:
 	@# builds may include a s390x+zfcpdump arch build.  UTS_RELEASE can only have a
 	@# version-release string with max 64 chars.  The version-release for s390x+zfcpdump
-	@# is 29 characters, leaving a maximum of 35 characters for PKGRELEASE.
-	@if [ $$(echo -n $(PKGRELEASE) | wc -c) -gt 35 ]; then \
-		echo "PKGRELEASE ($(PKGRELEASE)) is too long.  Use a shorter localversion (currently $(BUILDID))"; \
+	@# is 29 characters, leaving a maximum of 35 characters for SPECBUILD.
+	@if [ $$(echo -n $(SPECBUILD) | wc -c) -gt 35 ]; then \
+		echo "SPECBUILD ($(SPECBUILD)) is too long.  Use a shorter localversion (currently $(BUILDID))"; \
 		exit 1; \
 	fi
 

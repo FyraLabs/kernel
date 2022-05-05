@@ -46,6 +46,12 @@ external scripts.  Variables in this file should be considered stable.
 Variables still may be deprecated and will follow the guidelines in
 "Deprecating variables and targets" section below.
 
+Variable Naming
+===============
+
+Variables names prefixed with SPEC indicate that the variable is used
+in redhat/kernel.spec.template (see redhat/genspec.sh).
+
 Deprecating variables and targets
 =================================
 
@@ -73,4 +79,4 @@ or,
   dist-kernelversion:
     # deprecated in 5.17.0
     @echo "WARNING: This target will be removed in a later release."
-    @echo $(KVERSION)-$(DISTRO_BUILD)
+    @echo $(SPECVERSION)-$(DISTRO_BUILD)
