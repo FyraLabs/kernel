@@ -4,11 +4,11 @@
 # here before the %%install macro is pre-built.
 
 # Include Fedora files
-%global include_fedora %%INCLUDE_FEDORA_FILES%%
+%global include_fedora %%SPECINCLUDE_FEDORA_FILES%%
 # Include RHEL files
-%global include_rhel %%INCLUDE_RHEL_FILES%%
+%global include_rhel %%SPECINCLUDE_RHEL_FILES%%
 # Provide Patchlist.changelog file
-%global patchlist_changelog %%PATCHLIST_CHANGELOG%%
+%global patchlist_changelog %%SPECPATCHLIST_CHANGELOG%%
 
 # Disable LTO in userspace packages.
 %global _lto_cflags %{nil}
@@ -77,7 +77,7 @@ Summary: The Linux kernel
 #  kernel release. (This includes prepatch or "rc" releases.)
 # Set released_kernel to 0 when the upstream source tarball contains an
 #  unreleased kernel development snapshot.
-%global released_kernel %%RELEASED_KERNEL%%
+%global released_kernel %%SPECRELEASED_KERNEL%%
 
 # Set debugbuildsenabled to 1 to build separate base and debug kernels
 #  (on supported architectures). The kernel-debug-* subpackages will
@@ -85,7 +85,7 @@ Summary: The Linux kernel
 # Set debugbuildsenabled to 0 to not build a separate debug kernel, but
 #  to build the base kernel using the debug configuration. (Specifying
 #  the --with-release option overrides this setting.)
-%define debugbuildsenabled %%DEBUG_BUILDS_ENABLED%%
+%define debugbuildsenabled %%SPECDEBUG_BUILDS_ENABLED%%
 
 %if 0%{?fedora}
 %define secure_boot_arch x86_64
@@ -115,7 +115,7 @@ Summary: The Linux kernel
 # for parallel xz processes, replace with 1 to go back to single process
 %endif
 
-%%BUILDID%%
+%%SPECBUILDID%%
 
 
 %if 0%{?fedora}
@@ -125,14 +125,14 @@ Summary: The Linux kernel
 %endif
 
 # The kernel tarball/base version
-%define kversion %%RPMKVERSION%%.%%RPMKPATCHLEVEL%%
+%define kversion %%SPECKVERSION%%.%%SPECKPATCHLEVEL%%
 
-%define rpmversion %%RPMKVERSION%%.%%RPMKPATCHLEVEL%%.%%RPMKSUBLEVEL%%
-%define patchversion %%RPMKVERSION%%.%%RPMKPATCHLEVEL%%
-%define pkgrelease %%PKGRELEASE%%
+%define specversion %%SPECVERSION%%
+%define patchversion %%SPECKVERSION%%.%%SPECKPATCHLEVEL%%
+%define pkgrelease %%SPECBUILD%%
 
 # This is needed to do merge window version magic
-%define patchlevel %%RPMKPATCHLEVEL%%
+%define patchlevel %%SPECKPATCHLEVEL%%
 
 # allow pkg_release to have configurable %%{?dist} tag
 %define specrelease %%SPECRELEASE%%
@@ -551,7 +551,7 @@ Summary: The Linux kernel
 Name: kernel
 License: GPLv2 and Redistributable, no modification permitted
 URL: https://www.kernel.org/
-Version: %{rpmversion}
+Version: %{specversion}
 Release: %{pkg_release}
 # DO NOT CHANGE THE 'ExclusiveArch' LINE TO TEMPORARILY EXCLUDE AN ARCHITECTURE BUILD.
 # SET %%nobuildarches (ABOVE) INSTEAD
@@ -690,7 +690,7 @@ BuildRequires: lld
 # exact git commit you can run
 #
 # xzcat -qq ${TARBALL} | git get-tar-commit-id
-Source0: linux-%%TARFILE_RELEASE%%.tar.xz
+Source0: linux-%%SPECTARFILE_RELEASE%%.tar.xz
 
 Source1: Makefile.rhelver
 
@@ -826,8 +826,8 @@ Source211: Module.kabi_dup_ppc64le
 Source212: Module.kabi_dup_s390x
 Source213: Module.kabi_dup_x86_64
 
-Source300: kernel-abi-stablelists-%{rpmversion}-%{pkgrelease}.tar.bz2
-Source301: kernel-kabi-dw-%{rpmversion}-%{pkgrelease}.tar.bz2
+Source300: kernel-abi-stablelists-%{specversion}-%{pkgrelease}.tar.bz2
+Source301: kernel-kabi-dw-%{specversion}-%{pkgrelease}.tar.bz2
 
 # Sources for kernel-tools
 Source2000: cpupower.service
@@ -869,8 +869,8 @@ The kernel meta package
 # macros defined above.
 #
 %define kernel_reqprovconf \
-Provides: kernel = %{rpmversion}-%{pkg_release}\
-Provides: kernel-%{_target_cpu} = %{rpmversion}-%{pkg_release}%{?1:+%{1}}\
+Provides: kernel = %{specversion}-%{pkg_release}\
+Provides: kernel-%{_target_cpu} = %{specversion}-%{pkg_release}%{?1:+%{1}}\
 Provides: kernel-drm-nouveau = 16\
 Provides: kernel-uname-r = %{KVERREL}%{?1:+%{1}}\
 Requires(pre): %{kernel_prereq}\
@@ -1355,7 +1355,7 @@ ApplyPatch()
     exit 1
   fi
   if ! grep -E "^Patch[0-9]+: $patch\$" %{_specdir}/${RPM_PACKAGE_NAME}.spec ; then
-    if [ "${patch:0:8}" != "patch-%%RPMKVERSION%%." ] ; then
+    if [ "${patch:0:8}" != "patch-%%SPECKVERSION%%." ] ; then
       echo "ERROR: Patch  $patch  not listed as a source patch in specfile"
       exit 1
     fi
@@ -1382,8 +1382,8 @@ ApplyOptionalPatch()
   fi
 }
 
-%setup -q -n kernel-%%TARFILE_RELEASE%% -c
-mv linux-%%TARFILE_RELEASE%% linux-%{KVERREL}
+%setup -q -n kernel-%%SPECTARFILE_RELEASE%% -c
+mv linux-%%SPECTARFILE_RELEASE%% linux-%{KVERREL}
 
 cd linux-%{KVERREL}
 cp -a %{SOURCE1} .
@@ -1439,7 +1439,7 @@ cp %{SOURCE80} .
 cp %{SOURCE3000} .
 # kernel-local
 cp %{SOURCE3001} .
-FLAVOR=%{primary_target} KVERSION=%{version} ./generate_all_configs.sh %{debugbuildsenabled}
+FLAVOR=%{primary_target} SPECVERSION=%{version} ./generate_all_configs.sh %{debugbuildsenabled}
 
 # Merge in any user-provided local config option changes
 %ifnarch %nobuildarches
@@ -1490,7 +1490,7 @@ for opt in %{clang_make_opts}; do
   OPTS="$OPTS -m $opt"
 done
 %endif
-RHJOBS=$RPM_BUILD_NCPUS PACKAGE_NAME=kernel ./process_configs.sh $OPTS ${rpmversion}
+RHJOBS=$RPM_BUILD_NCPUS PACKAGE_NAME=kernel ./process_configs.sh $OPTS ${specversion}
 
 cp %{SOURCE82} .
 RPM_SOURCE_DIR=$RPM_SOURCE_DIR ./update_scripts.sh %{primary_target}
@@ -2401,7 +2401,7 @@ find Documentation -type d | xargs chmod u+w
 cd linux-%{KVERREL}
 
 %if %{with_doc}
-docdir=$RPM_BUILD_ROOT%{_datadir}/doc/kernel-doc-%{rpmversion}-%{pkgrelease}
+docdir=$RPM_BUILD_ROOT%{_datadir}/doc/kernel-doc-%{specversion}-%{pkgrelease}
 
 # copy the source over
 mkdir -p $docdir
@@ -2809,9 +2809,9 @@ fi
 %if %{with_doc}
 %files doc
 %defattr(-,root,root)
-%{_datadir}/doc/kernel-doc-%{rpmversion}-%{pkgrelease}/Documentation/*
-%dir %{_datadir}/doc/kernel-doc-%{rpmversion}-%{pkgrelease}/Documentation
-%dir %{_datadir}/doc/kernel-doc-%{rpmversion}-%{pkgrelease}
+%{_datadir}/doc/kernel-doc-%{specversion}-%{pkgrelease}/Documentation/*
+%dir %{_datadir}/doc/kernel-doc-%{specversion}-%{pkgrelease}/Documentation
+%dir %{_datadir}/doc/kernel-doc-%{specversion}-%{pkgrelease}
 %endif
 
 %if %{with_perf}
@@ -3025,7 +3025,7 @@ fi
 #
 #
 %changelog
-%%CHANGELOG%%
+%%SPECCHANGELOG%%
 
 ###
 # The following Emacs magic makes C-c C-e use UTC dates.
