@@ -1,3 +1,10 @@
+* Wed May 11 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc6.feb9c5e19e913b5.49]
+- Add CONFIG_EFI_DXE_MEM_ATTRIBUTES (Justin M. Forbes)
+- efi: x86: Set the NX-compatibility flag in the PE header (Peter Jones)
+- efi: libstub: ensure allocated memory to be executable (Baskov Evgeniy)
+- efi: libstub: declare DXE services table (Baskov Evgeniy)
+Resolves: 
+
 * Wed May 11 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc6.feb9c5e19e913b5.48]
 - Fedora 5.18 config set part 1 (Justin M. Forbes)
 Resolves: 
