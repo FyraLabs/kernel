@@ -1,8 +1,18 @@
-* Wed May 11 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc6.feb9c5e19e913b5.49]
+* Fri May 13 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc6.f3f19f939c11925.50]
 - Add CONFIG_EFI_DXE_MEM_ATTRIBUTES (Justin M. Forbes)
 - efi: x86: Set the NX-compatibility flag in the PE header (Peter Jones)
 - efi: libstub: ensure allocated memory to be executable (Baskov Evgeniy)
 - efi: libstub: declare DXE services table (Baskov Evgeniy)
+Resolves: 
+
+* Fri May 13 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc6.f3f19f939c11925.49]
+- redhat/configs: Fix rm warning on error (Prarit Bhargava)
+- Fix nightly merge CI (Don Zickus)
+- redhat/kernel.spec.template: fix standalone tools build (Jan Stancek)
+- Add system-sb-certs for RHEL-9 (Don Zickus)
+- Fix dist-buildcheck-reqs (Don Zickus)
+- move DAMON configs to correct directory (Chris von Recklinghausen)
+- redhat: indicate HEAD state in tarball/rpm name (Jarod Wilson)
 Resolves: 
 
 * Wed May 11 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc6.feb9c5e19e913b5.48]
