@@ -1,4 +1,4 @@
-* Fri May 13 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc6.f3f19f939c11925.50]
+* Sat May 14 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc6.ec7f49619d8ee13.51]
 - Add CONFIG_EFI_DXE_MEM_ATTRIBUTES (Justin M. Forbes)
 - efi: x86: Set the NX-compatibility flag in the PE header (Peter Jones)
 - efi: libstub: ensure allocated memory to be executable (Baskov Evgeniy)
