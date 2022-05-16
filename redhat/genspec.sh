@@ -23,11 +23,15 @@ else
 	SPECDEBUG_BUILDS_ENABLED=0
 fi
 
-if [ -n "$BUILDID" ]; then
-	SPECBUILDID=$(printf "%%define buildid %s" "$BUILDID")
+if [ -n "$LOCALVERSION" ]; then
+	SPECBUILDID=$(printf "%%define buildid %s" "$LOCALVERSION")
 else
 	SPECBUILDID="# define buildid .local"
 fi
+
+# The SPECRELEASE variable uses the SPECBUILDID variable which is
+# defined above.  IOW, don't remove SPECBUILDID ;)
+SPECRELEASE="${UPSTREAMBUILD}""${BUILD}""%{?buildid}%{?dist}"
 
 EXCLUDE_FILES=":(exclude,top).get_maintainer.conf \
 		:(exclude,top).gitattributes \
@@ -95,7 +99,7 @@ fi
 GIT_FORMAT="--format=- %s (%an)%n%N%n^^^NOTES-END^^^%n%b"
 GIT_NOTES="--notes=refs/notes/${RHEL_MAJOR}.${RHEL_MINOR}*"
 
-lasttag=$(git rev-list --first-parent --grep="^\[redhat\] kernel-${SPECKVERSION}.${SPECKPATCHLEVEL}" --max-count=1 HEAD)
+lasttag=$(git rev-list --first-parent --grep="^\[redhat\] ${RELEASETAG}" --max-count=1 HEAD)
 # if we didn't find the proper tag, assume this is the first release
 if [[ -z $lasttag ]]; then
     if [[ -z ${MARKER//[0-9a-f]/} ]]; then
@@ -111,7 +115,7 @@ echo "Gathering new log entries since $lasttag"
 
 cname="$(git var GIT_COMMITTER_IDENT |sed 's/>.*/>/')"
 cdate="$(LC_ALL=C date +"%a %b %d %Y")"
-cversion="[$RPMVERSION]";
+cversion="[$BASEVERSION]";
 echo "* $cdate $cname $cversion" > "$clogf"
 
 git log --topo-order --no-merges -z "$GIT_NOTES" "$GIT_FORMAT" \
