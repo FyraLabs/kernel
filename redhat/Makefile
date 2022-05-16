@@ -574,29 +574,29 @@ do-rpmbuild: dist-sources
 	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" $(RPMBUILDOPTS) $(RPM)/SOURCES/$(PACKAGE_NAME).spec
 
 dist-all-rpms: RPMBUILDOPTS=--target $(MACH) -ba
-dist-all-rpms: dist-sources do-rpmbuild
+dist-all-rpms: do-rpmbuild
 
 dist-srpm: RPMBUILDOPTS=--nodeps -bs
-dist-srpm: dist-sources do-rpmbuild
+dist-srpm: do-rpmbuild
 
 dist-srpm-gcov: BUILDID=.gcov
 dist-srpm-gcov: BUILDOPTS+=+gcov
 dist-srpm-gcov: dist-srpm
 
 dist-rpms: RPMBUILDOPTS=--target $(MACH) -bb
-dist-rpms: dist-sources do-rpmbuild
+dist-rpms: do-rpmbuild
 
-dist-kernel-%: dist-sources
+dist-kernel-%:
 	RPMBUILDOPTS="--target $(MACH) --with $* -bb" make do-rpmbuild
 
 dist-prep: RPMBUILDOPTS=--nodeps --target noarch -bp
-dist-prep: dist-sources do-rpmbuild
+dist-prep: do-rpmbuild
 
 dist-perf: RPMBUILDOPTS=--without up --without smp --without zfcpdump --without debug --without doc --without headers --without  --without doc --without debuginfo --target $(MACH) -bb
-dist-perf: dist-sources do-rpmbuild
+dist-perf: do-rpmbuild
 
 dist-rpm-baseonly: RPMBUILDOPTS=--target $(MACH) --without debug --without debuginfo --without vdso_install --without bpftool --without perf --without tools -bb
-dist-rpm-baseonly: dist-sources do-rpmbuild
+dist-rpm-baseonly: do-rpmbuild
 
 # unless you know what you're doing, you don't want to use the next four ones
 dist-release-finish: setup-source
