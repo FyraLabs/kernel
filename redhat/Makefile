@@ -84,6 +84,7 @@ TESTPATCH:=$(REDHAT)/linux-kernel-test.patch
 SPECCHANGELOG:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(RHEL_MINOR)
 CHANGELOG_PREV:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(shell expr $(RHEL_MINOR) - 1)
 ARCH_LIST=aarch64 ppc64le s390x x86_64
+SPECSRPMBUILDREQS := git-core make gcc flex bison bzip2
 
 ifndef DISTRO
   ifneq ($(findstring .fc,$(DIST)),)
@@ -391,7 +392,7 @@ rh-configs: dist-rhel-configs
 dist-configs-check: dist-configs-prep
 	+cd $(REDHAT)/configs; ./process_configs.sh $(PROCESS_CONFIGS_CHECK_OPTS) "" ""
 
-dist-configs-prep: dist-clean-configs dist-buildreq-check
+dist-configs-prep: dist-clean-configs dist-srpmbuildreq-check
 	+cd $(REDHAT)/configs; ./build_configs.sh "partial" "snip"
 	+cd $(REDHAT)/configs; ./build_configs.sh "$(PACKAGE_NAME)" "$(FLAVOR)"
 
@@ -466,6 +467,17 @@ dist-git-version-check:
 	IFS=; \
 	if [ "$$3" -lt 2 -o \( "$$3" -eq 2 -a "$$4" -lt 13 \) ]; then \
 		echo "ERROR: You need git version 2.13 or newer to run some setup commands"; \
+		exit 1; \
+	fi
+
+dist-srpmbuildreq-check: setup-source
+	@PKGLIST="rpm-build $(SPECSRPMBUILDREQS)"; \
+	MISSING=""; \
+	for pkg in $$PKGLIST; do \
+		rpm -q --whatprovides $$pkg >/dev/null || MISSING="$$MISSING $$pkg"; \
+	done; \
+	if [ -n "$$MISSING" ]; then \
+		echo "Error: please 'dnf install $$MISSING'"; \
 		exit 1; \
 	fi
 
@@ -812,6 +824,7 @@ dist-full-help:
 
 	@echo  ''
 	@echo  'Misc targets:'
+	@echo  '  dist-srpmbuildreq-check - Checks for presence of packages required for the srpm'
 	@echo  '  dist-buildreq-check - Checks for presence of packages required for build'
 	@echo  '  dist-get-latest - Returns the latest "known good" kernel from brew. This'
 	@echo  '                    should not be confused with the latest top-of-tree'
