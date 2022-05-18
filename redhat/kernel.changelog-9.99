@@ -1,3 +1,10 @@
+* Wed May 18 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc7.210e04ff7681.54]
+- Add CONFIG_EFI_DXE_MEM_ATTRIBUTES (Justin M. Forbes)
+- efi: x86: Set the NX-compatibility flag in the PE header (Peter Jones)
+- efi: libstub: ensure allocated memory to be executable (Baskov Evgeniy)
+- efi: libstub: declare DXE services table (Baskov Evgeniy)
+Resolves: 
+
 * Wed May 18 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.18.0-0.rc7.210e04ff7681.53]
 - redhat/Makefile.variables: Change git hash length to default (Prarit Bhargava)
 - redhat/Makefile: Drop quotation marks around string definitions (Prarit Bhargava)
