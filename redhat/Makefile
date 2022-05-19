@@ -412,7 +412,7 @@ rh-configs: dist-rhel-configs
 dist-configs-check: dist-configs-prep
 	+cd $(REDHAT)/configs; ./process_configs.sh $(PROCESS_CONFIGS_CHECK_OPTS) "" ""
 
-dist-configs-prep: dist-clean-configs dist-buildreq-check
+dist-configs-prep: dist-clean-configs
 	+cd $(REDHAT)/configs; ./build_configs.sh "partial" "snip"
 	+cd $(REDHAT)/configs; ./build_configs.sh "$(PACKAGE_NAME)" "$(FLAVOR)"
 
@@ -581,30 +581,32 @@ dist-test-patch: generate-testpatch-tmp
 do-rpmbuild: dist-sources
 	$(RPMBUILD) --define "_sourcedir $(SOURCES)" --define "_builddir $(RPM)/BUILD" --define "_srcrpmdir $(RPM)/SRPMS" --define "_rpmdir $(RPM)/RPMS" --define "_specdir $(RPM)/SPECS" --define "dist $(DIST)" $(RPMBUILDOPTS) $(RPM)/SOURCES/$(SPECFILE)
 
+do-rpmbuild-rpm: do-rpmbuild dist-buildreq-check
+
 dist-all-rpms: RPMBUILDOPTS=--target $(MACH) -ba
-dist-all-rpms: dist-sources do-rpmbuild
+dist-all-rpms: do-rpmbuild-rpm
 
 dist-srpm: RPMBUILDOPTS=--nodeps -bs
-dist-srpm: dist-sources do-rpmbuild
+dist-srpm: do-rpmbuild
 
 dist-srpm-gcov: LOCALVERSION=.gcov
 dist-srpm-gcov: BUILDOPTS+=+gcov
 dist-srpm-gcov: dist-srpm
 
 dist-rpms: RPMBUILDOPTS=--target $(MACH) -bb
-dist-rpms: dist-sources do-rpmbuild
+dist-rpms: do-rpmbuild-rpm
 
-dist-kernel-%: dist-sources
-	RPMBUILDOPTS="--target $(MACH) --with $* -bb" make do-rpmbuild
+dist-kernel-%:
+	RPMBUILDOPTS="--target $(MACH) --with $* -bb" make do-rpmbuild-rpm
 
 dist-prep: RPMBUILDOPTS=--nodeps --target noarch -bp
-dist-prep: dist-sources do-rpmbuild
+dist-prep: do-rpmbuild
 
 dist-perf: RPMBUILDOPTS=--without up --without smp --without zfcpdump --without debug --without doc --without headers --without  --without doc --without debuginfo --target $(MACH) -bb
-dist-perf: dist-sources do-rpmbuild
+dist-perf: do-rpmbuild-rpm
 
 dist-rpm-baseonly: RPMBUILDOPTS=--target $(MACH) --without debug --without debuginfo --without vdso_install --without bpftool --without perf --without tools -bb
-dist-rpm-baseonly: dist-sources do-rpmbuild
+dist-rpm-baseonly: do-rpmbuild-rpm
 
 # unless you know what you're doing, you don't want to use the next four ones
 dist-release-finish: setup-source
