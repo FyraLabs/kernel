@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
-# This script generates 'dist-dump-variables' output for various configurations
-# using known ark commit IDs.  It uses this information as well as setting
-# different values for DISTRO and DIST.
+# This script generates 'dist-self-test-dump-variables' output for various
+# configurations using known ark commit IDs.  It uses this information as well
+# as setting different values for DISTRO and DIST.
 #
 # The ark commit IDs are
 #
@@ -19,7 +19,7 @@ destdir="${RHDISTDATADIR}"
 specfile="${SOURCES}"/kernel.spec
 
 # unset all redhat/Makefile variables so they do not interfere with make targets below
-makefile_vars=$(unset SINGLE_TARBALL; make dist-dump-variables | grep "=" | cut -d"=" -f1)
+makefile_vars=$(unset SINGLE_TARBALL; make dist-self-test-dump-variables | grep "=" | cut -d"=" -f1)
 while read -r VAR; do unset "$VAR"; done < <(echo "$makefile_vars")
 
 for DISTRO in fedora rhel centos
@@ -38,12 +38,12 @@ do
 			# the tree is changed.  Omit UPSTREAM from the output.
 			# RHEL_RELEASE can change build-to-build.
 			# SHELL can change depending on user's environment
-			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} dist-dump-variables | grep "=" | grep -v CURDIR | grep -v -w UPSTREAM | grep -v -w RHEL_RELEASE | grep -v -w SHELL >& "${varfilename}"
+			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} dist-self-test-dump-variables | grep "=" | grep -v CURDIR | grep -v -w UPSTREAM | grep -v -w RHEL_RELEASE | grep -v -w SHELL >& "${varfilename}"
 
 			# When executed from a script, the variables in Makefile.variables are
 			# listed as having origin 'environment'.  This is because the script
 			# inherits the variables from the 'export' command in the redhat/Makefile.
-			# The 'dist-dump-variables' target explicitly omits these variables from
+			# The 'dist-self-test-dump-variables' target explicitly omits these variables from
 			# its output.  As a workaround, read in the variables and output them to
 			# the data file.
 			# shellcheck disable=SC2002

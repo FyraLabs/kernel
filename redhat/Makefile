@@ -714,6 +714,10 @@ dist-os-version:
 dist-dump-variables:
 	@$(foreach V,$(sort $(.VARIABLES)), $(if $(filter-out environment% default automatic, $(origin $V)),$(info $V=$($V) )))
 
+# create-data.sh is the only caller of this target and other users should not
+# expect the output from this target to be stable.
+dist-self-test-dump-variables: dist-dump-variables
+
 dist-self-test:
 	@if test -x /usr/bin/bats; then \
 		bats $(REDHAT)/self-test/*.bats ; \
