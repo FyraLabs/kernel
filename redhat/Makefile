@@ -717,6 +717,16 @@ dist-dump-variables:
 # create-data.sh is the only caller of this target and other users should not
 # expect the output from this target to be stable.
 dist-self-test-dump-variables: dist-dump-variables
+	@# When this target is executed from a script, the variables in
+	@# Makefile.variables are listed as having origin 'environment'.  This
+	@# is because the script inherits the variables from the 'export' command
+	@# in the redhat/Makefile.
+	@cat Makefile.variables | grep -v "^#" | sed '/^$$/d' | tr -d " " | awk -F "?=|:=" '{print $$1}' | while read -r VAR ; do \
+		[ "$$VAR" == "RHDISTDATADIR" ] && continue; \
+		[ "$$VAR" == "RHGITURL" ] && continue; \
+		[ "$$VAR" == "BUILD" ] && continue; \
+		echo "$$VAR=$${!VAR}"; \
+	done
 
 dist-self-test:
 	@if test -x /usr/bin/bats; then \

@@ -40,21 +40,6 @@ do
 			# SHELL can change depending on user's environment
 			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} dist-self-test-dump-variables | grep "=" | grep -v CURDIR | grep -v -w UPSTREAM | grep -v -w RHEL_RELEASE | grep -v -w SHELL >& "${varfilename}"
 
-			# When executed from a script, the variables in Makefile.variables are
-			# listed as having origin 'environment'.  This is because the script
-			# inherits the variables from the 'export' command in the redhat/Makefile.
-			# The 'dist-self-test-dump-variables' target explicitly omits these variables from
-			# its output.  As a workaround, read in the variables and output them to
-			# the data file.
-			# shellcheck disable=SC2002
-			cat Makefile.variables | grep -v "^#" | sed '/^$/d' | tr -d " " | awk -F "?=|:=" '{print $1}' | while read -r VAR
-			do
-				[ "$VAR" == "RHDISTDATADIR" ] && continue
-				[ "$VAR" == "RHGITURL" ] && continue
-				[ "$VAR" == "BUILD" ] && continue
-				echo "$VAR=${!VAR}"
-			done >> "${varfilename}"
-
 			echo "building ${varfilename}.spec"
 			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} setup-source
 			cp "$specfile" "${varfilename}".spec
