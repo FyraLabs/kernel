@@ -10,11 +10,6 @@
 
 #include <uapi/linux/random.h>
 
-struct random_extrng {
-	ssize_t (*extrng_read)(void __user *buf, size_t buflen);
-	struct module *owner;
-};
-
 struct notifier_block;
 
 void add_device_randomness(const void *buf, size_t len);
@@ -145,9 +140,6 @@ static inline bool __init arch_get_random_long_early(unsigned long *v)
 int random_prepare_cpu(unsigned int cpu);
 int random_online_cpu(unsigned int cpu);
 #endif
-
-void random_register_extrng(const struct random_extrng *rng);
-void random_unregister_extrng(void);
 
 #ifndef MODULE
 extern const struct file_operations random_fops, urandom_fops;

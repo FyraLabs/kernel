@@ -53,7 +53,6 @@
 #include <linux/uaccess.h>
 #include <linux/suspend.h>
 #include <linux/siphash.h>
-#include <linux/rcupdate.h>
 #include <crypto/chacha.h>
 #include <crypto/blake2s.h>
 #include <asm/processor.h>
@@ -281,11 +280,6 @@ static bool crng_has_old_seed(void)
 	}
 	return time_is_before_jiffies(READ_ONCE(base_crng.birth) + interval);
 }
-
-/*
- * Hook for external RNG.
- */
-static const struct random_extrng __rcu *extrng;
 
 /*
  * This function returns a ChaCha state that you may use for generating
@@ -675,9 +669,6 @@ static void __cold _credit_init_bits(size_t bits)
 }
 
 
-static const struct file_operations extrng_random_fops;
-static const struct file_operations extrng_urandom_fops;
-
 /**********************************************************************
  *
  * Entropy collection routines.
@@ -881,19 +872,6 @@ void __cold add_bootloader_randomness(const void *buf, size_t len)
 		credit_init_bits(len * 8);
 }
 EXPORT_SYMBOL_GPL(add_bootloader_randomness);
-
-void random_register_extrng(const struct random_extrng *rng)
-{
-	rcu_assign_pointer(extrng, rng);
-}
-EXPORT_SYMBOL_GPL(random_register_extrng);
-
-void random_unregister_extrng(void)
-{
-	RCU_INIT_POINTER(extrng, NULL);
-	synchronize_rcu();
-}
-EXPORT_SYMBOL_GPL(random_unregister_extrng);
 
 #if IS_ENABLED(CONFIG_VMGENID)
 static BLOCKING_NOTIFIER_HEAD(vmfork_chain);
@@ -1265,7 +1243,6 @@ SYSCALL_DEFINE3(getrandom, char __user *, ubuf, size_t, len, unsigned int, flags
 	struct iov_iter iter;
 	struct iovec iov;
 	int ret;
-	const struct random_extrng *rng;
 
 	if (flags & ~(GRND_NONBLOCK | GRND_RANDOM | GRND_INSECURE))
 		return -EINVAL;
@@ -1276,18 +1253,6 @@ SYSCALL_DEFINE3(getrandom, char __user *, ubuf, size_t, len, unsigned int, flags
 	 */
 	if ((flags & (GRND_INSECURE | GRND_RANDOM)) == (GRND_INSECURE | GRND_RANDOM))
 		return -EINVAL;
-
-	rcu_read_lock();
-	rng = rcu_dereference(extrng);
-	if (rng && !try_module_get(rng->owner))
-		rng = NULL;
-	rcu_read_unlock();
-
-	if (rng) {
-		ret = rng->extrng_read(buf, count);
-		module_put(rng->owner);
-		return ret;
-	}
 
 	if (!crng_ready() && !(flags & GRND_INSECURE)) {
 		if (flags & GRND_NONBLOCK)
@@ -1307,12 +1272,6 @@ static __poll_t random_poll(struct file *file, poll_table *wait)
 {
 	poll_wait(file, &crng_init_wait, wait);
 	return crng_ready() ? EPOLLIN | EPOLLRDNORM : EPOLLOUT | EPOLLWRNORM;
-}
-
-static __poll_t extrng_poll(struct file *file, poll_table * wait)
-{
-	/* extrng pool is always full, always read, no writes */
-	return EPOLLIN | EPOLLRDNORM;
 }
 
 static ssize_t write_pool_user(struct iov_iter *iter)
@@ -1451,58 +1410,7 @@ static int random_fasync(int fd, struct file *filp, int on)
 	return fasync_helper(fd, filp, on, &fasync);
 }
 
-static int random_open(struct inode *inode, struct file *filp)
-{
-	const struct random_extrng *rng;
-
-	rcu_read_lock();
-	rng = rcu_dereference(extrng);
-	if (rng && !try_module_get(rng->owner))
-		rng = NULL;
-	rcu_read_unlock();
-
-	if (!rng)
-		return 0;
-
-	filp->f_op = &extrng_random_fops;
-	filp->private_data = rng->owner;
-
-	return 0;
-}
-
-static int urandom_open(struct inode *inode, struct file *filp)
-{
-	const struct random_extrng *rng;
-
-	rcu_read_lock();
-	rng = rcu_dereference(extrng);
-	if (rng && !try_module_get(rng->owner))
-		rng = NULL;
-	rcu_read_unlock();
-
-	if (!rng)
-		return 0;
-
-	filp->f_op = &extrng_urandom_fops;
-	filp->private_data = rng->owner;
-
-	return 0;
-}
-
-static int extrng_release(struct inode *inode, struct file *filp)
-{
-	module_put(filp->private_data);
-	return 0;
-}
-
-static ssize_t
-extrng_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
-{
-	return rcu_dereference_raw(extrng)->extrng_read(buf, nbytes);
-}
-
 const struct file_operations random_fops = {
-	.open  = random_open,
 	.read_iter = random_read_iter,
 	.write_iter = random_write_iter,
 	.poll = random_poll,
@@ -1515,7 +1423,6 @@ const struct file_operations random_fops = {
 };
 
 const struct file_operations urandom_fops = {
-	.open  = urandom_open,
 	.read_iter = urandom_read_iter,
 	.write_iter = random_write_iter,
 	.unlocked_ioctl = random_ioctl,
@@ -1526,26 +1433,6 @@ const struct file_operations urandom_fops = {
 	.splice_write = iter_file_splice_write,
 };
 
-static const struct file_operations extrng_random_fops = {
-	.open  = random_open,
-	.read  = extrng_read,
-	.write = random_write,
-	.poll  = extrng_poll,
-	.unlocked_ioctl = random_ioctl,
-	.fasync = random_fasync,
-	.llseek = noop_llseek,
-	.release = extrng_release,
-};
-
-static const struct file_operations extrng_urandom_fops = {
-	.open  = urandom_open,
-	.read  = extrng_read,
-	.write = random_write,
-	.unlocked_ioctl = random_ioctl,
-	.fasync = random_fasync,
-	.llseek = noop_llseek,
-	.release = extrng_release,
-};
 
 /********************************************************************
  *
