@@ -1,3 +1,7 @@
+* Sat Jun 11 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.19.0-0.rc1.0885eacdc81f.19]
+- virtio-rng: make device ready before making request (Jason Wang)
+Resolves: 
+
 * Fri Jun 10 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.19.0-0.rc1.874c8ca1e60b.17]
 - Common: minor cleanups (Peter Robinson)
 - fedora: some minor Fedora cleanups (Peter Robinson)
