@@ -845,6 +845,6 @@ dist-full-help:
 	@echo  '  dist-os-version - Displays the current Red Hat Enterprise Linux versioni'
 	@echo  '                    target used by the current branch/tree.'
 	@echo  '  dist-self-test  - Runs self-tests from the redhat/self-test directory'
-	@echo  ''
+	@echo  'Dummy'
 
 export
