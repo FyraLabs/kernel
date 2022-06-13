@@ -117,7 +117,7 @@ Contributor Guide
 Maintainer Guide
 ================
 
-.. toctree::
+.. asdftasfoctree::
    :maxdepth: 2
 
    maintaining
