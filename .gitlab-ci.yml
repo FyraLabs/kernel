@@ -207,6 +207,8 @@ rhel9_realtime_baseline:
     - gpg2 --import "$TORVALDS_GPG_KEY"
     - git checkout --track origin/master && git describe
     - export PROJECT_ID="$CI_PROJECT_ID"
+    # CKI changed HOME to /cki which ssh does not pickup
+    - export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
 
 merge_upstream:
   extends: .scheduled_setup
