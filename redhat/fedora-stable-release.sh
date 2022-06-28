@@ -19,7 +19,7 @@ for release in $( cat redhat/release_targets );  do
 	if [[ $ApplyPatches == "1" ]] ; then
 		for patch in redhat/patches/* ; do patch -p1 < $patch ; done
 	fi
-	RHJOBS=24 make IS_FEDORA=1 DIST=".fc$release" BUILDID="" BUILD=$build RHDISTGIT_BRANCH=f$release dist-git;
+	make IS_FEDORA=1 DIST=".fc$release" BUILDID="" BUILD=$build RHDISTGIT_BRANCH=f$release dist-git;
 	sleep 60;
 	git checkout .
 done
