@@ -3,21 +3,6 @@
 #
 # This section is intentionally left at the top of the Makefile so it won't be ignored.
 #
-ifdef BREW_FLAGS
-  # deprecated in 5.17.0
-  $(warning WARNING: BREW_FLAGS will be deprecated in a later release, use BUILD_FLAGS instead.)
-endif
-
-ifdef KOJI_FLAGS
-  # deprecated in 5.17.0
-  $(warning WARNING: KOJI_FLAGS will be deprecated in a later release, use BUILD_FLAGS instead.)
-endif
-
-ifdef TEST_FLAGS
-  # deprecated in 5.17.0
-  $(warning WARNING: TEST_FLAGS will be deprecated in a later release, use BUILD_FLAGS instead.)
-endif
-
 ifdef SINGLE_TARBALL
   # The commit that introduced this code can be reverted if there are users of
   # this variable.
@@ -29,6 +14,12 @@ ifdef PREBUILD_GIT_ONLY
   # deprecated in 5.18.0
   $(warning WARNING: PREBUILD_GIT_ONLY will be deprecated in a later release, use UPSTREAMBUILD_GIT_ONLY instead.)
   UPSTREAMBUILD_GIT_ONLY:=$(PREBUILD_GIT_ONLY)
+endif
+
+ifdef BUILD_SCRATCH_TARGET
+  # deprecated in 5.19.0
+  $(warning WARNING: BUILD_SCRATCH_TARGET will be deprecated in a later release, use BUILD_TARGET instead.)
+  BUILD_TARGET:=$(BUILD_SCRATCH_TARGET)
 endif
 
 include Makefile.variables
@@ -97,16 +88,6 @@ ifndef DISTRO
   else
     DISTRO := rhel
   endif
-endif
-
-ifndef BUILD_FLAGS
-  ifeq ($(filter $(MAKECMDGOALS),dist-brew distg-brew),)
-	BUILD_FLAGS := $(BREW_FLAGS)
-  endif
-  ifeq ($(filter $(MAKECMDGOALS),dist-koji distg-koji),)
-	BUILD_FLAGS := $(KOJI_FLAGS)
-  endif
-  BUILD_FLAGS += $(TEST_FLAGS)
 endif
 
 ifndef RHJOBS
@@ -258,8 +239,8 @@ SRPM:=$(SRPMS)/$(RELEASETAG)$(DIST).src.rpm
 ifeq ("$(DISTRO)", "fedora")
   SINGLE_TARBALL:=0
   RHDISTGIT_BRANCH:=rawhide
-  ifndef BUILD_SCRATCH_TARGET
-    BUILD_SCRATCH_TARGET:=temp-ark-rhel-8-test
+  ifndef BUILD_TARGET
+    BUILD_TARGET:=temp-ark-rhel-8-test
   endif
   # The Fedora tarfile name is based on an upstream tag as users may
   # replace the tarball from one with upstream, rebuild, and then deploy
@@ -272,23 +253,19 @@ else ifeq ("$(DISTRO)", "centos")
   ifndef BUILD_PROFILE
     BUILD_PROFILE:= -p stream
   endif
-  ifndef BUILD_SCRATCH_TARGET
-    BUILD_SCRATCH_TARGET:=c$(RHEL_MAJOR)s-candidate
+  ifndef BUILD_TARGET
+    BUILD_TARGET:=c$(RHEL_MAJOR)s-candidate
   endif
   SPECTARFILE_RELEASE:=$(BASEVERSION)
   SPECKABIVERSION:=$(BASEVERSION)
 else
   SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
-  ifndef BUILD_SCRATCH_TARGET
-    BUILD_SCRATCH_TARGET:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
+  ifndef BUILD_TARGET
+    BUILD_TARGET:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
   endif
   SPECTARFILE_RELEASE:=$(BASEVERSION)
   SPECKABIVERSION:=$(BASEVERSION)
-endif
-
-ifndef BUILD_TARGET
-  BUILD_TARGET:=$(BUILD_SCRATCH_TARGET)
 endif
 
 TARFILE:=linux-$(SPECTARFILE_RELEASE).tar.xz
@@ -463,26 +440,6 @@ $(KABIDW_TARBALL):
 	fi
 	@(cd kabi-dwarf && tar cjf $(KABIDW_TARBALL) base run_kabi-dw.sh)
 
-dist-tarball: $(TARBALL)
-	# deprecated at 5.17.0
-	@echo "WARNING: This target will be deprecated in a future release."
-	@echo "redhat/$(TARFILE)"
-
-dist-kernelrelease:
-	# deprecated at 5.17.0
-	@echo "WARNING: This target will be deprecated in a future release."
-	@echo $(PACKAGE_NAME)-$(BASEVERSION)
-
-dist-kernelversion:
-	# deprecated at 5.17.0
-	@echo "WARNING: This target will be deprecated in a future release."
-	@echo $(BASEVERSION)
-
-dist-specfile: setup-source
-	# deprecated at 5.17.0
-	@echo "WARNING: This target will be deprecated in a future release."
-	@echo $(SOURCES)/$(SPECFILE)
-
 dist-git-version-check:
 	@# genspec.sh uses pathspec magic that wasn't introduced until version 2.13
 	@IFS=" ."; \
@@ -551,6 +508,7 @@ sources-rh: $(TARBALL) generate-testpatch-tmp setup-source dist-configs-check
 		kvm_stat.logrotate \
 		mod-denylist.sh \
 		mod-internal.list \
+		mod-partner.list \
 		mod-sign.sh \
 		configs/flavors \
 		configs/generate_all_configs.sh \
