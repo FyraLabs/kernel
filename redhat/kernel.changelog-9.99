@@ -1,3 +1,9 @@
+* Thu Jul 07 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.18.10-0]
+- netfilter: nf_tables: stricter validation of element data (Pablo Neira Ayuso)
+- Revert "Revert "smb3: use netname when available on secondary channels"" (Justin M. Forbes)
+- Revert "Revert "smb3: fix empty netname context on secondary channels"" (Justin M. Forbes)
+Resolves: 
+
 * Sat Jul 02 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.18.9-0]
 - Revert "smb3: fix empty netname context on secondary channels" (Justin M. Forbes)
 - Revert "smb3: use netname when available on secondary channels" (Justin M. Forbes)
