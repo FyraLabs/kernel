@@ -1,4 +1,4 @@
-* Thu Jul 07 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.19.0-0.rc5.9f09069cde34.42]
+* Fri Jul 08 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.19.0-0.rc5.e8a4e1c1bb69.43]
 - drm/aperture: Run fbdev removal before internal helpers (Thomas Zimmermann)
 Resolves: 
 
