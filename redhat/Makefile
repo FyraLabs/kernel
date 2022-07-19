@@ -461,7 +461,7 @@ dist-buildreq-check: setup-source
 		exit 1; \
 	fi
 
-setup-source: dist-git-version-check dist-clean-sources
+_setup-source: dist-git-version-check
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
 	@if [ ! -e  $(REDHAT)/$(SPECCHANGELOG) ]; then \
 		echo "Creating $(SPECCHANGELOG) as copy of $(CHANGELOG_PREV)"; \
@@ -478,6 +478,8 @@ setup-source: dist-git-version-check dist-clean-sources
 	fi
 	@$(REDHAT)/genspec.sh
 	@cp $(SOURCES)/$(SPECFILE) $(SOURCES)/../SPECS/
+
+setup-source: dist-clean-sources _setup-source
 
 generate-testpatch-tmp:
 	@$(GIT) diff --no-renames HEAD ":(exclude,top).get_maintainer.conf" \
