@@ -16,11 +16,21 @@
 
 # Store variables used in *this* script before unsetting them below.
 destdir="${RHDISTDATADIR}"
-specfile="${SOURCES}"/kernel.spec
+sources="${SOURCES}"
 
 # unset all redhat/Makefile variables so they do not interfere with make targets below
 makefile_vars=$(unset SINGLE_TARBALL; make dist-dump-variables | grep "=" | cut -d"=" -f1)
 while read -r VAR; do unset "$VAR"; done < <(echo "$makefile_vars")
+
+specfile_helper () {
+	local specfilename
+
+	specfilename=$1
+	cp ./kernel.spec.template ${varfilename}.spec.template
+	make RHSELFTESTDATA=1 SPECFILE="${specfilename}.spec" DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} _setup-source
+	grep -Fvx -f "${specfilename}.spec.template" "${sources}/${specfilename}.spec" > "${destdir}"/"${specfilename}".spec
+	rm -f ${specfilename}.spec.template
+}
 
 for DISTRO in fedora rhel centos
 do
@@ -28,9 +38,9 @@ do
 	do
 		for DIST in .fc25 .el7
 		do
-			varfilename="${destdir}/${DISTRO}-${commit}${DIST}"
+			varfilename="${DISTRO}-${commit}${DIST}"
 
-			echo "building $varfilename"
+			echo "building ${destdir}/$varfilename"
 
 			# Ignored Makefile variables:
 			# CURDIR is a make special target and cannot be easily changed.
@@ -50,11 +60,22 @@ do
 				grep -v -w RHGITURL |\
 				grep -v -w RHDISTDATADIR |\
 				grep -v -w VARS |\
-				sort -u >& "${varfilename}"
+				sort -u >& "${destdir}/${varfilename}" &
 
-			echo "building ${varfilename}.spec"
-			make RHSELFTESTDATA=1 DIST="${DIST}" DISTRO="${DISTRO}" HEAD=${commit} setup-source
-			 grep -Fvx -f "./kernel.spec.template" "$specfile" > "${varfilename}".spec
+			waitpids[${count}]=$!
+			((count++))
+
+			echo "building ${destdir}/${varfilename}.spec"
+			specfile_helper "${varfilename}" &
+			waitpids[${count}]=$!
+			((count++))
+		done
+
+		# There isn't an easy way to make sure the parallel execution doesn't go crazy
+		# and hammer a system.  Putting the wait loop here will artificially limit the
+		# number of jobs.
+		for pid in ${waitpids[*]}; do
+			wait ${pid}
 		done
 	done
 done

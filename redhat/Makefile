@@ -262,7 +262,11 @@ else
   SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
   ifndef BUILD_TARGET
-    BUILD_TARGET:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0-test-pesign
+    ifeq ("$(DIST)", ".eln")
+      BUILD_TARGET:=eln
+    else
+      BUILD_TARGET:=rhel-$(RHEL_MAJOR)-scratch
+    endif
   endif
   SPECTARFILE_RELEASE:=$(BASEVERSION)
   SPECKABIVERSION:=$(BASEVERSION)
@@ -461,7 +465,7 @@ dist-buildreq-check: setup-source
 		exit 1; \
 	fi
 
-setup-source: dist-git-version-check dist-clean-sources
+_setup-source: dist-git-version-check
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
 	@if [ ! -e  $(REDHAT)/$(SPECCHANGELOG) ]; then \
 		echo "Creating $(SPECCHANGELOG) as copy of $(CHANGELOG_PREV)"; \
@@ -478,6 +482,8 @@ setup-source: dist-git-version-check dist-clean-sources
 	fi
 	@$(REDHAT)/genspec.sh
 	@cp $(SOURCES)/$(SPECFILE) $(SOURCES)/../SPECS/
+
+setup-source: dist-clean-sources _setup-source
 
 generate-testpatch-tmp:
 	@$(GIT) diff --no-renames HEAD ":(exclude,top).get_maintainer.conf" \
@@ -634,13 +640,13 @@ dist-vr-check:
 
 dist-brew: DIST=.el9
 dist-brew: DISTRO=rhel
-dist-brew: BUILD_TARGET=rhel-$(RHEL_MAJOR).1.0-test-pesign
+dist-brew: BUILD_TARGET:=rhel-$(RHEL_MAJOR)-scratch
 dist-brew dist-koji: dist-%: dist-vr-check dist-srpm
 	$* $(BUILD_PROFILE) build $(BUILD_FLAGS) --scratch $(BUILD_TARGET) $(SRPMS)/$(RELEASETAG)$(DIST).src.rpm $(OUTPUT_FILE)
 
 distg-brew: DIST=.el9
 distg-brew: DISTRO=rhel
-distg-brew: BUILD_TARGET=rhel-$(RHEL_MAJOR).1.0-test-pesign
+distg-brew: BUILD_TARGET:=rhel-$(RHEL_MAJOR)-scratch
 distg-brew distg-koji: distg-%: dist-vr-check
 	$* $(BUILD_PROFILE) build $(BUILD_FLAGS) --scratch $(BUILD_TARGET) "$(RHGITURL)?redhat/koji#$(RHGITCOMMIT)"
 
