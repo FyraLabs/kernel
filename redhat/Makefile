@@ -3,19 +3,6 @@
 #
 # This section is intentionally left at the top of the Makefile so it won't be ignored.
 #
-ifdef SINGLE_TARBALL
-  # The commit that introduced this code can be reverted if there are users of
-  # this variable.
-  # deprecated in 5.18.0
-  $(warning WARNING: SINGLE_TARBALL will be deprecated in a later release.)
-endif
-
-ifdef PREBUILD_GIT_ONLY
-  # deprecated in 5.18.0
-  $(warning WARNING: PREBUILD_GIT_ONLY will be deprecated in a later release, use UPSTREAMBUILD_GIT_ONLY instead.)
-  UPSTREAMBUILD_GIT_ONLY:=$(PREBUILD_GIT_ONLY)
-endif
-
 ifdef BUILD_SCRATCH_TARGET
   # deprecated in 5.19.0
   $(warning WARNING: BUILD_SCRATCH_TARGET will be deprecated in a later release, use BUILD_TARGET instead.)
@@ -23,6 +10,13 @@ ifdef BUILD_SCRATCH_TARGET
 endif
 
 include Makefile.variables
+
+# This deprecation message must come after GIT is set in Makefile.variables.
+ifneq ($(GIT),git)
+  # deprecated in 5.20.0
+  $(warning WARNING: GIT($(GIT)) will be deprecated in a later release.)
+endif
+
 # These entries are 'duplicates' of variables specified in Makefile.variables
 # that are used in the SPEC file.  Specifying these with a SPEC prefix indicates
 # that the value is passed through to the spec file.
@@ -237,7 +231,6 @@ SRPM:=$(SRPMS)/$(RELEASETAG)$(DIST).src.rpm
 # specific values should be set.
 #
 ifeq ("$(DISTRO)", "fedora")
-  SINGLE_TARBALL:=0
   RHDISTGIT_BRANCH:=rawhide
   ifndef BUILD_TARGET
     BUILD_TARGET:=rawhide
@@ -248,7 +241,6 @@ ifeq ("$(DISTRO)", "fedora")
   SPECTARFILE_RELEASE:=$(UPSTREAM_TARBALL_NAME)
   SPECKABIVERSION:=$(SPECVERSION)
 else ifeq ("$(DISTRO)", "centos")
-  SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=c$(RHEL_MAJOR)s
   ifndef BUILD_PROFILE
     BUILD_PROFILE:= -p stream
@@ -259,7 +251,6 @@ else ifeq ("$(DISTRO)", "centos")
   SPECTARFILE_RELEASE:=$(BASEVERSION)
   SPECKABIVERSION:=$(BASEVERSION)
 else
-  SINGLE_TARBALL:=1
   RHDISTGIT_BRANCH:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
   ifndef BUILD_TARGET
     ifeq ("$(DIST)", ".eln")
