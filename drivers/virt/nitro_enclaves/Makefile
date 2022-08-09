@@ -7,3 +7,5 @@
 obj-$(CONFIG_NITRO_ENCLAVES) += nitro_enclaves.o
 
 nitro_enclaves-y := ne_pci_dev.o ne_misc_dev.o
+
+obj-${CONFIG_NITRO_ENCLAVES_MISC_DEV_TEST} := ne_mis_dev_test.o

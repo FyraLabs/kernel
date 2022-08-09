@@ -25,6 +25,12 @@ slub_kunit
 memcpy_kunit
 dev_addr_lists_test
 kfence_test
+usb4_test
+ne_mis_dev_test
+test_cpumask
+iio-test-format
+iio-test-rescale
+cros_kunit
 test_hash
 locktorture
 mac80211_hwsim
@@ -61,3 +67,5 @@ test_cpumask
 iio-test-format
 iio-test-rescale
 cros_kunit
+hid-uclogic-rdesc-test
+test_fprobe

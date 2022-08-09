@@ -2093,10 +2093,11 @@ config KPROBES_SANITY_TEST
 	  Say N if you are unsure.
 
 config FPROBE_SANITY_TEST
-	bool "Self test for fprobe"
+	tristate "Self test for fprobe" if !KUNIT_ALL_TESTS
 	depends on DEBUG_KERNEL
 	depends on FPROBE
-	depends on KUNIT=y
+	depends on KUNIT
+	default KUNIT_ALL_TESTS
 	help
 	  This option will enable testing the fprobe when the system boot.
 	  A series of tests are made to verify that the fprobe is functioning

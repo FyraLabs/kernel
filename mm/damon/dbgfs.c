@@ -311,7 +311,7 @@ out:
 	return ret;
 }
 
-static ssize_t sprint_target_ids(struct damon_ctx *ctx, char *buf, ssize_t len)
+ssize_t sprint_target_ids(struct damon_ctx *ctx, char *buf, ssize_t len)
 {
 	struct damon_target *t;
 	int id;
@@ -336,6 +336,7 @@ static ssize_t sprint_target_ids(struct damon_ctx *ctx, char *buf, ssize_t len)
 	written += scnprintf(&buf[written], len - written, "\n");
 	return written;
 }
+EXPORT_SYMBOL(sprint_target_ids);
 
 static ssize_t dbgfs_target_ids_read(struct file *file,
 		char __user *buf, size_t count, loff_t *ppos)
@@ -351,35 +352,6 @@ static ssize_t dbgfs_target_ids_read(struct file *file,
 		return len;
 
 	return simple_read_from_buffer(buf, count, ppos, ids_buf, len);
-}
-
-/*
- * Converts a string into an integers array
- *
- * Returns an array of integers array if the conversion success, or NULL
- * otherwise.
- */
-static int *str_to_ints(const char *str, ssize_t len, ssize_t *nr_ints)
-{
-	int *array;
-	const int max_nr_ints = 32;
-	int nr;
-	int pos = 0, parsed, ret;
-
-	*nr_ints = 0;
-	array = kmalloc_array(max_nr_ints, sizeof(*array), GFP_KERNEL);
-	if (!array)
-		return NULL;
-	while (*nr_ints < max_nr_ints && pos < len) {
-		ret = sscanf(&str[pos], "%d%n", &nr, &parsed);
-		pos += parsed;
-		if (ret != 1)
-			break;
-		array[*nr_ints] = nr;
-		*nr_ints += 1;
-	}
-
-	return array;
 }
 
 static void dbgfs_put_pids(struct pid **pids, int nr_pids)
@@ -439,7 +411,7 @@ out:
  *
  * Return: 0 on success, negative error code otherwise.
  */
-static int dbgfs_set_targets(struct damon_ctx *ctx, ssize_t nr_targets,
+int dbgfs_set_targets(struct damon_ctx *ctx, ssize_t nr_targets,
 		struct pid **pids)
 {
 	ssize_t i;
@@ -467,6 +439,7 @@ static int dbgfs_set_targets(struct damon_ctx *ctx, ssize_t nr_targets,
 
 	return 0;
 }
+EXPORT_SYMBOL(dbgfs_set_targets);
 
 static ssize_t dbgfs_target_ids_write(struct file *file,
 		const char __user *buf, size_t count, loff_t *ppos)
@@ -530,7 +503,7 @@ out:
 	return ret;
 }
 
-static ssize_t sprint_init_regions(struct damon_ctx *c, char *buf, ssize_t len)
+ssize_t sprint_init_regions(struct damon_ctx *c, char *buf, ssize_t len)
 {
 	struct damon_target *t;
 	struct damon_region *r;
@@ -551,6 +524,7 @@ static ssize_t sprint_init_regions(struct damon_ctx *c, char *buf, ssize_t len)
 	}
 	return written;
 }
+EXPORT_SYMBOL(sprint_init_regions);
 
 static ssize_t dbgfs_init_regions_read(struct file *file, char __user *buf,
 		size_t count, loff_t *ppos)
@@ -611,7 +585,7 @@ static int add_init_region(struct damon_ctx *c, int target_idx,
 	return rc;
 }
 
-static int set_init_regions(struct damon_ctx *c, const char *str, ssize_t len)
+int set_init_regions(struct damon_ctx *c, const char *str, ssize_t len)
 {
 	struct damon_target *t;
 	struct damon_region *r, *next;
@@ -645,6 +619,7 @@ fail:
 	}
 	return err;
 }
+EXPORT_SYMBOL(set_init_regions);
 
 static ssize_t dbgfs_init_regions_write(struct file *file,
 					  const char __user *buf, size_t count,
@@ -764,7 +739,7 @@ static void dbgfs_before_terminate(struct damon_ctx *ctx)
 	mutex_unlock(&ctx->kdamond_lock);
 }
 
-static struct damon_ctx *dbgfs_new_ctx(void)
+struct damon_ctx *dbgfs_new_ctx(void)
 {
 	struct damon_ctx *ctx;
 
@@ -780,11 +755,7 @@ static struct damon_ctx *dbgfs_new_ctx(void)
 	ctx->callback.before_terminate = dbgfs_before_terminate;
 	return ctx;
 }
-
-static void dbgfs_destroy_ctx(struct damon_ctx *ctx)
-{
-	damon_destroy_ctx(ctx);
-}
+EXPORT_SYMBOL(dbgfs_new_ctx);
 
 /*
  * Make a context of @name and create a debugfs directory for it.
@@ -908,7 +879,7 @@ static int dbgfs_rm_context(char *name)
 	for (i = 0, j = 0; i < dbgfs_nr_ctxs; i++) {
 		if (dbgfs_dirs[i] == dir) {
 			debugfs_remove(dbgfs_dirs[i]);
-			dbgfs_destroy_ctx(dbgfs_ctxs[i]);
+			damon_destroy_ctx(dbgfs_ctxs[i]);
 			continue;
 		}
 		new_dirs[j] = dbgfs_dirs[i];
@@ -1083,5 +1054,3 @@ out:
 }
 
 module_init(damon_dbgfs_init);
-
-#include "dbgfs-test.h"

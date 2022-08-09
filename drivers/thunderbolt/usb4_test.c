@@ -11,6 +11,7 @@
 
 #include "tb.h"
 #include "tunnel.h"
+#include <linux/thunderbolt.h>
 
 static int __ida_init(struct kunit_resource *res, void *context)
 {
@@ -2818,3 +2819,5 @@ static struct kunit_suite tb_test_suite = {
 };
 
 kunit_test_suite(tb_test_suite);
+
+MODULE_LICENSE("GPL");

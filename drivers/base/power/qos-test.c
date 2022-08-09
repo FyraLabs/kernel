@@ -115,3 +115,5 @@ static struct kunit_suite pm_qos_test_module = {
 	.test_cases = pm_qos_test_cases,
 };
 kunit_test_suites(&pm_qos_test_module);
+
+MODULE_LICENSE("GPL");

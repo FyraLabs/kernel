@@ -26,9 +26,6 @@ static DEFINE_MUTEX(damon_lock);
 static int nr_running_ctxs;
 static bool running_exclusive_ctxs;
 
-static DEFINE_MUTEX(damon_ops_lock);
-static struct damon_operations damon_registered_ops[NR_DAMON_OPS];
-
 /* Should be called under damon_ops_lock with id smaller than NR_DAMON_OPS */
 static bool __damon_is_registered_ops(enum damon_ops_id id)
 {
@@ -140,11 +137,12 @@ void damon_add_region(struct damon_region *r, struct damon_target *t)
 	t->nr_regions++;
 }
 
-static void damon_del_region(struct damon_region *r, struct damon_target *t)
+void damon_del_region(struct damon_region *r, struct damon_target *t)
 {
 	list_del(&r->list);
 	t->nr_regions--;
 }
+EXPORT_SYMBOL(damon_del_region);
 
 static void damon_free_region(struct damon_region *r)
 {
@@ -641,7 +639,7 @@ static bool kdamond_aggregate_interval_passed(struct damon_ctx *ctx)
 /*
  * Reset the aggregated monitoring results ('nr_accesses' of each region).
  */
-static void kdamond_reset_aggregated(struct damon_ctx *c)
+void kdamond_reset_aggregated(struct damon_ctx *c)
 {
 	struct damon_target *t;
 	unsigned int ti = 0;	/* target's index */
@@ -657,10 +655,7 @@ static void kdamond_reset_aggregated(struct damon_ctx *c)
 		ti++;
 	}
 }
-
-static void damon_split_region_at(struct damon_ctx *ctx,
-		struct damon_target *t, struct damon_region *r,
-		unsigned long sz_r);
+EXPORT_SYMBOL(kdamond_reset_aggregated);
 
 static bool __damos_valid_target(struct damon_region *r, struct damos *s)
 {
@@ -863,7 +858,7 @@ static inline unsigned long sz_damon_region(struct damon_region *r)
 /*
  * Merge two adjacent regions into one region
  */
-static void damon_merge_two_regions(struct damon_target *t,
+void damon_merge_two_regions(struct damon_target *t,
 		struct damon_region *l, struct damon_region *r)
 {
 	unsigned long sz_l = sz_damon_region(l), sz_r = sz_damon_region(r);
@@ -874,6 +869,7 @@ static void damon_merge_two_regions(struct damon_target *t,
 	l->ar.end = r->ar.end;
 	damon_destroy_region(r, t);
 }
+EXPORT_SYMBOL(damon_merge_two_regions);
 
 /*
  * Merge adjacent regions having similar access frequencies
@@ -882,7 +878,7 @@ static void damon_merge_two_regions(struct damon_target *t,
  * thres	'->nr_accesses' diff threshold for the merge
  * sz_limit	size upper limit of each region
  */
-static void damon_merge_regions_of(struct damon_target *t, unsigned int thres,
+void damon_merge_regions_of(struct damon_target *t, unsigned int thres,
 				   unsigned long sz_limit)
 {
 	struct damon_region *r, *prev = NULL, *next;
@@ -901,6 +897,7 @@ static void damon_merge_regions_of(struct damon_target *t, unsigned int thres,
 			prev = r;
 	}
 }
+EXPORT_SYMBOL(damon_merge_regions_of);
 
 /*
  * Merge adjacent regions having similar access frequencies
@@ -928,7 +925,7 @@ static void kdamond_merge_regions(struct damon_ctx *c, unsigned int threshold,
  * r		the region to be split
  * sz_r		size of the first sub-region that will be made
  */
-static void damon_split_region_at(struct damon_ctx *ctx,
+void damon_split_region_at(struct damon_ctx *ctx,
 		struct damon_target *t, struct damon_region *r,
 		unsigned long sz_r)
 {
@@ -945,9 +942,10 @@ static void damon_split_region_at(struct damon_ctx *ctx,
 
 	damon_insert_region(new, r, damon_next_region(r), t);
 }
+EXPORT_SYMBOL(damon_split_region_at);
 
 /* Split every region in the given target into 'nr_subs' regions */
-static void damon_split_regions_of(struct damon_ctx *ctx,
+void damon_split_regions_of(struct damon_ctx *ctx,
 				     struct damon_target *t, int nr_subs)
 {
 	struct damon_region *r, *next;
@@ -974,6 +972,7 @@ static void damon_split_regions_of(struct damon_ctx *ctx,
 		}
 	}
 }
+EXPORT_SYMBOL(damon_split_regions_of);
 
 /*
  * Split every target region into randomly-sized small regions
@@ -1217,5 +1216,3 @@ static int kdamond_fn(void *data)
 
 	return 0;
 }
-
-#include "core-test.h"

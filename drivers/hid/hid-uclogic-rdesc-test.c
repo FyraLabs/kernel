@@ -7,7 +7,7 @@
  */
 
 #include <kunit/test.h>
-#include "./hid-uclogic-rdesc.h"
+#include "hid-uclogic-rdesc.c"
 
 struct uclogic_template_case {
 	const char *name;

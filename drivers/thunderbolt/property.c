@@ -231,6 +231,7 @@ struct tb_property_dir *tb_property_parse_dir(const u32 *block,
 	return __tb_property_parse_dir(block, block_len, 0, rootdir->length,
 				       true);
 }
+EXPORT_SYMBOL(tb_property_parse_dir);
 
 /**
  * tb_property_create_dir() - Creates new property directory
@@ -500,6 +501,7 @@ ssize_t tb_property_format_dir(const struct tb_property_dir *dir, u32 *block,
 	ret = __tb_property_format_dir(dir, block, 0, block_len);
 	return ret < 0 ? ret : 0;
 }
+EXPORT_SYMBOL(tb_property_format_dir);
 
 /**
  * tb_property_copy_dir() - Take a deep copy of directory
@@ -571,6 +573,7 @@ err_free:
 
 	return NULL;
 }
+EXPORT_SYMBOL(tb_property_copy_dir);
 
 /**
  * tb_property_add_immediate() - Add immediate property to directory

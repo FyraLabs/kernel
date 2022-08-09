@@ -7,6 +7,8 @@
 #include <linux/fprobe.h>
 #include <linux/random.h>
 #include <kunit/test.h>
+#include <linux/ftrace.h>
+#include <linux/kallsyms.h>
 
 #define div_factor 3
 

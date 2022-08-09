@@ -72,7 +72,7 @@ config DRM_DEBUG_SELFTEST
 
 config DRM_KUNIT_TEST
 	tristate "KUnit tests for DRM" if !KUNIT_ALL_TESTS
-	depends on DRM && KUNIT=y
+	depends on DRM && KUNIT
 	select DRM_KMS_HELPER
 	default KUNIT_ALL_TESTS
 	help

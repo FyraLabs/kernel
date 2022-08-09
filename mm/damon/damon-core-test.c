@@ -7,12 +7,11 @@
  * Author: SeongJae Park <sjpark@amazon.de>
  */
 
-#ifdef CONFIG_DAMON_KUNIT_TEST
-
 #ifndef _DAMON_CORE_TEST_H
 #define _DAMON_CORE_TEST_H
 
 #include <kunit/test.h>
+#include <linux/damon.h>
 
 static void damon_test_regions(struct kunit *test)
 {
@@ -287,4 +286,4 @@ kunit_test_suite(damon_test_suite);
 
 #endif /* _DAMON_CORE_TEST_H */
 
-#endif	/* CONFIG_DAMON_KUNIT_TEST */
+MODULE_LICENSE("GPL");

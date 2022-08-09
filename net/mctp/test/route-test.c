@@ -682,3 +682,5 @@ static struct kunit_suite mctp_test_suite = {
 };
 
 kunit_test_suite(mctp_test_suite);
+
+MODULE_LICENSE("GPL");

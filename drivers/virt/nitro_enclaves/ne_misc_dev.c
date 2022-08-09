@@ -1757,10 +1757,6 @@ static long ne_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	return 0;
 }
 
-#if defined(CONFIG_NITRO_ENCLAVES_MISC_DEV_TEST)
-#include "ne_misc_dev_test.c"
-#endif
-
 static int __init ne_init(void)
 {
 	mutex_init(&ne_cpu_pool.mutex);

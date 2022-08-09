@@ -29,8 +29,8 @@ config BINFMT_ELF
 	  latest version).
 
 config BINFMT_ELF_KUNIT_TEST
-	bool "Build KUnit tests for ELF binary support" if !KUNIT_ALL_TESTS
-	depends on KUNIT=y && BINFMT_ELF=y
+	tristate "Build KUnit tests for ELF binary support" if !KUNIT_ALL_TESTS
+	depends on KUNIT && BINFMT_ELF=y
 	default KUNIT_ALL_TESTS
 	help
 	  This builds the ELF loader KUnit tests, which try to gather

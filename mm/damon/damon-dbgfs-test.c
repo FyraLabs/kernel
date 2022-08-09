@@ -4,13 +4,11 @@
  *
  * Author: SeongJae Park <sjpark@amazon.de>
  */
-
-#ifdef CONFIG_DAMON_DBGFS_KUNIT_TEST
-
 #ifndef _DAMON_DBGFS_TEST_H
 #define _DAMON_DBGFS_TEST_H
 
 #include <kunit/test.h>
+#include <linux/damon.h>
 
 static void damon_dbgfs_test_str_to_ints(struct kunit *test)
 {
@@ -88,7 +86,7 @@ static void damon_dbgfs_test_set_targets(struct kunit *test)
 	sprint_target_ids(ctx, buf, 64);
 	KUNIT_EXPECT_STREQ(test, (char *)buf, "\n");
 
-	dbgfs_destroy_ctx(ctx);
+	damon_destroy_ctx(ctx);
 }
 
 static void damon_dbgfs_test_set_init_regions(struct kunit *test)
@@ -158,6 +156,5 @@ static struct kunit_suite damon_test_suite = {
 };
 kunit_test_suite(damon_test_suite);
 
+MODULE_LICENSE("GPL");
 #endif /* _DAMON_TEST_H */
-
-#endif	/* CONFIG_DAMON_KUNIT_TEST */

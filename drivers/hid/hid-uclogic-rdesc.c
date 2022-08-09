@@ -1128,3 +1128,5 @@ __u8 *uclogic_rdesc_template_apply(const __u8 *template_ptr,
 
 	return rdesc_ptr;
 }
+
+MODULE_LICENSE("GPL");

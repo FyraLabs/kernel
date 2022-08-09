@@ -12,6 +12,7 @@
 #include <linux/time64.h>
 #include <linux/types.h>
 #include <linux/random.h>
+#include <linux/slab.h>
 
 /* Minimal region size.  Every damon_region is aligned by this. */
 #define DAMON_MIN_REGION	PAGE_SIZE
@@ -463,6 +464,38 @@ static inline struct damon_region *damon_last_region(struct damon_target *t)
 	return list_last_entry(&t->regions_list, struct damon_region, list);
 }
 
+/*
+ * Converts a string into an integers array
+ *
+ * Returns an array of integers array if the conversion success, or NULL
+ * otherwise.
+ */
+static int *str_to_ints(const char *str, ssize_t len, ssize_t *nr_ints)
+{
+	int *array;
+	const int max_nr_ints = 32;
+	int nr;
+	int pos = 0, parsed, ret;
+
+	*nr_ints = 0;
+	array = kmalloc_array(max_nr_ints, sizeof(*array), GFP_KERNEL);
+	if (!array)
+		return NULL;
+	while (*nr_ints < max_nr_ints && pos < len) {
+		ret = sscanf(&str[pos], "%d%n", &nr, &parsed);
+		pos += parsed;
+		if (ret != 1)
+			break;
+		array[*nr_ints] = nr;
+		*nr_ints += 1;
+	}
+
+	return array;
+}
+
+extern struct mutex damon_ops_lock;                 
+extern struct damon_operations damon_registered_ops[NR_DAMON_OPS];
+
 #define damon_for_each_region(r, t) \
 	list_for_each_entry(r, &t->regions_list, list)
 
@@ -497,6 +530,7 @@ static inline void damon_insert_region(struct damon_region *r,
 }
 
 void damon_add_region(struct damon_region *r, struct damon_target *t);
+void damon_del_region(struct damon_region *r, struct damon_target *t);
 void damon_destroy_region(struct damon_region *r, struct damon_target *t);
 int damon_set_regions(struct damon_target *t, struct damon_addr_range *ranges,
 		unsigned int nr_ranges);
@@ -528,6 +562,27 @@ int damon_nr_running_ctxs(void);
 bool damon_is_registered_ops(enum damon_ops_id id);
 int damon_register_ops(struct damon_operations *ops);
 int damon_select_ops(struct damon_ctx *ctx, enum damon_ops_id id);
+
+void kdamond_reset_aggregated(struct damon_ctx *c);
+void damon_split_region_at(struct damon_ctx *ctx,
+                struct damon_target *t, struct damon_region *r,
+                unsigned long sz_r);
+void damon_merge_two_regions(struct damon_target *t,
+		struct damon_region *l, struct damon_region *r);
+void damon_merge_regions_of(struct damon_target *t, unsigned int thres,
+		unsigned long sz_limit);
+void damon_split_regions_of(struct damon_ctx *ctx,
+		struct damon_target *t, int nr_subs);
+int damon_va_evenly_split_region(struct damon_target *t,
+		struct damon_region *r, unsigned int nr_pieces);
+struct damon_ctx *dbgfs_new_ctx(void);
+int __damon_va_three_regions(struct vm_area_struct *vma,
+		struct damon_addr_range regions[3]);
+int dbgfs_set_targets(struct damon_ctx *ctx, ssize_t nr_targets,
+		struct pid **pids);
+ssize_t sprint_target_ids(struct damon_ctx *ctx, char *buf, ssize_t len);
+int set_init_regions(struct damon_ctx *c, const char *str, ssize_t len);
+ssize_t sprint_init_regions(struct damon_ctx *c, char *buf, ssize_t len);
 
 static inline bool damon_target_has_pid(const struct damon_ctx *ctx)
 {

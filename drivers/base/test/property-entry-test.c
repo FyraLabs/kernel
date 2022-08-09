@@ -508,3 +508,5 @@ static struct kunit_suite property_entry_test_suite = {
 };
 
 kunit_test_suite(property_entry_test_suite);
+
+MODULE_LICENSE("GPL");

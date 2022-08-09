@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0
 
+#include <linux/module.h>
 #include <kunit/test.h>
+
+#include "ne_misc_dev.h"
 
 #define MAX_PHYS_REGIONS	16
 #define INVALID_VALUE		(~0ull)
@@ -152,3 +155,7 @@ static struct kunit_suite ne_misc_dev_test_suite = {
 };
 
 kunit_test_suite(ne_misc_dev_test_suite);
+
+MODULE_AUTHOR("Amazon.com, Inc. or its affiliates");
+MODULE_DESCRIPTION("Nitro Enclaves Driver");
+MODULE_LICENSE("GPL v2");

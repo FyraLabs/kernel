@@ -931,6 +931,7 @@ struct tb_port *tb_next_port_on_path(struct tb_port *start, struct tb_port *end,
 
 	return next != prev ? next : NULL;
 }
+EXPORT_SYMBOL(tb_next_port_on_path);
 
 /**
  * tb_port_get_link_speed() - Get current link speed

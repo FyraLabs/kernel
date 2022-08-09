@@ -453,6 +453,8 @@ void freq_constraints_init(struct freq_constraints *qos)
 	BLOCKING_INIT_NOTIFIER_HEAD(c->notifiers);
 }
 
+EXPORT_SYMBOL(freq_constraints_init);
+
 /**
  * freq_qos_read_value - Get frequency QoS constraint for a given list.
  * @qos: Constraints to evaluate.
@@ -481,6 +483,8 @@ s32 freq_qos_read_value(struct freq_constraints *qos,
 
 	return ret;
 }
+
+EXPORT_SYMBOL(freq_qos_read_value);
 
 /**
  * freq_qos_apply - Add/modify/remove frequency QoS request.

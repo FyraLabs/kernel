@@ -6,7 +6,6 @@
 
 #include <net/mctpdevice.h>
 #include <net/pkt_sched.h>
-
 #include "utils.h"
 
 static netdev_tx_t mctp_test_dev_tx(struct sk_buff *skb,
@@ -64,3 +63,5 @@ void mctp_test_destroy_dev(struct mctp_test_dev *dev)
 	mctp_dev_put(dev->mdev);
 	unregister_netdev(dev->ndev);
 }
+
+MODULE_LICENSE("GPL");

@@ -9,6 +9,6 @@ config TEST_ASYNC_DRIVER_PROBE
 
 	  If unsure say N.
 config DRIVER_PE_KUNIT_TEST
-	bool "KUnit Tests for property entry API" if !KUNIT_ALL_TESTS
-	depends on KUNIT=y
+	tristate "KUnit Tests for property entry API" if !KUNIT_ALL_TESTS
+	depends on KUNIT && PPC
 	default KUNIT_ALL_TESTS

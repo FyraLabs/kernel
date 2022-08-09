@@ -61,7 +61,7 @@ static struct mm_struct *damon_get_mm(struct damon_target *t)
  *
  * Returns 0 on success, or negative error code otherwise.
  */
-static int damon_va_evenly_split_region(struct damon_target *t,
+int damon_va_evenly_split_region(struct damon_target *t,
 		struct damon_region *r, unsigned int nr_pieces)
 {
 	unsigned long sz_orig, sz_piece, orig_end;
@@ -94,6 +94,7 @@ static int damon_va_evenly_split_region(struct damon_target *t,
 
 	return 0;
 }
+EXPORT_SYMBOL(damon_va_evenly_split_region);
 
 static unsigned long sz_range(struct damon_addr_range *r)
 {
@@ -113,7 +114,7 @@ static unsigned long sz_range(struct damon_addr_range *r)
  *
  * Returns 0 if success, or negative error code otherwise.
  */
-static int __damon_va_three_regions(struct vm_area_struct *vma,
+int __damon_va_three_regions(struct vm_area_struct *vma,
 				       struct damon_addr_range regions[3])
 {
 	struct damon_addr_range gap = {0}, first_gap = {0}, second_gap = {0};
@@ -163,6 +164,7 @@ next:
 
 	return 0;
 }
+EXPORT_SYMBOL(__damon_va_three_regions);
 
 /*
  * Get the three regions in the given target (task)
@@ -697,5 +699,3 @@ static int __init damon_va_initcall(void)
 };
 
 subsys_initcall(damon_va_initcall);
-
-#include "vaddr-test.h"

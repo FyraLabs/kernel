@@ -13,8 +13,8 @@ menuconfig MCTP
 	  channel.
 
 config MCTP_TEST
-        bool "MCTP core tests" if !KUNIT_ALL_TESTS
-        depends on MCTP=y && KUNIT=y
+        tristate "MCTP core tests" if !KUNIT_ALL_TESTS
+        depends on MCTP=y && KUNIT
         default KUNIT_ALL_TESTS
 
 config MCTP_FLOWS

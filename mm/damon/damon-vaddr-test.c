@@ -6,13 +6,11 @@
  *
  * Author: SeongJae Park <sjpark@amazon.de>
  */
-
-#ifdef CONFIG_DAMON_VADDR_KUNIT_TEST
-
 #ifndef _DAMON_VADDR_TEST_H
 #define _DAMON_VADDR_TEST_H
 
 #include <kunit/test.h>
+#include <linux/damon.h>
 
 static void __link_vmas(struct vm_area_struct *vmas, ssize_t nr_vmas)
 {
@@ -321,6 +319,5 @@ static struct kunit_suite damon_test_suite = {
 };
 kunit_test_suite(damon_test_suite);
 
+MODULE_LICENSE("GPL");
 #endif /* _DAMON_VADDR_TEST_H */
-
-#endif	/* CONFIG_DAMON_VADDR_KUNIT_TEST */

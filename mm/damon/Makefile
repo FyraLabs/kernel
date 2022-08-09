@@ -7,3 +7,7 @@ obj-$(CONFIG_DAMON_SYSFS)	+= sysfs.o
 obj-$(CONFIG_DAMON_DBGFS)	+= dbgfs.o
 obj-$(CONFIG_DAMON_RECLAIM)	+= reclaim.o
 obj-$(CONFIG_DAMON_LRU_SORT)	+= lru_sort.o
+
+obj-$(CONFIG_DAMON_KUNIT_TEST)		+= damon-core-test.o
+obj-$(CONFIG_DAMON_DBGFS_KUNIT_TEST)	+= ops-common.o damon-dbgfs-test.o
+obj-$(CONFIG_DAMON_VADDR_KUNIT_TEST)	+= ops-common.o damon-vaddr-test.o

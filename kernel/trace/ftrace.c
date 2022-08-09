@@ -1565,6 +1565,7 @@ unsigned long ftrace_location_range(unsigned long start, unsigned long end)
 
 	return 0;
 }
+EXPORT_SYMBOL(ftrace_location_range);
 
 /**
  * ftrace_location - return the ftrace location

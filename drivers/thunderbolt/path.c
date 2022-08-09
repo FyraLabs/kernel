@@ -348,6 +348,7 @@ err:
 	tb_path_free(path);
 	return NULL;
 }
+EXPORT_SYMBOL(tb_path_alloc);
 
 /**
  * tb_path_free() - free a path
@@ -375,6 +376,7 @@ void tb_path_free(struct tb_path *path)
 	kfree(path->hops);
 	kfree(path);
 }
+EXPORT_SYMBOL(tb_path_free);
 
 static void __tb_path_deallocate_nfc(struct tb_path *path, int first_hop)
 {

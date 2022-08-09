@@ -332,6 +332,7 @@ err_free:
 	tb_tunnel_free(tunnel);
 	return NULL;
 }
+EXPORT_SYMBOL(tb_tunnel_alloc_pci);
 
 static bool tb_dp_is_usb4(const struct tb_switch *sw)
 {
@@ -924,6 +925,7 @@ err_free:
 	tb_tunnel_free(tunnel);
 	return NULL;
 }
+EXPORT_SYMBOL(tb_tunnel_alloc_dp);
 
 static unsigned int tb_dma_available_credits(const struct tb_port *port)
 {
@@ -1132,6 +1134,7 @@ err_free:
 	tb_tunnel_free(tunnel);
 	return NULL;
 }
+EXPORT_SYMBOL(tb_tunnel_alloc_dma);
 
 /**
  * tb_tunnel_match_dma() - Match DMA tunnel
@@ -1192,6 +1195,7 @@ bool tb_tunnel_match_dma(const struct tb_tunnel *tunnel, int transmit_path,
 
 	return true;
 }
+EXPORT_SYMBOL(tb_tunnel_match_dma);
 
 static int tb_usb3_max_link_rate(struct tb_port *up, struct tb_port *down)
 {
@@ -1543,6 +1547,7 @@ struct tb_tunnel *tb_tunnel_alloc_usb3(struct tb *tb, struct tb_port *up,
 
 	return tunnel;
 }
+EXPORT_SYMBOL(tb_tunnel_alloc_usb3);
 
 /**
  * tb_tunnel_free() - free a tunnel
@@ -1568,6 +1573,7 @@ void tb_tunnel_free(struct tb_tunnel *tunnel)
 	kfree(tunnel->paths);
 	kfree(tunnel);
 }
+EXPORT_SYMBOL(tb_tunnel_free);
 
 /**
  * tb_tunnel_is_invalid - check whether an activated path is still valid
@@ -1698,6 +1704,7 @@ bool tb_tunnel_port_on_path(const struct tb_tunnel *tunnel,
 
 	return false;
 }
+EXPORT_SYMBOL(tb_tunnel_port_on_path);
 
 static bool tb_tunnel_is_active(const struct tb_tunnel *tunnel)
 {
