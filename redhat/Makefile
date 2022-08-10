@@ -575,15 +575,14 @@ dist-release-finish: setup-source
 	@$(GIT) add $(REDHAT)/$(SPECCHANGELOG)
 	@$(GIT) add $(REDHAT)/marker
 	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(SPECCHANGELOG) $(SPECFILE).template -m "[redhat] $(RELEASETAG)"
-dist-release-changed: setup-source
-	@cp $(SOURCES)/$(SPECCHANGELOG) $(REDHAT)/$(SPECCHANGELOG)
-	@echo $(MARKER) > $(REDHAT)/marker
-	@# if neither changelog nor marker was updated, skip bumping a release
-	@$(GIT) update-index -q --really-refresh
-	@if $(GIT) diff-index --quiet HEAD; then \
+dist-release-changed:
+	@CLOGF="$$(mktemp)"; \
+	trap 'rm -f "$$CLOGF"' SIGHUP SIGINT SIGTERM EXIT; \
+	$(REDHAT)/genlog.sh "$$CLOGF"; \
+	if [ "$(MARKER)" == "$$(cat $(REDHAT)/marker)" ] && \
+	   [ "$$(wc -l $$CLOGF | cut -d ' ' -f 1)" -le 3 ]; then \
 		echo "Nothing changed, skipping updates"; \
 	else \
-		$(GIT) checkout -- $(REDHAT)/$(SPECCHANGELOG); \
 		$(REDHAT)/scripts/new_release.sh; \
 		$(MAKE) dist-release-finish; \
 	fi
