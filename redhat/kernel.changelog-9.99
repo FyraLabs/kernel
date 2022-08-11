@@ -1,3 +1,7 @@
+* Thu Aug 11 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.1-0]
+- v5.19.1 rebase
+Resolves: 
+
 * Tue Aug 02 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.19.0-65]
 - redhat/configs: Fix rm warning on config warnings (Eric Chanudet)
 - redhat/Makefile: Deprecate PREBUILD_GIT_ONLY variable (Prarit Bhargava)
