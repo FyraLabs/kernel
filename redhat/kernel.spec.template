@@ -817,6 +817,7 @@ Source82: update_scripts.sh
 
 Source84: mod-internal.list
 Source85: mod-partner.list
+Source86: mod-kunit.list
 
 Source100: rheldup3.x509
 Source101: rhelkpatch1.x509
@@ -2088,6 +2089,7 @@ BuildKernel() {
 
     # Copy the System.map file for depmod to use, and create a backup of the
     # full module tree so we can restore it after we're done filtering
+    cat mod-kunit.list > mod-internal.list
     cp System.map $RPM_BUILD_ROOT/.
     cp configs/filter-*.sh $RPM_BUILD_ROOT/.
     pushd $RPM_BUILD_ROOT
@@ -2167,6 +2169,7 @@ BuildKernel() {
     rm -f $RPM_BUILD_ROOT/module-dirs.list
     rm -f $RPM_BUILD_ROOT/mod-extra.list
     rm -f $RPM_BUILD_ROOT/mod-internal.list
+    rm -f $RPM_BUILD_ROOT/mod-kunit.list
 %if 0%{!?fedora:1}
     rm -f $RPM_BUILD_ROOT/mod-partner.list
 %endif
