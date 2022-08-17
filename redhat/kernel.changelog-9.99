@@ -1,3 +1,9 @@
+* Wed Aug 17 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.18.18-0]
+- Config updates for 5.19.2 (Justin M. Forbes)
+- Bluetooth: hci_event: Fix vendor (unknown) opcode status handling (Hans de Goede)
+- Bluetooth: hci_sync: Fix resuming scan after suspend resume (Zhengping Jiang)
+Resolves: 
+
 * Thu Aug 11 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.18.17-0]
 - netfilter: nf_tables: do not allow RULE_ID to refer to another chain (Thadeu Lima de Souza Cascardo)
 - netfilter: nf_tables: do not allow CHAIN_ID to refer to another table (Thadeu Lima de Souza Cascardo)
