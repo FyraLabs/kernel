@@ -410,6 +410,7 @@ dist-clean-rpmdirs:
 	done;
 
 dist-clean: dist-clean-sources dist-clean-configs dist-clean-rpmdirs
+	@rm -f $(REDHAT)/linux-*.tar.xz
 
 dist-stub-key:
 	@echo "Copying pre-generated keys";
@@ -572,6 +573,7 @@ dist-rpm-baseonly: dist-sources do-rpmbuild
 # unless you know what you're doing, you don't want to use the next four ones
 dist-release-finish: setup-source
 	@cp $(SOURCES)/$(SPECCHANGELOG) $(REDHAT)/$(SPECCHANGELOG)
+	@echo $(MARKER) > $(REDHAT)/marker
 	@$(GIT) add $(REDHAT)/$(SPECCHANGELOG)
 	@$(GIT) add $(REDHAT)/marker
 	@$(GIT) commit -s ../Makefile.rhelver $(REDHAT)/marker $(REDHAT)/$(SPECCHANGELOG) $(SPECFILE).template -m "[redhat] $(RELEASETAG)"
