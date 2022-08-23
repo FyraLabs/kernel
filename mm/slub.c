@@ -2828,39 +2828,31 @@ static inline unsigned long node_nr_objs(struct kmem_cache_node *n)
 }
 
 /* Supports checking bulk free of a constructed freelist */
-static noinline void free_debug_processing(
+static noinline int free_debug_processing(
 	struct kmem_cache *s, struct slab *slab,
 	void *head, void *tail, int bulk_cnt,
 	unsigned long addr)
 {
 	struct kmem_cache_node *n = get_node(s, slab_nid(slab));
-	struct slab *slab_free = NULL;
 	void *object = head;
 	int cnt = 0;
-	unsigned long flags;
-	bool checks_ok = false;
+	unsigned long flags, flags2;
+	int ret = 0;
 	depot_stack_handle_t handle = 0;
 
 	if (s->flags & SLAB_STORE_USER)
 		handle = set_track_prepare();
 
 	spin_lock_irqsave(&n->list_lock, flags);
+	slab_lock(slab, &flags2);
 
 	if (s->flags & SLAB_CONSISTENCY_CHECKS) {
 		if (!check_slab(s, slab))
 			goto out;
 	}
 
-	if (slab->inuse < bulk_cnt) {
-		slab_err(s, slab, "Slab has %d allocated objects but %d are to be freed\n",
-			 slab->inuse, bulk_cnt);
-		goto out;
-	}
-
 next_object:
-
-	if (++cnt > bulk_cnt)
-		goto out_cnt;
+	cnt++;
 
 	if (s->flags & SLAB_CONSISTENCY_CHECKS) {
 		if (!free_consistency_checks(s, slab, object, addr))
@@ -2878,60 +2870,18 @@ next_object:
 		object = get_freepointer(s, object);
 		goto next_object;
 	}
-	checks_ok = true;
-
-out_cnt:
-	if (cnt != bulk_cnt)
-		slab_err(s, slab, "Bulk free expected %d objects but found %d\n",
-			 bulk_cnt, cnt);
+	ret = 1;
 
 out:
-	if (checks_ok) {
-		void *prior = slab->freelist;
+	if (cnt != bulk_cnt)
+		slab_err(s, slab, "Bulk freelist count(%d) invalid(%d)\n",
+			 bulk_cnt, cnt);
 
-		/* Perform the actual freeing while we still hold the locks */
-		slab->inuse -= cnt;
-		set_freepointer(s, tail, prior);
-		slab->freelist = head;
-
-		/*
-		 * If the slab is empty, and node's partial list is full,
-		 * it should be discarded anyway no matter it's on full or
-		 * partial list.
-		 */
-		if (slab->inuse == 0 && n->nr_partial >= s->min_partial)
-			slab_free = slab;
-
-		if (!prior) {
-			/* was on full list */
-			remove_full(s, n, slab);
-			if (!slab_free) {
-				add_partial(n, slab, DEACTIVATE_TO_TAIL);
-				stat(s, FREE_ADD_PARTIAL);
-			}
-		} else if (slab_free) {
-			remove_partial(n, slab);
-			stat(s, FREE_REMOVE_PARTIAL);
-		}
-	}
-
-	if (slab_free) {
-		/*
-		 * Update the counters while still holding n->list_lock to
-		 * prevent spurious validation warnings
-		 */
-		dec_slabs_node(s, slab_nid(slab_free), slab_free->objects);
-	}
-
+	slab_unlock(slab, &flags2);
 	spin_unlock_irqrestore(&n->list_lock, flags);
-
-	if (!checks_ok)
+	if (!ret)
 		slab_fix(s, "Object at 0x%p not freed", object);
-
-	if (slab_free) {
-		stat(s, FREE_SLAB);
-		free_slab(s, slab_free);
-	}
+	return ret;
 }
 #endif /* CONFIG_SLUB_DEBUG */
 
