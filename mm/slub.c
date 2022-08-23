@@ -498,10 +498,10 @@ static __always_inline void slab_unlock(struct slab *slab)
 
 /*
  * Interrupts must be disabled (for the fallback code to work right), typically
- * by an _irqsave() lock variant. On PREEMPT_RT the preempt_disable(), which is
- * part of bit_spin_lock(), is sufficient because the policy is not to allow any
- * allocation/ free operation in hardirq context. Therefore nothing can
- * interrupt the operation.
+ * by an _irqsave() lock variant. Except on PREEMPT_RT where these variants do
+ * not actually disable interrupts. On the other hand the migrate_disable()
+ * done by bit_spin_lock() is sufficient on PREEMPT_RT thanks to its threaded
+ * interrupts.
  */
 static inline bool __cmpxchg_double_slab(struct kmem_cache *s, struct slab *slab,
 		void *freelist_old, unsigned long counters_old,
