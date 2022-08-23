@@ -6,6 +6,13 @@ if [ -z "$releasenum" ]; then
 	releasenum="0"
 fi
 
+klist -s
+if [ ! $? -eq 0 ]; then
+	echo "klist couldn't read the credential cache."
+	echo "Do you need to fix your kerberos tokens?"
+	exit 1
+fi
+
 ApplyPatches="0"
 
 for release in $( cat redhat/release_targets );  do 
