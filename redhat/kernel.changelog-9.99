@@ -1,3 +1,10 @@
+* Wed Aug 31 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.6-0]
+- Revert "block: freeze the queue earlier in del_gendisk" (Justin M. Forbes)
+- redhat/configs: aarch64: Turn on Apple Silicon configs for Fedora (Eric Curtin)
+- redhat/Makefile: Always set UPSTREAM (Prarit Bhargava)
+- Linux v5.19.6
+Resolves: 
+
 * Thu Aug 25 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.4-0]
 - Linux v5.19.4
 Resolves: 
