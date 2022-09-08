@@ -1,3 +1,8 @@
+* Thu Sep 08 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.8-0]
+- [PATCH] drm/i915/bios: Use hardcoded fp_timing size for generating  LFP data pointers (Mark Pearson)
+- Linux v5.19.8
+Resolves: 
+
 * Wed Aug 31 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.6-0]
 - Revert "block: freeze the queue earlier in del_gendisk" (Justin M. Forbes)
 - redhat/configs: aarch64: Turn on Apple Silicon configs for Fedora (Eric Curtin)
