@@ -57,7 +57,7 @@ clk_test
 mtty
 test_hmm
 test_vmalloc
-test_cpumask
+cpumask_kunit
 iio-test-format
 iio-test-rescale
 cros_kunit
