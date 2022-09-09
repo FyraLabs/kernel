@@ -468,6 +468,7 @@ _setup-source: dist-git-version-check
 	@if [ ! -e  $(REDHAT)/$(SPECCHANGELOG) ]; then \
 		echo "Creating $(SPECCHANGELOG) as copy of $(CHANGELOG_PREV)"; \
 		cp $(REDHAT)/$(CHANGELOG_PREV) $(REDHAT)/$(SPECCHANGELOG); \
+		$(GIT) add $(REDHAT)/$(SPECCHANGELOG); \
 	fi
 	@if [ -z "$(RHSELFTESTDATA)" ]; then \
 		cp $(REDHAT)/$(SPECCHANGELOG) $(SOURCES)/$(SPECCHANGELOG); \
