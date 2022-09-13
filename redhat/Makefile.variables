@@ -158,3 +158,7 @@ RHDISTGIT_CACHE ?=
 # rolled into a single tarball, or if the commits are individually broken out
 # into separate patches and then included in the tarball.
 SINGLE_TARBALL := 1
+
+# If set to 1, this variable will cause the kernel package build to fail if
+# the selftests fail to build.
+SPECSELFTESTS_MUST_BUILD ?= 0

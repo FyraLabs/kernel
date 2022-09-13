@@ -2550,6 +2550,7 @@ export BPFTOOL=$(pwd)/tools/bpf/bpftool/bpftool
 pushd tools/testing/selftests
 # We need to install here because we need to call make with ARCH set which
 # doesn't seem possible to do in the install section.
+
 %if %{selftests_must_build}
   force_targets="FORCE_TARGETS=1"
 %else
