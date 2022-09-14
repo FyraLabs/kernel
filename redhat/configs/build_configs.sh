@@ -108,7 +108,11 @@ function merge_configs()
 		echo "# $arch" > "$name";;
 	esac
 
-	sort config-merging."$count" >> "$name"
+	# sort config based on the config option names only
+	cat config-merging."$count" |
+		sed 's/^\(CONFIG_[^=]\+\)=\(.*\)/@ \1 =\2/' |
+		LC_ALL=C sort -k2,2 -b |
+		sed 's/@ \(CONFIG_[^ ]\+\) =\(.*\)/\1=\2/' >> "$name"
 	rm -f config-merged."$count" config-merging."$count"
 	echo "Building $name complete"
 }
