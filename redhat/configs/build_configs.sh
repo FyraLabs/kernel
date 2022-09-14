@@ -108,7 +108,7 @@ function merge_configs()
 		echo "# $arch" > "$name";;
 	esac
 
-	LC_ALL=C sort config-merging."$count" >> "$name"
+	sort config-merging."$count" >> "$name"
 	rm -f config-merged."$count" config-merging."$count"
 	echo "Building $name complete"
 }
