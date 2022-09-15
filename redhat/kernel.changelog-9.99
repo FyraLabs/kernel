@@ -1,3 +1,12 @@
+* Thu Sep 15 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.9-0]
+- Add CONFIG_ARM64_ERRATUM_2457168 as new stable config option (Justin M. Forbes)
+- fedora: disable IWLMEI (Peter Robinson)
+- [PATCH] drm/i915: Ensure damage clip area is within pipe area (Mark Pearson)
+- [PATCH] drm/i915/psr: Use full update In case of area calculation fails (Mark Pearson)
+- Config update for stable ARM64_ERRATUM_2441009 (Justin M. Forbes)
+- Linux v5.19.9
+Resolves: 
+
 * Thu Sep 08 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.8-0]
 - [PATCH] drm/i915/bios: Use hardcoded fp_timing size for generating  LFP data pointers (Mark Pearson)
 - Linux v5.19.8
