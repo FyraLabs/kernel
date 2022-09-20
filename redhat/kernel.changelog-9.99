@@ -1,3 +1,8 @@
+* Tue Sep 20 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.10-0]
+- kbuild: Add skip_encoding_btf_enum64 option to pahole (Martin Rodriguez Reboredo)
+- Linux v5.19.10
+Resolves: 
+
 * Thu Sep 15 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.9-0]
 - Add CONFIG_ARM64_ERRATUM_2457168 as new stable config option (Justin M. Forbes)
 - fedora: disable IWLMEI (Peter Robinson)
