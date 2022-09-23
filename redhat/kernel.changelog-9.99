@@ -1,3 +1,7 @@
+* Fri Sep 23 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.11-0]
+- Linux v5.19.11
+Resolves: 
+
 * Tue Sep 20 2022 Justin M. Forbes <jforbes@fedoraproject.org> [5.19.10-0]
 - kbuild: Add skip_encoding_btf_enum64 option to pahole (Martin Rodriguez Reboredo)
 - Linux v5.19.10
