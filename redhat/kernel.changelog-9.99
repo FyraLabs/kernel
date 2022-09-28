@@ -1,3 +1,7 @@
+* Wed Sep 28 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.0.0-0.rc7.49c13ed0316d.50]
+- Allow selftests to fail without killing the build (Justin M. Forbes)
+Resolves: 
+
 * Wed Sep 28 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.0.0-0.rc7.49c13ed0316d.49]
 - redhat/configs: Remove x86_64 from priority files (Prarit Bhargava)
 - redhat/configs/pending-ark: Remove x86_64 directory (Prarit Bhargava)
