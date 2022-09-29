@@ -169,5 +169,14 @@ localversion
 # Clang's compilation database file
 /compile_commands.json
 
+#
+# Red Hat
+#
+configs/*.config
+localversion
+
 # Documentation toolchain
 sphinx_*/
+
+# GitLab CI configuration
+!.gitlab-ci.yml
