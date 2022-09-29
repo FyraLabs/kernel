@@ -242,6 +242,7 @@ ifeq ("$(DISTRO)", "fedora")
   # without changing anything else in the specfile.
   SPECTARFILE_RELEASE:=$(UPSTREAM_TARBALL_NAME)
   SPECKABIVERSION:=$(SPECVERSION)
+  RHPKG_BIN:=fedpkg
 else ifeq ("$(DISTRO)", "centos")
   RHDISTGIT_BRANCH:=c$(RHEL_MAJOR)s
   ifndef BUILD_PROFILE
@@ -253,6 +254,7 @@ else ifeq ("$(DISTRO)", "centos")
   SPECTARFILE_RELEASE:=$(BASEVERSION)
   SPECKABIVERSION:=$(BASEVERSION)
   PATCHLIST_URL:=none
+  RHPKG_BIN:=centpkg
 else
   RHDISTGIT_BRANCH:=rhel-$(RHEL_MAJOR).$(RHEL_MINOR).0
   ifndef BUILD_TARGET
@@ -265,6 +267,7 @@ else
   SPECTARFILE_RELEASE:=$(BASEVERSION)
   SPECKABIVERSION:=$(BASEVERSION)
   PATCHLIST_URL:=none
+  RHPKG_BIN:=rhpkg
 endif
 
 TARFILE:=linux-$(SPECTARFILE_RELEASE).tar.xz
@@ -274,7 +277,16 @@ KABI_TARBALL:=$(SOURCES)/kernel-abi-stablelists-$(SPECKABIVERSION).tar.bz2
 KABIDW := $(REDHAT)/kabi-dwarf
 KABIDW_TARBALL:=$(SOURCES)/kernel-kabi-dw-$(SPECKABIVERSION).tar.bz2
 
-include Makefile.rhpkg
+# load Makefile variable settings from user-specified configuration file,
+# ~/.rhpkg.mk or $TOPDIR/.rhpkg.mk
+ifeq ("$(RHDISTGIT_CACHE)", "")
+  ifneq ("$(wildcard ${HOME}/.rhpkg.mk)", "")
+    include ${HOME}/.rhpkg.mk
+  endif
+  ifneq ("$(wildcard $(TOPDIR)/.rhpkg.mk)", "")
+    include $(TOPDIR)/.rhpkg.mk
+  endif
+endif
 
 ifeq ("$(ZSTREAM)", "yes")
   YSTREAM_FLAG = no
