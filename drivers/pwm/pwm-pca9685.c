@@ -560,10 +560,10 @@ static int pca9685_pwm_probe(struct i2c_client *client,
 	pca9685_write_reg(pca, PCA9685_MODE1, reg);
 
 	/* Reset OFF/ON registers to POR default */
-	pca9685_write_reg(pca, PCA9685_ALL_LED_OFF_L, LED_FULL);
+	pca9685_write_reg(pca, PCA9685_ALL_LED_OFF_L, 0);
 	pca9685_write_reg(pca, PCA9685_ALL_LED_OFF_H, LED_FULL);
 	pca9685_write_reg(pca, PCA9685_ALL_LED_ON_L, 0);
-	pca9685_write_reg(pca, PCA9685_ALL_LED_ON_H, 0);
+	pca9685_write_reg(pca, PCA9685_ALL_LED_ON_H, LED_FULL);
 
 	pca->chip.ops = &pca9685_pwm_ops;
 	/* Add an extra channel for ALL_LED */
@@ -601,11 +601,8 @@ static int pca9685_pwm_probe(struct i2c_client *client,
 static int pca9685_pwm_remove(struct i2c_client *client)
 {
 	struct pca9685 *pca = i2c_get_clientdata(client);
-	int ret;
 
-	ret = pwmchip_remove(&pca->chip);
-	if (ret)
-		return ret;
+	pwmchip_remove(&pca->chip);
 
 	if (!pm_runtime_enabled(&client->dev)) {
 		/* Put chip in sleep state if runtime PM is disabled */

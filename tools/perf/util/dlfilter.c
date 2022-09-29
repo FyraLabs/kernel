@@ -21,7 +21,7 @@
 #include "symbol.h"
 #include "srcline.h"
 #include "dlfilter.h"
-#include "perf_dlfilter.h"
+#include "../include/perf/perf_dlfilter.h"
 
 static void al_to_d_al(struct addr_location *al, struct perf_dlfilter_al *d_al)
 {
@@ -495,6 +495,8 @@ int dlfilter__do_filter_event(struct dlfilter *d,
 	ASSIGN(misc);
 	ASSIGN(raw_size);
 	ASSIGN(raw_data);
+	ASSIGN(machine_pid);
+	ASSIGN(vcpu);
 
 	if (sample->branch_stack) {
 		d_sample.brstack_nr = sample->branch_stack->nr;
@@ -530,8 +532,8 @@ int dlfilter__do_filter_event(struct dlfilter *d,
 	return ret;
 }
 
-static bool get_filter_desc(const char *dirname, const char *name,
-			    char **desc, char **long_desc)
+bool get_filter_desc(const char *dirname, const char *name, char **desc,
+		     char **long_desc)
 {
 	char path[PATH_MAX];
 	void *handle;

@@ -20,11 +20,7 @@
 
 #define INJ_TIMEOUT_NS 50000
 
-struct frame_info {
-	int src_port;
-};
-
-static void sparx5_xtr_flush(struct sparx5 *sparx5, u8 grp)
+void sparx5_xtr_flush(struct sparx5 *sparx5, u8 grp)
 {
 	/* Start flush */
 	spx5_wr(QS_XTR_FLUSH_FLUSH_SET(BIT(grp)), sparx5, QS_XTR_FLUSH);
@@ -36,7 +32,7 @@ static void sparx5_xtr_flush(struct sparx5 *sparx5, u8 grp)
 	spx5_wr(0, sparx5, QS_XTR_FLUSH);
 }
 
-static void sparx5_ifh_parse(u32 *ifh, struct frame_info *info)
+void sparx5_ifh_parse(u32 *ifh, struct frame_info *info)
 {
 	u8 *xtr_hdr = (u8 *)ifh;
 
@@ -48,6 +44,12 @@ static void sparx5_ifh_parse(u32 *ifh, struct frame_info *info)
 		((u32)xtr_hdr[30] <<  0);
 	fwd = (fwd >> 5);
 	info->src_port = FIELD_GET(GENMASK(7, 1), fwd);
+
+	info->timestamp =
+		((u64)xtr_hdr[2] << 24) |
+		((u64)xtr_hdr[3] << 16) |
+		((u64)xtr_hdr[4] <<  8) |
+		((u64)xtr_hdr[5] <<  0);
 }
 
 static void sparx5_xtr_grp(struct sparx5 *sparx5, u8 grp, bool byte_swap)
@@ -111,6 +113,8 @@ static void sparx5_xtr_grp(struct sparx5 *sparx5, u8 grp, bool byte_swap)
 			/* This assumes STATUS_WORD_POS == 1, Status
 			 * just after last data
 			 */
+			if (!byte_swap)
+				val = ntohl((__force __be32)val);
 			byte_cnt -= (4 - XTR_VALID_BYTES(val));
 			eof_flag = true;
 			break;
@@ -148,10 +152,11 @@ static void sparx5_xtr_grp(struct sparx5 *sparx5, u8 grp, bool byte_swap)
 	/* Finish up skb */
 	skb_put(skb, byte_cnt - ETH_FCS_LEN);
 	eth_skb_pad(skb);
+	sparx5_ptp_rxtstamp(sparx5, skb, fi.timestamp);
 	skb->protocol = eth_type_trans(skb, netdev);
-	netif_rx(skb);
 	netdev->stats.rx_bytes += skb->len;
 	netdev->stats.rx_packets++;
+	netif_rx(skb);
 }
 
 static int sparx5_inject(struct sparx5 *sparx5,
@@ -222,17 +227,44 @@ int sparx5_port_xmit_impl(struct sk_buff *skb, struct net_device *dev)
 	struct net_device_stats *stats = &dev->stats;
 	struct sparx5_port *port = netdev_priv(dev);
 	struct sparx5 *sparx5 = port->sparx5;
+	u32 ifh[IFH_LEN];
 	int ret;
 
-	ret = sparx5_inject(sparx5, port->ifh, skb, dev);
+	memset(ifh, 0, IFH_LEN * 4);
+	sparx5_set_port_ifh(ifh, port->portno);
+
+	if (sparx5->ptp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+		ret = sparx5_ptp_txtstamp_request(port, skb);
+		if (ret)
+			return ret;
+
+		sparx5_set_port_ifh_rew_op(ifh, SPARX5_SKB_CB(skb)->rew_op);
+		sparx5_set_port_ifh_pdu_type(ifh, SPARX5_SKB_CB(skb)->pdu_type);
+		sparx5_set_port_ifh_pdu_w16_offset(ifh, SPARX5_SKB_CB(skb)->pdu_w16_offset);
+		sparx5_set_port_ifh_timestamp(ifh, SPARX5_SKB_CB(skb)->ts_id);
+	}
+
+	skb_tx_timestamp(skb);
+	if (sparx5->fdma_irq > 0)
+		ret = sparx5_fdma_xmit(sparx5, ifh, skb);
+	else
+		ret = sparx5_inject(sparx5, ifh, skb, dev);
 
 	if (ret == NETDEV_TX_OK) {
 		stats->tx_bytes += skb->len;
 		stats->tx_packets++;
-		skb_tx_timestamp(skb);
+
+		if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP &&
+		    SPARX5_SKB_CB(skb)->rew_op == IFH_REW_OP_TWO_STEP_PTP)
+			return ret;
+
 		dev_kfree_skb_any(skb);
 	} else {
 		stats->tx_dropped++;
+
+		if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP &&
+		    SPARX5_SKB_CB(skb)->rew_op == IFH_REW_OP_TWO_STEP_PTP)
+			sparx5_ptp_txtstamp_release(port, skb);
 	}
 	return ret;
 }

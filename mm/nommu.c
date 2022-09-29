@@ -27,7 +27,6 @@
 #include <linux/pagemap.h>
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
-#include <linux/blkdev.h>
 #include <linux/backing-dev.h>
 #include <linux/compiler.h>
 #include <linux/mount.h>
@@ -226,6 +225,8 @@ void *vmalloc(unsigned long size)
 	return __vmalloc(size, GFP_KERNEL);
 }
 EXPORT_SYMBOL(vmalloc);
+
+void *vmalloc_huge(unsigned long size, gfp_t gfp_mask) __weak __alias(__vmalloc);
 
 /*
  *	vzalloc - allocate virtually contiguous memory with zero fill
@@ -499,7 +500,7 @@ static void delete_nommu_region(struct vm_region *region)
 static void free_page_series(unsigned long from, unsigned long to)
 {
 	for (; from < to; from += PAGE_SIZE) {
-		struct page *page = virt_to_page(from);
+		struct page *page = virt_to_page((void *)from);
 
 		atomic_long_dec(&mmap_pages_allocated);
 		put_page(page);
@@ -825,9 +826,6 @@ static int validate_mmap_request(struct file *file,
 			if (IS_APPEND(file_inode(file)) &&
 			    (file->f_mode & FMODE_WRITE))
 				return -EACCES;
-
-			if (locks_verify_locked(file))
-				return -EAGAIN;
 
 			if (!(capabilities & NOMMU_MAP_DIRECT))
 				return -ENODEV;
@@ -1296,8 +1294,6 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
 			goto out;
 	}
 
-	flags &= ~MAP_DENYWRITE;
-
 	retval = vm_mmap_pgoff(file, addr, len, prot, flags, pgoff);
 
 	if (file)
@@ -1643,12 +1639,6 @@ int remap_vmalloc_range(struct vm_area_struct *vma, void *addr,
 	return 0;
 }
 EXPORT_SYMBOL(remap_vmalloc_range);
-
-unsigned long arch_get_unmapped_area(struct file *file, unsigned long addr,
-	unsigned long len, unsigned long pgoff, unsigned long flags)
-{
-	return -ENOMEM;
-}
 
 vm_fault_t filemap_fault(struct vm_fault *vmf)
 {

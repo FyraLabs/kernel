@@ -22,7 +22,7 @@
  *
  * The total_period is needed because by default auto-freq is used, so
  * multiplying nr_events[PERF_EVENT_SAMPLE] by a frequency isn't possible to get
- * the total number of low level events, it is necessary to to sum all struct
+ * the total number of low level events, it is necessary to sum all struct
  * perf_record_sample.period and stash the result in total_period.
  */
 struct events_stats {
@@ -30,6 +30,7 @@ struct events_stats {
 	u64 total_lost_samples;
 	u64 total_aux_lost;
 	u64 total_aux_partial;
+	u64 total_aux_collision;
 	u64 total_invalid_chains;
 	u32 nr_events[PERF_RECORD_HEADER_MAX];
 	u32 nr_lost_warned;

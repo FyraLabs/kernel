@@ -171,10 +171,13 @@ struct regulator;
 /**
  * struct regulator_bulk_data - Data used for bulk regulator operations.
  *
- * @supply:   The name of the supply.  Initialised by the user before
- *            using the bulk regulator APIs.
- * @consumer: The regulator consumer for the supply.  This will be managed
- *            by the bulk API.
+ * @supply:       The name of the supply.  Initialised by the user before
+ *                using the bulk regulator APIs.
+ * @init_load_uA: After getting the regulator, regulator_set_load() will be
+ *                called with this load.  Initialised by the user before
+ *                using the bulk regulator APIs.
+ * @consumer:     The regulator consumer for the supply.  This will be managed
+ *                by the bulk API.
  *
  * The regulator APIs provide a series of regulator_bulk_() API calls as
  * a convenience to consumers which require multiple supplies.  This
@@ -182,6 +185,7 @@ struct regulator;
  */
 struct regulator_bulk_data {
 	const char *supply;
+	int init_load_uA;
 	struct regulator *consumer;
 
 	/* private: Internal use */
@@ -222,17 +226,12 @@ void regulator_bulk_unregister_supply_alias(struct device *dev,
 int devm_regulator_register_supply_alias(struct device *dev, const char *id,
 					 struct device *alias_dev,
 					 const char *alias_id);
-void devm_regulator_unregister_supply_alias(struct device *dev,
-					    const char *id);
 
 int devm_regulator_bulk_register_supply_alias(struct device *dev,
 					      const char *const *id,
 					      struct device *alias_dev,
 					      const char *const *alias_id,
 					      int num_id);
-void devm_regulator_bulk_unregister_supply_alias(struct device *dev,
-						 const char *const *id,
-						 int num_id);
 
 /* regulator output control and status */
 int __must_check regulator_enable(struct regulator *regulator);
@@ -245,6 +244,10 @@ int __must_check regulator_bulk_get(struct device *dev, int num_consumers,
 				    struct regulator_bulk_data *consumers);
 int __must_check devm_regulator_bulk_get(struct device *dev, int num_consumers,
 					 struct regulator_bulk_data *consumers);
+int __must_check devm_regulator_bulk_get_const(
+	struct device *dev, int num_consumers,
+	const struct regulator_bulk_data *in_consumers,
+	struct regulator_bulk_data **out_consumers);
 int __must_check regulator_bulk_enable(int num_consumers,
 				       struct regulator_bulk_data *consumers);
 int regulator_bulk_disable(int num_consumers,
@@ -408,11 +411,6 @@ static inline int devm_regulator_register_supply_alias(struct device *dev,
 	return 0;
 }
 
-static inline void devm_regulator_unregister_supply_alias(struct device *dev,
-							  const char *id)
-{
-}
-
 static inline int devm_regulator_bulk_register_supply_alias(struct device *dev,
 						const char *const *id,
 						struct device *alias_dev,
@@ -420,11 +418,6 @@ static inline int devm_regulator_bulk_register_supply_alias(struct device *dev,
 						int num_id)
 {
 	return 0;
-}
-
-static inline void devm_regulator_bulk_unregister_supply_alias(
-	struct device *dev, const char *const *id, int num_id)
-{
 }
 
 static inline int regulator_enable(struct regulator *regulator)

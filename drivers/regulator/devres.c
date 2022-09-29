@@ -166,6 +166,34 @@ int devm_regulator_bulk_get(struct device *dev, int num_consumers,
 }
 EXPORT_SYMBOL_GPL(devm_regulator_bulk_get);
 
+/**
+ * devm_regulator_bulk_get_const - devm_regulator_bulk_get() w/ const data
+ *
+ * @dev:           device to supply
+ * @num_consumers: number of consumers to register
+ * @in_consumers:  const configuration of consumers
+ * @out_consumers: in_consumers is copied here and this is passed to
+ *		   devm_regulator_bulk_get().
+ *
+ * This is a convenience function to allow bulk regulator configuration
+ * to be stored "static const" in files.
+ *
+ * Return: 0 on success, an errno on failure.
+ */
+int devm_regulator_bulk_get_const(struct device *dev, int num_consumers,
+				  const struct regulator_bulk_data *in_consumers,
+				  struct regulator_bulk_data **out_consumers)
+{
+	*out_consumers = devm_kmemdup(dev, in_consumers,
+				      num_consumers * sizeof(*in_consumers),
+				      GFP_KERNEL);
+	if (*out_consumers == NULL)
+		return -ENOMEM;
+
+	return devm_regulator_bulk_get(dev, num_consumers, *out_consumers);
+}
+EXPORT_SYMBOL_GPL(devm_regulator_bulk_get_const);
+
 static void devm_rdev_release(struct device *dev, void *res)
 {
 	regulator_unregister(*(struct regulator_dev **)res);
@@ -204,35 +232,6 @@ struct regulator_dev *devm_regulator_register(struct device *dev,
 	return rdev;
 }
 EXPORT_SYMBOL_GPL(devm_regulator_register);
-
-static int devm_rdev_match(struct device *dev, void *res, void *data)
-{
-	struct regulator_dev **r = res;
-	if (!r || !*r) {
-		WARN_ON(!r || !*r);
-		return 0;
-	}
-	return *r == data;
-}
-
-/**
- * devm_regulator_unregister - Resource managed regulator_unregister()
- * @dev:  device to supply
- * @rdev: regulator to free
- *
- * Unregister a regulator registered with devm_regulator_register().
- * Normally this function will not need to be called and the resource
- * management code will ensure that the resource is freed.
- */
-void devm_regulator_unregister(struct device *dev, struct regulator_dev *rdev)
-{
-	int rc;
-
-	rc = devres_release(dev, devm_rdev_release, devm_rdev_match, rdev);
-	if (rc != 0)
-		WARN_ON(rc);
-}
-EXPORT_SYMBOL_GPL(devm_regulator_unregister);
 
 struct regulator_supply_alias_match {
 	struct device *dev;
@@ -296,19 +295,8 @@ int devm_regulator_register_supply_alias(struct device *dev, const char *id,
 }
 EXPORT_SYMBOL_GPL(devm_regulator_register_supply_alias);
 
-/**
- * devm_regulator_unregister_supply_alias - Resource managed
- * regulator_unregister_supply_alias()
- *
- * @dev: device to supply
- * @id:  supply name or regulator ID
- *
- * Unregister an alias registered with
- * devm_regulator_register_supply_alias(). Normally this function
- * will not need to be called and the resource management code
- * will ensure that the resource is freed.
- */
-void devm_regulator_unregister_supply_alias(struct device *dev, const char *id)
+static void devm_regulator_unregister_supply_alias(struct device *dev,
+						   const char *id)
 {
 	struct regulator_supply_alias_match match;
 	int rc;
@@ -321,7 +309,6 @@ void devm_regulator_unregister_supply_alias(struct device *dev, const char *id)
 	if (rc != 0)
 		WARN_ON(rc);
 }
-EXPORT_SYMBOL_GPL(devm_regulator_unregister_supply_alias);
 
 /**
  * devm_regulator_bulk_register_supply_alias - Managed register
@@ -372,30 +359,6 @@ err:
 	return ret;
 }
 EXPORT_SYMBOL_GPL(devm_regulator_bulk_register_supply_alias);
-
-/**
- * devm_regulator_bulk_unregister_supply_alias - Managed unregister
- * multiple aliases
- *
- * @dev:    device to supply
- * @id:     list of supply names or regulator IDs
- * @num_id: number of aliases to unregister
- *
- * Unregister aliases registered with
- * devm_regulator_bulk_register_supply_alias(). Normally this function
- * will not need to be called and the resource management code
- * will ensure that the resource is freed.
- */
-void devm_regulator_bulk_unregister_supply_alias(struct device *dev,
-						 const char *const *id,
-						 int num_id)
-{
-	int i;
-
-	for (i = 0; i < num_id; ++i)
-		devm_regulator_unregister_supply_alias(dev, id[i]);
-}
-EXPORT_SYMBOL_GPL(devm_regulator_bulk_unregister_supply_alias);
 
 struct regulator_notifier_match {
 	struct regulator *regulator;

@@ -19,7 +19,7 @@ workflow:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'   # ARK release pipelines
     - if: '$CI_MERGE_REQUEST_PROJECT_PATH =~ /^cki-project.kernel-ark/'   # ARK MR CI
       variables:
-        REQUESTED_PIPELINE_TYPE: 'trusted-ark'
+        REQUESTED_PIPELINE_TYPE: 'ark-ci'
     # We cannot merge rules through !reference and have to copy them over from the
     # CKI pipeline: https://gitlab.com/gitlab-org/gitlab/-/issues/322992
     - if: '$CI_MERGE_REQUEST_PROJECT_PATH =~ /^redhat.rhel/ || $CI_PROJECT_PATH =~ /^redhat.rhel/'
@@ -27,7 +27,7 @@ workflow:
         REQUESTED_PIPELINE_TYPE: 'internal'
     - if: '$CI_MERGE_REQUEST_PROJECT_PATH =~ /^redhat.centos-stream/ || $CI_PROJECT_PATH =~ /^redhat.centos-stream/'
       variables:
-        REQUESTED_PIPELINE_TYPE: 'trusted'
+        REQUESTED_PIPELINE_TYPE: '/^(trusted|centos-rhel)$/'
 
 # We need to differentiate between the pipeline types that are triggered from this
 # single file. Once the mirroring to c9s stops this anchor can be dropped and the
@@ -38,7 +38,7 @@ workflow:
     project: redhat/red-hat-ci-tools/kernel/cki-internal-pipelines/cki-trusted-contributors
     strategy: depend
   variables:
-    PIPELINE_TYPE: 'trusted-ark'
+    PIPELINE_TYPE: 'ark-ci'
     kernel_type: 'upstream'
 
 .trigger_ark_pipeline:
@@ -50,20 +50,22 @@ workflow:
     builder_image: registry.gitlab.com/cki-project/containers/builder-rawhide
     builder_image_tag: latest
     srpm_make_target: dist-srpm
+    run_redhat_self_test : 'true'
     # We only need srpm so skip the rest of the stages
     skip_build: 'true'
     skip_publish: 'true'
     skip_test: 'true'
     skip_results: 'true'
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "os-build"'
 
 .9-common:
   variables:
     builder_image_tag: latest
     srpm_make_target: dist-srpm
-    build_kabi_stablelist: 'true'
-    tree_yaml_name: rhel
-    publish_elsewhere: 'true'
     native_tools: 'true'
+    architectures: 'x86_64 ppc64le aarch64 s390x'
+    POWER_BUILDER_SUFFIX: '-p9'
 
 .trigger_c9s_pipeline:
   trigger:
@@ -71,8 +73,8 @@ workflow:
   variables:
     name: centos-stream-9
     builder_image: registry.gitlab.com/cki-project/containers/builder-stream9
-    architectures: 'x86_64 ppc64le aarch64 s390x'
     kpet_tree_family: c9s
+    kernel_type: 'upstream'  # Needs to be overriden due to inheriting from .rhel_common
 
 .trigger_rhel9_pipeline:
   trigger:
@@ -80,29 +82,111 @@ workflow:
   variables:
     name: rhel9
     builder_image: quay.io/cki/builder-rhel9
-    architectures: 'x86_64 aarch64 s390x'   #ppc64le container is not available yet
     kpet_tree_family: rhel9
 
+.realtime_check_c9s:
+  trigger:
+    branch: c9s-rt
+  variables:
+    merge_branch: main-rt
+    name: kernel-rt-c9s
+
+.realtime_check_rhel9:
+  trigger:
+    branch: rhel9-rt
+  variables:
+    merge_branch: main-rt
+    name: kernel-rt-rhel9
+
+.trigger_rhel9_build:
+  extends: .trigger_rhel9_pipeline
+  variables:
+    skip_test: 'true'
+    skip_results: 'true'
+
+.realtime_full_c9s:
+  variables:
+    name: kernel-rt-c9s
+    kpet_tree_family: c9s-rt
+    RUN_ONLY_FOR_RT: 'true'
+
+.realtime_full_rhel9:
+  variables:
+    name: kernel-rt-rhel9
+    kpet_tree_family: rhel9-rt
+    RUN_ONLY_FOR_RT: 'true'
+
+# ARK CI
 ark_merge_request:
   extends: [.trusted-ark, .merge_request, .trigger_ark_pipeline]
 
-# Only enable c9s pipelines once we have the composes available in Beaker
-# c9s_merge_request:
-#   extends: [.trusted, .merge_request, .9-common, .trigger_c9s_pipeline]
-# 
-# c9s_baseline:
-#   extends: [.trusted, .baseline, .9-common, .trigger_c9s_pipeline]
+# c9s CI
+c9s_merge_request:
+  extends: [.trusted, .merge_request, .rhel_common,
+            .9-common, .trigger_c9s_pipeline]
 
+c9s_realtime_check_merge_request:
+  extends: [.trusted, .merge_request,
+            .9-common,
+            .realtime_check_common,
+            .trigger_c9s_pipeline, .realtime_check_c9s]
+
+c9s_baseline:
+  extends: [.trusted, .baseline, .rhel_common,
+            .9-common, .trigger_c9s_pipeline]
+
+c9s_rhel9_compat_merge_request:
+  extends: [.centos_stream_rhel_internal, .merge_request, .rhel_common,
+            .9-common, .trigger_rhel9_build]
+
+c9s_rhel9_compat_baseline:
+  extends: [.centos_stream_rhel_internal, .baseline, .rhel_common,
+            .9-common, .trigger_rhel9_build]
+
+# c9s realtime branch CI
+c9s_realtime_merge_request:
+  extends: [.trusted, .merge_request,
+            .9-common,
+            .realtime_pipeline_common,
+            .trigger_c9s_pipeline, .realtime_full_c9s]
+
+c9s_realtime_baseline:
+  extends: [.trusted, .baseline,
+            .9-common,
+            .realtime_pipeline_common,
+            .trigger_c9s_pipeline, .realtime_full_c9s]
+
+# RHEL9 CI
 rhel9_merge_request:
-  extends: [.internal, .merge_request, .9-common, .trigger_rhel9_pipeline]
+  extends: [.internal, .merge_request, .rhel_common,
+            .9-common, .trigger_rhel9_pipeline]
+
+rhel9_realtime_check_merge_request:
+  extends: [.internal, .merge_request,
+            .9-common,
+            .realtime_check_common,
+            .trigger_rhel9_pipeline, .realtime_check_rhel9]
 
 rhel9_baseline:
-  extends: [.internal, .baseline, .9-common, .trigger_rhel9_pipeline]
+  extends: [.internal, .baseline, .rhel_common,
+            .9-common, .trigger_rhel9_pipeline]
 
+# RHEL9 realtime branch CI
+rhel9_realtime_merge_request:
+  extends: [.internal, .merge_request,
+            .9-common,
+            .realtime_pipeline_common,
+            .trigger_rhel9_pipeline, .realtime_full_rhel9]
+
+rhel9_realtime_baseline:
+  extends: [.internal, .baseline,
+            .9-common,
+            .realtime_pipeline_common,
+            .trigger_rhel9_pipeline, .realtime_full_rhel9]
 
 # scheduled job
 .scheduled_setup:
-  image: registry.gitlab.com/cki-project/containers/builder-fedora
+  image: registry.gitlab.com/cki-project/containers/builder-rawhide
   variables:
     GIT_DEPTH: "0"
     GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
@@ -154,6 +238,27 @@ rawhide_release:
   retry: 2
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RAWHIDE_RELEASE == "true"'
+
+test_makefile:
+  image: quay.io/fedora/fedora:rawhide
+  variables:
+    GIT_DEPTH: "0"
+    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/kernel-ark
+  before_script:
+    - echo "fastestmirror=true" >> /etc/dnf/dnf.conf
+    - dnf -y install python3-gitlab git openssh-clients dnf-utils gnupg2
+    # These packages are required for 'make dist-get-buildreqs'
+    - dnf -y install make rpm-build
+    - git config user.name "Fedora Kernel Team"
+    - git config user.email "kernel-team@fedoraproject.org"
+  script:
+    - export missing=$(make dist-get-buildreqs | grep "Missing dependencies:" | cut -d":" -f2)
+    - if [ "$missing" == "" ]; then echo "Missing dependencies should not be null but are empty. Review test log." && exit 1; fi;
+    - dnf -y install $missing
+    - export missingafter=$(make dist-get-buildreqs | grep "Missing dependencies:" | cut -d":" -f2)
+    - if [ "$missingafter" != "" ]; then echo "Missing dependencies should be null but are $missingafter. Review test log." && exit 1; fi;
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "os-build"'
 
 test_docs:
   stage: test

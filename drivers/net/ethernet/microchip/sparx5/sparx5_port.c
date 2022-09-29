@@ -596,7 +596,7 @@ static int sparx5_port_max_tags_set(struct sparx5 *sparx5,
 	return 0;
 }
 
-static int sparx5_port_fwd_urg(struct sparx5 *sparx5, u32 speed)
+int sparx5_port_fwd_urg(struct sparx5 *sparx5, u32 speed)
 {
 	u32 clk_period_ps = 1600; /* 625Mhz for now */
 	u32 urg = 672000;
@@ -742,7 +742,7 @@ static int sparx5_port_pcs_low_set(struct sparx5 *sparx5,
 		if (err)
 			return -EINVAL;
 	} else {
-		sgmii = true; /* Phy is connnected to the MAC */
+		sgmii = true; /* Phy is connected to the MAC */
 	}
 
 	/* Choose SGMII or 1000BaseX/2500BaseX PCS mode */

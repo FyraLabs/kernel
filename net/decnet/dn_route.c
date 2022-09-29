@@ -159,7 +159,7 @@ static void dn_dst_ifdown(struct dst_entry *dst, struct net_device *dev, int how
 		struct neighbour *n = rt->n;
 
 		if (n && n->dev == dev) {
-			n->dev = dev_net(dev)->loopback_dev;
+			n->dev = blackhole_netdev;
 			dev_hold(n->dev);
 			dev_put(dev);
 		}
@@ -201,7 +201,7 @@ static void dn_dst_check_expire(struct timer_list *unused)
 		}
 		spin_unlock(&dn_rt_hash_table[i].lock);
 
-		if ((jiffies - now) > 0)
+		if (jiffies != now)
 			break;
 	}
 
@@ -1026,8 +1026,7 @@ source_ok:
 	if (!fld.daddr) {
 		fld.daddr = fld.saddr;
 
-		if (dev_out)
-			dev_put(dev_out);
+		dev_put(dev_out);
 		err = -EINVAL;
 		dev_out = init_net.loopback_dev;
 		if (!dev_out->dn_ptr)
@@ -1084,8 +1083,7 @@ source_ok:
 					neigh_release(neigh);
 					neigh = NULL;
 				} else {
-					if (dev_out)
-						dev_put(dev_out);
+					dev_put(dev_out);
 					if (dn_dev_islocal(neigh->dev, fld.daddr)) {
 						dev_out = init_net.loopback_dev;
 						res.type = RTN_LOCAL;
@@ -1122,7 +1120,7 @@ source_ok:
 		/* Ok then, we assume its directly connected and move on */
 select_source:
 		if (neigh)
-			gateway = ((struct dn_neigh *)neigh)->addr;
+			gateway = container_of(neigh, struct dn_neigh, n)->addr;
 		if (gateway == 0)
 			gateway = fld.daddr;
 		if (fld.saddr == 0) {
@@ -1144,8 +1142,7 @@ select_source:
 	if (res.type == RTN_LOCAL) {
 		if (!fld.saddr)
 			fld.saddr = fld.daddr;
-		if (dev_out)
-			dev_put(dev_out);
+		dev_put(dev_out);
 		dev_out = init_net.loopback_dev;
 		dev_hold(dev_out);
 		if (!dev_out->dn_ptr)
@@ -1168,8 +1165,7 @@ select_source:
 	if (!fld.saddr)
 		fld.saddr = DN_FIB_RES_PREFSRC(res);
 
-	if (dev_out)
-		dev_put(dev_out);
+	dev_put(dev_out);
 	dev_out = DN_FIB_RES_DEV(res);
 	dev_hold(dev_out);
 	fld.flowidn_oif = dev_out->ifindex;
@@ -1222,8 +1218,7 @@ done:
 		neigh_release(neigh);
 	if (free_res)
 		dn_fib_res_put(&res);
-	if (dev_out)
-		dev_put(dev_out);
+	dev_put(dev_out);
 out:
 	return err;
 
@@ -1434,7 +1429,7 @@ static int dn_route_input_slow(struct sk_buff *skb)
 		/* Use the default router if there is one */
 		neigh = neigh_clone(dn_db->router);
 		if (neigh) {
-			gateway = ((struct dn_neigh *)neigh)->addr;
+			gateway = container_of(neigh, struct dn_neigh, n)->addr;
 			goto make_route;
 		}
 
@@ -1503,8 +1498,7 @@ done:
 	if (free_res)
 		dn_fib_res_put(&res);
 	dev_put(in_dev);
-	if (out_dev)
-		dev_put(out_dev);
+	dev_put(out_dev);
 out:
 	return err;
 

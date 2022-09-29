@@ -111,15 +111,13 @@ static int scmi_dev_probe(struct device *dev)
 	return scmi_drv->probe(scmi_dev);
 }
 
-static int scmi_dev_remove(struct device *dev)
+static void scmi_dev_remove(struct device *dev)
 {
 	struct scmi_driver *scmi_drv = to_scmi_driver(dev->driver);
 	struct scmi_device *scmi_dev = to_scmi_dev(dev);
 
 	if (scmi_drv->remove)
 		scmi_drv->remove(scmi_dev);
-
-	return 0;
 }
 
 static struct bus_type scmi_bus_type = {
@@ -183,7 +181,7 @@ scmi_device_create(struct device_node *np, struct device *parent, int protocol,
 		return NULL;
 	}
 
-	id = ida_simple_get(&scmi_bus_id, 1, 0, GFP_KERNEL);
+	id = ida_alloc_min(&scmi_bus_id, 1, GFP_KERNEL);
 	if (id < 0) {
 		kfree_const(scmi_dev->name);
 		kfree(scmi_dev);
@@ -206,7 +204,7 @@ scmi_device_create(struct device_node *np, struct device *parent, int protocol,
 put_dev:
 	kfree_const(scmi_dev->name);
 	put_device(&scmi_dev->dev);
-	ida_simple_remove(&scmi_bus_id, id);
+	ida_free(&scmi_bus_id, id);
 	return NULL;
 }
 
@@ -214,7 +212,7 @@ void scmi_device_destroy(struct scmi_device *scmi_dev)
 {
 	kfree_const(scmi_dev->name);
 	scmi_handle_put(scmi_dev->handle);
-	ida_simple_remove(&scmi_bus_id, scmi_dev->id);
+	ida_free(&scmi_bus_id, scmi_dev->id);
 	device_unregister(&scmi_dev->dev);
 }
 

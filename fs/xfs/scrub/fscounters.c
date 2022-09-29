@@ -78,10 +78,10 @@ xchk_fscount_warmup(
 			continue;
 
 		/* Lock both AG headers. */
-		error = xfs_ialloc_read_agi(mp, sc->tp, agno, &agi_bp);
+		error = xfs_ialloc_read_agi(pag, sc->tp, &agi_bp);
 		if (error)
 			break;
-		error = xfs_alloc_read_agf(mp, sc->tp, agno, 0, &agf_bp);
+		error = xfs_alloc_read_agf(pag, sc->tp, 0, &agf_bp);
 		if (error)
 			break;
 
@@ -148,9 +148,9 @@ xchk_fscount_btreeblks(
 	xfs_extlen_t		blocks;
 	int			error;
 
-	error = xchk_ag_init(sc, agno, &sc->sa);
+	error = xchk_ag_init_existing(sc, agno, &sc->sa);
 	if (error)
-		return error;
+		goto out_free;
 
 	error = xfs_btree_count_blocks(sc->sa.bno_cur, &blocks);
 	if (error)
@@ -207,7 +207,7 @@ retry:
 		/* Add up the free/freelist/bnobt/cntbt blocks */
 		fsc->fdblocks += pag->pagf_freeblks;
 		fsc->fdblocks += pag->pagf_flcount;
-		if (xfs_sb_version_haslazysbcount(&sc->mp->m_sb)) {
+		if (xfs_has_lazysbcount(sc->mp)) {
 			fsc->fdblocks += pag->pagf_btreeblks;
 		} else {
 			error = xchk_fscount_btreeblks(sc, fsc, agno);

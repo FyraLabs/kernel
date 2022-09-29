@@ -35,26 +35,18 @@
 #include <asm/syscalls.h>
 #include <asm/time.h>
 #include <asm/unistd.h>
-#include <asm/asm-prototypes.h>
 
 static inline long do_mmap2(unsigned long addr, size_t len,
 			unsigned long prot, unsigned long flags,
 			unsigned long fd, unsigned long off, int shift)
 {
-	long ret = -EINVAL;
-
 	if (!arch_validate_prot(prot, addr))
-		goto out;
+		return -EINVAL;
 
-	if (shift) {
-		if (off & ((1 << shift) - 1))
-			goto out;
-		off >>= shift;
-	}
+	if (!IS_ALIGNED(off, 1 << shift))
+		return -EINVAL;
 
-	ret = ksys_mmap_pgoff(addr, len, prot, flags, fd, off);
-out:
-	return ret;
+	return ksys_mmap_pgoff(addr, len, prot, flags, fd, off >> shift);
 }
 
 SYSCALL_DEFINE6(mmap2, unsigned long, addr, size_t, len,
@@ -81,7 +73,7 @@ SYSCALL_DEFINE6(mmap, unsigned long, addr, size_t, len,
 int
 ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, struct __kernel_old_timeval __user *tvp)
 {
-	if ( (unsigned long)n >= 4096 )
+	if ((unsigned long)n >= 4096)
 		return sys_old_select((void __user *)n);
 
 	return sys_select(n, inp, outp, exp, tvp);

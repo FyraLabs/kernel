@@ -52,7 +52,7 @@ properties:
       of the data and clock lines.
 
   port:
-    $ref: /schemas/graph.yaml#/properties/port
+    $ref: /schemas/graph.yaml#/$defs/port-base
     description:
       Input port node, single endpoint describing the input pad.
 
@@ -67,7 +67,7 @@ properties:
           remote-endpoint: true
 
           bus-width:
-            enum: [8, 9, 10, 11, 12]
+            enum: [8, 9, 10, 11, 12, 14]
             default: 12
 
           hsync-active:
@@ -126,4 +126,3 @@ examples:
                 };
         };
     };
-
