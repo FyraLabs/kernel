@@ -1,0 +1,99 @@
+From 71e9b84904d2dffca453acc8e44029197bd7057d Mon Sep 17 00:00:00 2001
+From: "Justin M. Forbes" <jforbes@fedoraproject.org>
+Date: Thu, 31 Mar 2022 13:42:18 -0500
+Subject: [PATCH] Revert SimpleDRM changes
+
+The Simple DRM feature for F36 requires some configration changes that
+do not work for everyone on F35 and below. This revert will be saved in
+the tree so that it can be applied before building configs for F34/F35
+
+Signed-off-by: Justin M. Forbes <jforbes@fedoraproject.org>
+---
+ redhat/configs/fedora/generic/CONFIG_DRM            | 1 -
+ redhat/configs/fedora/generic/CONFIG_DRM_DEBUG_MM   | 1 -
+ redhat/configs/fedora/generic/CONFIG_DRM_SIMPLEDRM  | 2 +-
+ redhat/configs/fedora/generic/CONFIG_FB_SSD1307     | 2 +-
+ redhat/configs/fedora/generic/CONFIG_I2C_ALGOBIT    | 1 -
+ redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB | 2 +-
+ redhat/configs/fedora/generic/arm/CONFIG_FB_SIMPLE  | 2 +-
+ redhat/configs/fedora/generic/arm/CONFIG_FB_SSD1307 | 2 +-
+ redhat/configs/fedora/generic/x86/CONFIG_FB_I810    | 2 +-
+ redhat/configs/fedora/generic/x86/CONFIG_FB_VGA16   | 2 +-
+ 11 files changed, 7 insertions(+), 11 deletions(-)
+ delete mode 100644 redhat/configs/fedora/generic/CONFIG_DRM
+ delete mode 100644 redhat/configs/fedora/generic/CONFIG_DRM_DEBUG_MM
+ delete mode 100644 redhat/configs/fedora/generic/CONFIG_I2C_ALGOBIT
+
+diff --git a/redhat/configs/fedora/generic/CONFIG_DRM b/redhat/configs/fedora/generic/CONFIG_DRM
+deleted file mode 100644
+index 517f31840d34..000000000000
+--- a/redhat/configs/fedora/generic/CONFIG_DRM
++++ /dev/null
+@@ -1 +0,0 @@
+-CONFIG_DRM=y
+diff --git a/redhat/configs/fedora/generic/CONFIG_DRM_DEBUG_MM b/redhat/configs/fedora/generic/CONFIG_DRM_DEBUG_MM
+deleted file mode 100644
+index 117f02c9e72a..000000000000
+--- a/redhat/configs/fedora/generic/CONFIG_DRM_DEBUG_MM
++++ /dev/null
+@@ -1 +0,0 @@
+-# CONFIG_DRM_DEBUG_MM is not set
+diff --git a/redhat/configs/fedora/generic/CONFIG_DRM_SIMPLEDRM b/redhat/configs/fedora/generic/CONFIG_DRM_SIMPLEDRM
+index b81ed1176cd9..2bd12280c074 100644
+--- a/redhat/configs/fedora/generic/CONFIG_DRM_SIMPLEDRM
++++ b/redhat/configs/fedora/generic/CONFIG_DRM_SIMPLEDRM
+@@ -1 +1 @@
+-CONFIG_DRM_SIMPLEDRM=y
++# CONFIG_DRM_SIMPLEDRM is not set
+diff --git a/redhat/configs/fedora/generic/CONFIG_FB_SSD1307 b/redhat/configs/fedora/generic/CONFIG_FB_SSD1307
+index cddd16bb7398..efd995bdfe8a 100644
+--- a/redhat/configs/fedora/generic/CONFIG_FB_SSD1307
++++ b/redhat/configs/fedora/generic/CONFIG_FB_SSD1307
+@@ -1 +1 @@
+-# CONFIG_FB_SSD1307 is not set
++CONFIG_FB_SSD1307=m
+diff --git a/redhat/configs/fedora/generic/CONFIG_I2C_ALGOBIT b/redhat/configs/fedora/generic/CONFIG_I2C_ALGOBIT
+deleted file mode 100644
+index b89d18d43501..000000000000
+--- a/redhat/configs/fedora/generic/CONFIG_I2C_ALGOBIT
++++ /dev/null
+@@ -1 +0,0 @@
+-CONFIG_I2C_ALGOBIT=y
+diff --git a/redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB b/redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB
+index d542137dbb6a..6ae3e10a489e 100644
+--- a/redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB
++++ b/redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB
+@@ -1 +1 @@
+-CONFIG_SYSFB_SIMPLEFB=y
++# CONFIG_SYSFB_SIMPLEFB is not set
+diff --git a/redhat/configs/fedora/generic/arm/CONFIG_FB_SIMPLE b/redhat/configs/fedora/generic/arm/CONFIG_FB_SIMPLE
+index 3ae9be22cdf9..0eb3d04225f1 100644
+--- a/redhat/configs/fedora/generic/arm/CONFIG_FB_SIMPLE
++++ b/redhat/configs/fedora/generic/arm/CONFIG_FB_SIMPLE
+@@ -1 +1 @@
+-# CONFIG_FB_SIMPLE is not set
++CONFIG_FB_SIMPLE=y
+diff --git a/redhat/configs/fedora/generic/arm/CONFIG_FB_SSD1307 b/redhat/configs/fedora/generic/arm/CONFIG_FB_SSD1307
+index cddd16bb7398..efd995bdfe8a 100644
+--- a/redhat/configs/fedora/generic/arm/CONFIG_FB_SSD1307
++++ b/redhat/configs/fedora/generic/arm/CONFIG_FB_SSD1307
+@@ -1 +1 @@
+-# CONFIG_FB_SSD1307 is not set
++CONFIG_FB_SSD1307=m
+diff --git a/redhat/configs/fedora/generic/x86/CONFIG_FB_I810 b/redhat/configs/fedora/generic/x86/CONFIG_FB_I810
+index 3a3f4d26de7b..9ef6eca18a0a 100644
+--- a/redhat/configs/fedora/generic/x86/CONFIG_FB_I810
++++ b/redhat/configs/fedora/generic/x86/CONFIG_FB_I810
+@@ -1 +1 @@
+-# CONFIG_FB_I810 is not set
++CONFIG_FB_I810=m
+diff --git a/redhat/configs/fedora/generic/x86/CONFIG_FB_VGA16 b/redhat/configs/fedora/generic/x86/CONFIG_FB_VGA16
+index d933f13d7a84..4fa33dfdc6be 100644
+--- a/redhat/configs/fedora/generic/x86/CONFIG_FB_VGA16
++++ b/redhat/configs/fedora/generic/x86/CONFIG_FB_VGA16
+@@ -1 +1 @@
+-# CONFIG_FB_VGA16 is not set
++CONFIG_FB_VGA16=m
+-- 
+2.35.1
+
