@@ -1,3 +1,11 @@
+* Wed Oct 05 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.0-0]
+- enable efifb for Nvidia (Justin M. Forbes)
+- drivers/firmware: skip simpledrm if nvidia-drm.modeset=1 is set (Javier Martinez Canillas)
+- Updates for stable Fedora (Justin M. Forbes)
+- Forgot too remove this from pending, it is set properly in ark (Justin M. Forbes)
+- redhat/Makefile: Add DIST to git tags for RHEL (Prarit Bhargava)
+Resolves: 
+
 * Mon Oct 03 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.0.0-54]
 - redhat/configs: Move CONFIG_ARM_SMMU_QCOM_DEBUG to common (Jerry Snitselaar)
 - Linux v6.0.0
