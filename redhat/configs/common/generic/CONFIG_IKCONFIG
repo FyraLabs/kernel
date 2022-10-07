@@ -1,1 +1,1 @@
-# CONFIG_IKCONFIG is not set
+CONFIG_IKCONFIG=y
