@@ -1,7 +1,11 @@
-* Sat Oct 08 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.e8bc52cb8df8.6]
+* Sun Oct 09 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.a6afa4199d3d.7]
 - Add acpi video to the filter_modules.sh for rhel (Justin M. Forbes)
 - Change acpi_bus_get_acpi_device to acpi_get_acpi_dev (Justin M. Forbes)
 - Add new drm kunit tests to mod-internal.list (Justin M. Forbes)
+Resolves: 
+
+* Sun Oct 09 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.a6afa4199d3d.6]
+- Linux v6.1.0-0.rc0.a6afa4199d3d
 Resolves: 
 
 * Sat Oct 08 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.e8bc52cb8df8.5]
