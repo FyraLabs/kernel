@@ -776,13 +776,6 @@ static int __init vsprintf_init_hashval(void)
 }
 subsys_initcall(vsprintf_init_hashval)
 
-static int __init vsprintf_init_hashval(void)
-{
-	fill_ptr_key_workfn(NULL);
-	return 0;
-}
-subsys_initcall(vsprintf_init_hashval)
-
 /* Maps a pointer to a 32 bit unique identifier. */
 static inline int __ptr_to_hashval(const void *ptr, unsigned long *hashval_out)
 {
