@@ -2521,6 +2521,7 @@ err_out:
 }
 #endif /* CONFIG_HAVE_ATOMIC_CONSOLE */
 
+static bool pr_flush(int timeout_ms, bool reset_on_progress);
 static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progress);
 
 static void printk_start_kthread(struct console *con);
@@ -3646,9 +3647,6 @@ void register_console(struct console *newcon)
 		newcon->next = console_drivers->next;
 		console_drivers->next = newcon;
 	}
-
-	if (newcon->flags & CON_EXTENDED)
-		nr_ext_console_drivers++;
 
 	atomic_long_set(&newcon->dropped, 0);
 	newcon->thread = NULL;

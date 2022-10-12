@@ -172,7 +172,6 @@ extern void __printk_safe_exit(void);
 extern void printk_prefer_direct_enter(void);
 extern void printk_prefer_direct_exit(void);
 
-extern bool pr_flush(int timeout_ms, bool reset_on_progress);
 extern void try_block_console_kthreads(int timeout_ms);
 
 /*
@@ -231,11 +230,6 @@ static inline void printk_prefer_direct_enter(void)
 
 static inline void printk_prefer_direct_exit(void)
 {
-}
-
-static inline bool pr_flush(int timeout_ms, bool reset_on_progress)
-{
-	return true;
 }
 
 static inline void try_block_console_kthreads(int timeout_ms)
