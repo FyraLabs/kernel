@@ -97,13 +97,13 @@ endif
 LOCVERFILE:=../localversion
 # create an empty localversion file if you don't want a local buildid
 ifneq ($(wildcard $(LOCVERFILE)),)
-  LOCALVERSION:=$(shell cat $(LOCVERFILE))
-  $(info LOCALVERSION is "$(LOCALVERSION)". Update '$(shell dirname $(REDHAT))/localversion' to change.)
+  BUILDID:=$(shell cat $(LOCVERFILE))
+  $(info BUILDID is "$(BUILDID)". Update '$(shell dirname $(REDHAT))/localversion' to change.)
 else
-  ifeq ($(LOCALVERSION),)
-    LOCALVERSION:=.test
+  ifeq ($(BUILDID),)
+    BUILDID:=.test
   endif
-  $(info LOCALVERSION is "$(LOCALVERSION)".)
+  $(info BUILDID is "$(BUILDID)".)
 endif
 
 # options for process_configs.sh script
@@ -213,7 +213,7 @@ endif
 # The NVR looks like, for example, kernel-5.17.0-0.rc8.551acdc3c3d2.124.test.fc35.
 # This string can be deconstructed as
 #
-# $(PACKAGE_NAME)-$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)-$(UPSTREAMBUILD)$(BUILD)$(LOCALVERSION)$(DIST)
+# $(PACKAGE_NAME)-$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)-$(UPSTREAMBUILD)$(BUILD)$(BUILDID)$(DIST)
 #
 # This can be evaluated as
 #
@@ -222,7 +222,7 @@ endif
 # $(PACKAGE_NAME)-$(BASEVERSION)                                                            $(DIST)
 # $(RELEASETAG)                                                                             $(DIST)
 #
-SPECBUILD:=$(UPSTREAMBUILD)$(BUILD)$(LOCALVERSION)
+SPECBUILD:=$(UPSTREAMBUILD)$(BUILD)$(BUILDID)
 SPECVERSION:=$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)
 BASEVERSION:=$(SPECVERSION)-$(SPECBUILD)
 RELEASETAG:=$(PACKAGE_NAME)-$(BASEVERSION)
@@ -675,7 +675,7 @@ dist-all-rpms: dist-sources do-rpmbuild
 dist-srpm: RPMBUILDOPTS=--nodeps -bs
 dist-srpm: dist-sources do-rpmbuild
 
-dist-srpm-gcov: LOCALVERSION=.gcov
+dist-srpm-gcov: BUILDID=.gcov
 dist-srpm-gcov: BUILDOPTS+=+gcov
 dist-srpm-gcov: dist-srpm
 
@@ -754,7 +754,7 @@ dist-vr-check:
 	@# version-release string with max 64 chars.  The version-release for s390x+zfcpdump
 	@# is 29 characters, leaving a maximum of 35 characters for SPECBUILD.
 	@if [ $$(echo -n $(SPECBUILD) | wc -c) -gt 35 ]; then \
-		echo "SPECBUILD ($(SPECBUILD)) is too long.  Use a shorter localversion (currently $(LOCALVERSION))"; \
+		echo "SPECBUILD ($(SPECBUILD)) is too long.  Use a shorter localversion (currently $(BUILDID))"; \
 		exit 1; \
 	fi
 
