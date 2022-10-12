@@ -3393,7 +3393,7 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * return false if the runqueue has changed and p
 		 * is actually now running somewhere else!
 		 */
-		while (task_running(rq, p)) {
+		while (task_on_cpu(rq, p)) {
 			if (match_state && state_mismatch(p, match_state))
 				return 0;
 			cpu_relax();
@@ -3406,7 +3406,7 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 */
 		rq = task_rq_lock(p, &rf);
 		trace_sched_wait_task(p);
-		running = task_running(rq, p);
+		running = task_on_cpu(rq, p);
 		wait = task_on_rq_queued(p);
 		ncsw = 0;
 
