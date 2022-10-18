@@ -1,5 +1,10 @@
-* Mon Oct 17 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.15]
-- Revert "redhat: properly handle binary files in patches" (Akihiko Odaki)
+* Tue Oct 18 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.bb1a1146467a.16]
+- perf tools: Fix man page build wrt perf-arm-coresight.txt (Adrian Hunter)
+- spec: prevent git apply from searching for the .git directory (Ondrej Mosnacek)
+Resolves: 
+
+* Tue Oct 18 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.bb1a1146467a.15]
+- Linux v6.1.0-0.rc1.bb1a1146467a
 Resolves: 
 
 * Mon Oct 17 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.14]
