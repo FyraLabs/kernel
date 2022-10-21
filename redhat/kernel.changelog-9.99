@@ -1,3 +1,10 @@
+* Fri Oct 21 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.3-0]
+- drm/vc4: hdmi: Fix HSM clock too low on Pi4 (maxime@cerno.tech)
+- Config updates for new options in 6.0.3 (Justin M. Forbes)
+- Revert "redhat: properly handle binary files in patches" (Justin M. Forbes)
+- Linux v6.0.3
+Resolves: 
+
 * Sat Oct 15 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.2-0]
 - phy: rockchip-inno-usb2: Return zero after otg sync (Peter Geis)
 - drm/vc4: hdmi: Check the HSM rate at runtime_resume (Maxime Ripard)
