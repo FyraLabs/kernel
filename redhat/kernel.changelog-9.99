@@ -1,3 +1,7 @@
+* Mon Oct 24 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.21]
+- perf tools: Fix man page build wrt perf-arm-coresight.txt (Adrian Hunter)
+Resolves: 
+
 * Mon Oct 24 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.20]
 - Linux v6.1.0-0.rc2
 Resolves: 
