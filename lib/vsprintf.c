@@ -750,7 +750,7 @@ static int __init debug_boot_weak_hash_enable(char *str)
 }
 early_param("debug_boot_weak_hash", debug_boot_weak_hash_enable);
 
-static bool filled_random_ptr_key __read_mostly;
+static bool filled_random_ptr_key;
 static siphash_key_t ptr_key __read_mostly;
 static void fill_ptr_key_workfn(struct work_struct *work);
 static DECLARE_DELAYED_WORK(fill_ptr_key_work, fill_ptr_key_workfn);

@@ -169,6 +169,11 @@ extern void __printk_safe_exit(void);
 #define printk_deferred_enter __printk_safe_enter
 #define printk_deferred_exit __printk_safe_exit
 
+extern void printk_prefer_direct_enter(void);
+extern void printk_prefer_direct_exit(void);
+
+extern void try_block_console_kthreads(int timeout_ms);
+
 /*
  * Please don't use printk_ratelimit(), because it shares ratelimiting state
  * with all other unrelated printk_ratelimit() callsites.  Instead use
@@ -216,6 +221,18 @@ static inline void printk_deferred_enter(void)
 }
 
 static inline void printk_deferred_exit(void)
+{
+}
+
+static inline void printk_prefer_direct_enter(void)
+{
+}
+
+static inline void printk_prefer_direct_exit(void)
+{
+}
+
+static inline void try_block_console_kthreads(int timeout_ms)
 {
 }
 
