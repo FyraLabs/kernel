@@ -14,7 +14,7 @@ Signed-off-by: Justin M. Forbes <jforbes@fedoraproject.org>
  redhat/configs/fedora/generic/CONFIG_DRM_SIMPLEDRM  | 2 +-
  redhat/configs/fedora/generic/CONFIG_FB_SSD1307     | 2 +-
  redhat/configs/fedora/generic/CONFIG_I2C_ALGOBIT    | 1 -
- redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB | 2 +-
+ redhat/configs/common/generic/CONFIG_SYSFB_SIMPLEFB | 2 +-
  redhat/configs/fedora/generic/arm/CONFIG_FB_SIMPLE  | 2 +-
  redhat/configs/fedora/generic/arm/CONFIG_FB_SSD1307 | 2 +-
  redhat/configs/fedora/generic/x86/CONFIG_FB_I810    | 2 +-
@@ -59,10 +59,10 @@ index b89d18d43501..000000000000
 +++ /dev/null
 @@ -1 +0,0 @@
 -CONFIG_I2C_ALGOBIT=y
-diff --git a/redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB b/redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB
+diff --git a/redhat/configs/common/generic/CONFIG_SYSFB_SIMPLEFB b/redhat/configs/common/generic/CONFIG_SYSFB_SIMPLEFB
 index d542137dbb6a..6ae3e10a489e 100644
---- a/redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB
-+++ b/redhat/configs/fedora/generic/CONFIG_SYSFB_SIMPLEFB
+--- a/redhat/configs/common/generic/CONFIG_SYSFB_SIMPLEFB
++++ b/redhat/configs/common/generic/CONFIG_SYSFB_SIMPLEFB
 @@ -1 +1 @@
 -CONFIG_SYSFB_SIMPLEFB=y
 +# CONFIG_SYSFB_SIMPLEFB is not set
