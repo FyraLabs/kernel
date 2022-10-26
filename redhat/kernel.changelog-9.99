@@ -1,3 +1,8 @@
+* Wed Oct 26 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.5-0]
+- Add release targets for stable rebase (Justin M. Forbes)
+- Linux v6.0.5
+Resolves: 
+
 * Fri Oct 21 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.3-0]
 - drm/vc4: hdmi: Fix HSM clock too low on Pi4 (maxime@cerno.tech)
 - Config updates for new options in 6.0.3 (Justin M. Forbes)
