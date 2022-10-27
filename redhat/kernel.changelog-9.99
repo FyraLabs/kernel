@@ -1,5 +1,6 @@
-* Wed Oct 26 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.4dc12f37a8e9.23]
-- perf tools: Fix man page build wrt perf-arm-coresight.txt (Adrian Hunter)
+* Thu Oct 27 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.b229b6ca5abb.23]
+- redhat/docs: Update with DISTLOCALVERSION (Prarit Bhargava)
+- Linux v6.1.0-0.rc2.b229b6ca5abb
 Resolves: 
 
 * Wed Oct 26 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.4dc12f37a8e9.22]
