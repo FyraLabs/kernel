@@ -754,6 +754,31 @@ static void serial8250_set_sleep(struct uart_8250_port *p, int sleep)
 	serial8250_rpm_put(p);
 }
 
+static unsigned int serial8250_clear_IER(struct uart_8250_port *up)
+{
+	struct uart_port *port = &up->port;
+	unsigned int clearval = 0;
+	unsigned long flags;
+	bool is_console;
+	unsigned int prior;
+
+	is_console = uart_console(port);
+
+	if (up->capabilities & UART_CAP_UUE)
+		clearval = UART_IER_UUE;
+
+	if (is_console)
+		printk_cpu_sync_get_irqsave(flags);
+
+	prior = serial_in(up, UART_IER);
+	serial_out(up, UART_IER, clearval);
+
+	if (is_console)
+		printk_cpu_sync_put_irqrestore(flags);
+
+	return prior;
+}
+
 #ifdef CONFIG_SERIAL_8250_RSA
 /*
  * Attempts to turn on the RSA FIFO.  Returns zero on failure.
@@ -2171,6 +2196,9 @@ static void serial8250_put_poll_char(struct uart_port *port,
 	struct uart_8250_port *up = up_to_u8250p(port);
 
 	serial8250_rpm_get(up);
+	/*
+	 *	First save the IER then disable the interrupts
+	 */
 	ier = serial8250_clear_IER(up);
 
 	wait_for_xmitr(up, UART_LSR_BOTH_EMPTY);
@@ -3457,6 +3485,9 @@ void serial8250_console_write(struct uart_8250_port *up, const char *s,
 
 	spin_lock_irqsave(&port->lock, flags);
 
+	/*
+	 *	First save the IER then disable the interrupts
+	 */
 	ier = serial8250_clear_IER(up);
 
 	/* check scratch reg to see if port powered off during system sleep */

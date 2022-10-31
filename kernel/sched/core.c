@@ -3324,30 +3324,36 @@ static __always_inline bool state_mismatch(struct task_struct *p, unsigned int m
 	bool mismatch;
 
 	raw_spin_lock_irqsave(&p->pi_lock, flags);
-	mismatch = READ_ONCE(p->__state) != match_state &&
-		READ_ONCE(p->saved_state) != match_state;
+	if (READ_ONCE(p->__state) & match_state)
+		mismatch = false;
+	else if (READ_ONCE(p->saved_state) & match_state)
+		mismatch = false;
+	else
+		mismatch = true;
+
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 	return mismatch;
 }
 static __always_inline bool state_match(struct task_struct *p, unsigned int match_state,
 					bool *wait)
 {
-	if (READ_ONCE(p->__state) == match_state)
+	if (READ_ONCE(p->__state) & match_state)
 		return true;
-	if (READ_ONCE(p->saved_state) != match_state)
-		return false;
-	*wait = true;
-	return true;
+	if (READ_ONCE(p->saved_state) & match_state) {
+		*wait = true;
+		return true;
+	}
+	return false;
 }
 #else
 static __always_inline bool state_mismatch(struct task_struct *p, unsigned int match_state)
 {
-	return READ_ONCE(p->__state) != match_state;
+	return !(READ_ONCE(p->__state) & match_state);
 }
 static __always_inline bool state_match(struct task_struct *p, unsigned int match_state,
 					bool *wait)
 {
-	return READ_ONCE(p->__state) == match_state;
+	return (READ_ONCE(p->__state) & match_state);
 }
 #endif
 
@@ -3395,7 +3401,7 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * is actually now running somewhere else!
 		 */
 		while (task_on_cpu(rq, p)) {
-			if (match_state && state_mismatch(p, match_state))
+			if (state_mismatch(p, match_state))
 				return 0;
 			cpu_relax();
 		}
@@ -3411,9 +3417,8 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		wait = task_on_rq_queued(p);
 		ncsw = 0;
 
-		if (!match_state || state_match(p, match_state, &wait))
+		if (state_match(p, match_state, &wait))
 			ncsw = p->nvcsw | LONG_MIN; /* sets MSB */
-
 		task_rq_unlock(rq, p, &rf);
 
 		/*

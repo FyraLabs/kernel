@@ -4042,7 +4042,6 @@ static int printk_kthread_func(void *data)
 	}
 
 	con_printk(KERN_INFO, con, "printing thread started\n");
-
 	for (;;) {
 		/*
 		 * Guarantee this task is visible on the waitqueue before
@@ -4055,7 +4054,7 @@ static int printk_kthread_func(void *data)
 		 * This pairs with __wake_up_klogd:A.
 		 */
 		error = wait_event_interruptible(log_wait,
-				printer_should_wake(con, seq)); /* LMM(printk_kthread_func:A) */
+						 printer_should_wake(con, seq)); /* LMM(printk_kthread_func:A) */
 
 		if (kthread_should_stop() || !printk_kthreads_available)
 			break;

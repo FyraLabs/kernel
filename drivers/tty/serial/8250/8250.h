@@ -214,31 +214,6 @@ static inline void serial8250_set_IER(struct uart_8250_port *up, int ier)
 		printk_cpu_sync_put_irqrestore(flags);
 }
 
-static inline int serial8250_clear_IER(struct uart_8250_port *up)
-{
-	struct uart_port *port = &up->port;
-	unsigned int clearval = 0;
-	unsigned long flags;
-	bool is_console;
-	int prior;
-
-	is_console = uart_console(port);
-
-	if (up->capabilities & UART_CAP_UUE)
-		clearval = UART_IER_UUE;
-
-	if (is_console)
-		printk_cpu_sync_get_irqsave(flags);
-
-	prior = serial_in(up, UART_IER);
-	serial_out(up, UART_IER, clearval);
-
-	if (is_console)
-		printk_cpu_sync_put_irqrestore(flags);
-
-	return prior;
-}
-
 static inline bool serial8250_set_THRI(struct uart_8250_port *up)
 {
 	if (up->ier & UART_IER_THRI)

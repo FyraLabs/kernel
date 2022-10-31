@@ -168,10 +168,8 @@ extern void __printk_safe_exit(void);
  */
 #define printk_deferred_enter __printk_safe_enter
 #define printk_deferred_exit __printk_safe_exit
-
 extern void printk_prefer_direct_enter(void);
 extern void printk_prefer_direct_exit(void);
-
 extern void try_block_console_kthreads(int timeout_ms);
 
 /*
