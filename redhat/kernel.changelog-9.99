@@ -1,3 +1,94 @@
+* Mon Oct 31 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc3.27]
+- Linux v6.1.0-0.rc3
+Resolves: 
+
+* Sun Oct 30 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.882ad2a2a8ff.26]
+- Linux v6.1.0-0.rc2.882ad2a2a8ff
+Resolves: 
+
+* Sat Oct 29 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.576e61cea1e4.25]
+- configs: move CONFIG_INTEL_TDX_GUEST to common directory (Wander Lairson Costa)
+- redhat/Makefile: Use new BUILD_TARGET for RHEL dist[g]-brew target (Prarit Bhargava)
+- Linux v6.1.0-0.rc2.576e61cea1e4
+Resolves: 
+
+* Fri Oct 28 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.23758867219c.24]
+- redhat: method.py: change the output loop to use 'values' method (Patrick Talbert)
+- redhat: use 'update' method in merge.py (Patrick Talbert)
+- redhat: Use a context manager in merge.py for opening the config file for reading (Patrick Talbert)
+- redhat: automatically strip newlines in merge.py (Clark Williams)
+- redhat: python replacement for merge.pl (Clark Williams)
+- Linux v6.1.0-0.rc2.23758867219c
+Resolves: 
+
+* Thu Oct 27 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.b229b6ca5abb.23]
+- redhat/docs: Update with DISTLOCALVERSION (Prarit Bhargava)
+- Linux v6.1.0-0.rc2.b229b6ca5abb
+Resolves: 
+
+* Wed Oct 26 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.4dc12f37a8e9.22]
+- redhat/Makefile: Rename LOCALVERSION to DISTLOCALVERSION (Akihiko Odaki)
+- Linux v6.1.0-0.rc2.4dc12f37a8e9
+Resolves: 
+
+* Tue Oct 25 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.1a2dcbdde82e.21]
+- Linux v6.1.0-0.rc2.1a2dcbdde82e
+Resolves: 
+
+* Mon Oct 24 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc2.20]
+- Linux v6.1.0-0.rc2
+Resolves: 
+
+* Sun Oct 23 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.d47136c28015.19]
+- Linux v6.1.0-0.rc1.d47136c28015
+Resolves: 
+
+* Sat Oct 22 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.4da34b7d175d.18]
+- Linux v6.1.0-0.rc1.4da34b7d175d
+Resolves: 
+
+* Fri Oct 21 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.e35184f32151.17]
+- Linux v6.1.0-0.rc1.e35184f32151
+Resolves: 
+
+* Wed Oct 19 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.aae703b02f92.16]
+- Adjust FIPS module name in RHEL (Vladis Dronov)
+- spec: prevent git apply from searching for the .git directory (Ondrej Mosnacek)
+- redhat: Remove parallel_xz.sh (Prarit Bhargava)
+- Linux v6.1.0-0.rc1.aae703b02f92
+Resolves: 
+
+* Tue Oct 18 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.bb1a1146467a.15]
+- Linux v6.1.0-0.rc1.bb1a1146467a
+Resolves: 
+
+* Mon Oct 17 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc1.14]
+- Linux v6.1.0-0.rc1
+Resolves: 
+
+* Sun Oct 16 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.1501278bb7ba.13]
+- Linux v6.1.0-0.rc0.1501278bb7ba
+Resolves: 
+
+* Sat Oct 15 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.19d17ab7c68b.12]
+- Turn on Multi-Gen LRU for Fedora (Justin M. Forbes)
+- Linux v6.1.0-0.rc0.19d17ab7c68b
+Resolves: 
+
+* Fri Oct 14 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.9c9155a3509a.11]
+- Add kasan_test to mod-internal.list (Justin M. Forbes)
+- redhat/Makefile.variables: Fix typo with RHDISTGIT_TMP (Prarit Bhargava)
+- spec: fix path to `installing_core` stamp file for subpackages (Jonathan Lebon)
+- Remove unused ci scripts (Don Zickus)
+- Rename rename FORCE_MAX_ZONEORDER to ARCH_FORCE_MAX_ORDER in configs (Justin M. Forbes)
+- redhat: Add new fortify_kunit & is_signed_type_kunit to mod-internal.list (Patrick Talbert)
+- Linux v6.1.0-0.rc0.9c9155a3509a
+Resolves: 
+
+* Thu Oct 13 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.a185a0995518.10]
+- Linux v6.1.0-0.rc0.a185a0995518
+Resolves: 
+
 * Wed Oct 12 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-0.rc0.49da07006239.9]
 - Rename rename FORCE_MAX_ZONEORDER to ARCH_FORCE_MAX_ORDER in pending (Justin M. Forbes)
 - Linux v6.1.0-0.rc0.49da07006239

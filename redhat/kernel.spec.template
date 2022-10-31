@@ -101,7 +101,6 @@ Summary: The Linux kernel
 
 %if %{zipmodules}
 %global zipsed -e 's/\.ko$/\.ko.xz/'
-# for parallel xz processes, replace with 1 to go back to single process
 %endif
 
 %if 0%{?fedora}
@@ -807,7 +806,6 @@ Source13: redhatsecureboot003.cer
 
 Source20: mod-denylist.sh
 Source21: mod-sign.sh
-Source22: parallel_xz.sh
 
 %define modsign_cmd %{SOURCE21}
 
@@ -1523,7 +1521,7 @@ if [ "%{patches}" != "%%{patches}" ] ; then
   done
 fi 2>/dev/null
 
-patch_command='git apply'
+patch_command='git --work-tree=. apply'
 ApplyPatch()
 {
   local patch=$1
@@ -1662,6 +1660,13 @@ for i in *.config; do
   sed -i 's@CONFIG_SYSTEM_TRUSTED_KEYS=""@CONFIG_SYSTEM_TRUSTED_KEYS="certs/rhel.pem"@' $i
 done
 %endif
+%endif
+
+# Adjust FIPS module name for RHEL
+%if 0%{?rhel}
+for i in *.config; do
+  sed -i 's/CONFIG_CRYPTO_FIPS_NAME=.*/CONFIG_CRYPTO_FIPS_NAME="Red Hat Enterprise Linux %{rhel} - Kernel Cryptographic API"/' $i
+done
 %endif
 
 cp %{SOURCE81} .
@@ -3081,7 +3086,7 @@ if [ `uname -i` == "x86_64" -o `uname -i` == "i386" ] &&\
   /bin/sed -r -i -e 's/^DEFAULTKERNEL=%{-r*}$/DEFAULTKERNEL=kernel%{?-v:-%{-v*}}/' /etc/sysconfig/kernel || exit $?\
 fi}\
 mkdir -p %{_localstatedir}/lib/rpm-state/%{name}\
-touch %{_localstatedir}/lib/rpm-state/%{name}/installing_core_%{KVERREL}%{?1:+%{1}}\
+touch %{_localstatedir}/lib/rpm-state/%{name}/installing_core_%{KVERREL}%{?-v:+%{-v*}}\
 %{nil}
 
 #
