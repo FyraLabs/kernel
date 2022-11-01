@@ -1,3 +1,10 @@
+* Tue Nov 01 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.6-0]
+- drm/simpledrm: Only advertise formats that are supported (Justin M. Forbes)
+- disable enum64 BTF in fedora rawhide (Jiri Olsa)
+- Update patch for 6.0 (Justin M. Forbes)
+- Linux v6.0.6
+Resolves: 
+
 * Wed Oct 26 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.5-0]
 - Add release targets for stable rebase (Justin M. Forbes)
 - Linux v6.0.5
