@@ -2890,11 +2890,7 @@ static int vc4_hdmi_runtime_resume(struct device *dev)
 	 * its frequency while the power domain is active so that it
 	 * keeps its rate.
 	 */
-	ret = clk_set_min_rate(vc4_hdmi->hsm_clock, HSM_MIN_CLOCK_FREQ);
-	if (ret)
-		return ret;
-
-	ret = clk_prepare_enable(vc4_hdmi->hsm_clock);
+	ret = clk_set_min_rate(vc4_hdmi->hsm_rpm_clock, HSM_MIN_CLOCK_FREQ);
 	if (ret)
 		return ret;
 
