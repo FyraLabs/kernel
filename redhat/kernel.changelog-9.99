@@ -1,3 +1,7 @@
+* Wed Nov 16 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.9-0]
+- Linux v6.0.9
+Resolves: 
+
 * Fri Nov 11 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.8-0]
 - PCI/PM: Always disable PTM for all devices during suspend (Mark Pearson)
 - PCI/PTM: Consolidate PTM interface declarations (Mark Pearson)
