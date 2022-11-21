@@ -621,8 +621,7 @@ sources-rh: $(TARBALL) generate-testpatch-tmp setup-source dist-configs-check
 	@sed -e "s/%%SPECKVERSION%%/$(SPECKVERSION)/" \
 		-e "s/%%SPECKPATCHLEVEL%%/$(SPECKPATCHLEVEL)/" \
 		rpminspect.yaml > $(SOURCES)/rpminspect.yaml
-	@cp cpupower.* \
-		keys/rhel*.x509 \
+	@cp keys/rhel*.x509 \
 		kabi/check-kabi \
 		configs/$(PACKAGE_NAME)-*.config \
 		configs/partial*.config \
