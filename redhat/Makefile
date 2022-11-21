@@ -597,7 +597,7 @@ _setup-source: dist-git-version-check
 		echo "Error: PATCHLIST_URL must be set (to 'none' or any URL)"; \
 		exit 1; \
 	fi
-	@$(REDHAT)/genspec.sh
+	@$(REDHAT)/scripts/genspec/genspec.sh
 	@cp $(SOURCES)/$(SPECFILE) $(SOURCES)/../SPECS/
 
 setup-source: dist-clean-sources _setup-source
@@ -620,19 +620,20 @@ sources-rh: $(TARBALL) generate-testpatch-tmp setup-source dist-configs-check
 	@cat configs/flavors | while read flavor; do echo "Copying sources for $${flavor}"; [ -e $${flavor}_files ] && cp $${flavor}_files/* $(SOURCES); done
 	@sed -e "s/%%SPECKVERSION%%/$(SPECKVERSION)/" \
 		-e "s/%%SPECKPATCHLEVEL%%/$(SPECKPATCHLEVEL)/" \
-		rpminspect.yaml > $(SOURCES)/rpminspect.yaml
-	@cp cpupower.* \
+		scripts/gating/rpminspect.yaml > $(SOURCES)/rpminspect.yaml
+	@cp scripts/kernel-tools/cpupower.config \
+		scripts/kernel-tools/cpupower.service \
+		scripts/kernel-tools/kvm_stat.logrotate \
 		keys/rhel*.x509 \
 		kabi/check-kabi \
 		configs/$(PACKAGE_NAME)-*.config \
 		configs/partial*.config \
-		gating.yaml \
-		update_scripts.sh \
-		kvm_stat.logrotate \
-		mod-denylist.sh \
-		mod-internal.list \
-		mod-partner.list \
-		mod-sign.sh \
+		scripts/gating/gating.yaml \
+		scripts/update_scripts.sh \
+		scripts/mod/mod-denylist.sh \
+		scripts/mod/mod-internal.list \
+		scripts/mod/mod-partner.list \
+		scripts/mod/mod-sign.sh \
 		configs/flavors \
 		configs/generate_all_configs.sh \
 		configs/merge.pl \
@@ -700,7 +701,7 @@ dist-release-finish: setup-source
 dist-release-changed:
 	@CLOGF="$$(mktemp)"; \
 	trap 'rm -f "$$CLOGF"' SIGHUP SIGINT SIGTERM EXIT; \
-	$(REDHAT)/genlog.sh "$$CLOGF"; \
+	$(REDHAT)/scripts/genspec/genlog.sh "$$CLOGF"; \
 	if [ "$(MARKER)" == "$$(cat $(REDHAT)/marker)" ] && \
 	   [ "$$(wc -l $$CLOGF | cut -d ' ' -f 1)" -le 3 ]; then \
 		echo "Nothing changed, skipping updates"; \
