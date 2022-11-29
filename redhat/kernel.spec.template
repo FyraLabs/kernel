@@ -578,7 +578,7 @@ Requires: kernel-modules-uname-r = %{KVERREL}
 # List the packages used during the kernel build
 #
 BuildRequires: kmod, bash, coreutils, tar, git-core, which
-BuildRequires: bzip2, xz, findutils, gzip, m4, perl-interpreter, perl-Carp, perl-devel, perl-generators, make, diffutils, gawk
+BuildRequires: bzip2, xz, findutils, m4, perl-interpreter, perl-Carp, perl-devel, perl-generators, make, diffutils, gawk
 BuildRequires: gcc, binutils, redhat-rpm-config, hmaccalc, bison, flex, gcc-c++
 BuildRequires: net-tools, hostname, bc, elfutils-devel
 BuildRequires: dwarves
@@ -612,6 +612,7 @@ BuildRequires: numactl-devel
 %endif
 %ifarch aarch64
 BuildRequires: opencsd-devel >= 1.0.0
+BuildRequires: gzip
 %endif
 %endif
 %if %{with_tools}
@@ -1712,14 +1713,11 @@ BuildKernel() {
         CopyKernel=cp
     fi
 
-    # Sign the image if we're using EFI
-    # aarch64 kernels are gziped EFI images
-    KernelExtension=${KernelImage##*.}
-    if [ "$KernelExtension" == "gz" ]; then
+    SignImage=$KernelImage
+    %ifarch aarch64
+        # aarch64 kernels are gziped EFI images
         SignImage=${KernelImage%.*}
-    else
-        SignImage=$KernelImage
-    fi
+    %endif
 
     %ifarch x86_64 aarch64
     %pesign -s -i $SignImage -o vmlinuz.tmp -a %{secureboot_ca_0} -c %{secureboot_key_0} -n %{pesign_name_0}
@@ -1742,9 +1740,9 @@ BuildKernel() {
         exit 1
     fi
     mv vmlinuz.signed $SignImage
-    if [ "$KernelExtension" == "gz" ]; then
+    %ifarch aarch64
         gzip -f9 $SignImage
-    fi
+    %endif
     # signkernel
     %endif
 
