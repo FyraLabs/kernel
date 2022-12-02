@@ -1,3 +1,10 @@
+* Fri Dec 02 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.11-0]
+- drm/i915: fix TLB invalidation for Gen12 video and compute engines (Andrzej Hajda)
+- l2tp: Serialize access to sk_user_data with sk_callback_lock (Jakub Sitnicki)
+- Adjust path to compressed vmlinux kernel image for s390x (Justin M. Forbes) [2149273]
+- Linux v6.0.11
+Resolves: rhbz#2149273
+
 * Sat Nov 26 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.10-0]
 - net: neigh: decrement the family specific qlen (Thomas Zeitlhofer)
 - Linux v6.0.10
