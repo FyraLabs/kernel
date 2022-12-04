@@ -1405,10 +1405,10 @@ ApplyPatch()
     fi
   fi 2>/dev/null
   case "$patch" in
-  *.bz2) bunzip2 < "$RPM_SOURCE_DIR/$patch" | $patch_command ${1+"$@"} ;;
-  *.gz)  gunzip  < "$RPM_SOURCE_DIR/$patch" | $patch_command ${1+"$@"} ;;
-  *.xz)  unxz    < "$RPM_SOURCE_DIR/$patch" | $patch_command ${1+"$@"} ;;
-  *) $patch_command ${1+"$@"} < "$RPM_SOURCE_DIR/$patch" ;;
+  *.bz2) bunzip2 < "$RPM_SOURCE_DIR/$patch" | $patch_command $patch ;;
+  *.gz)  gunzip  < "$RPM_SOURCE_DIR/$patch" | $patch_command $patch ;;
+  *.xz)  unxz    < "$RPM_SOURCE_DIR/$patch" | $patch_command $patch ;;
+  *) $patch_command < "$RPM_SOURCE_DIR/$patch" ;;
   esac
 }
 
@@ -1416,13 +1416,18 @@ ApplyPatch()
 ApplyOptionalPatch()
 {
   local patch=$1
+  commit_msg=$2
   shift
   if [ ! -f $RPM_SOURCE_DIR/$patch ]; then
     exit 1
   fi
   local C=$(wc -l $RPM_SOURCE_DIR/$patch | awk '{print $1}')
   if [ "$C" -gt 9 ]; then
-    ApplyPatch $patch ${1+"$@"}
+    ApplyPatch "$patch" "$commit_msg"
+    if ! git-diff --quiet --exit-code ; then
+      git add -A
+      git commit -q --author "Fedora Kernel Team <kernel-team@fedoraproject.org>" -m "$commit_msg"
+    fi
   fi
 }
 
@@ -1432,12 +1437,19 @@ mv linux-%{tarfile_release} linux-%{KVERREL}
 cd linux-%{KVERREL}
 cp -a %{SOURCE1} .
 
+git init .
+# disable autopacking in repository
+git config --worktree gc.autopacklimit 0
+git config --worktree gc.auto 0
+git add -A
+git commit . -q --author "Fedora Kernel Team <kernel-team@fedoraproject.org>" -m "Base commit for linux %kabiversion"
+
 %if !%{nopatches}
 
-ApplyOptionalPatch patch-%{patchversion}-redhat.patch
+ApplyOptionalPatch patch-%{patchversion}-redhat.patch "Fedora/ARK %patchversion changes"
 %endif
 
-ApplyOptionalPatch linux-kernel-test.patch
+ApplyOptionalPatch linux-kernel-test.patch "linux-kernel-test changes"
 
 # END OF PATCH APPLICATIONS
 
