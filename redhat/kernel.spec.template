@@ -1441,6 +1441,10 @@ git init .
 # disable autopacking in repository
 git config --worktree gc.autopacklimit 0
 git config --worktree gc.auto 0
+# set email and name for initial commits (these are reset at the end of the
+# patch applications)
+git config --worktree user.email "kernel-team@fedoraproject.org"
+git config --worktree user.name "Fedora Kernel Team"
 git add -A
 git commit . -q --author "Fedora Kernel Team <kernel-team@fedoraproject.org>" -m "Base commit for linux %kabiversion"
 
@@ -1451,6 +1455,11 @@ ApplyOptionalPatch patch-%{patchversion}-redhat.patch "Fedora/ARK %patchversion 
 
 ApplyOptionalPatch linux-kernel-test.patch "linux-kernel-test changes"
 
+# These command must be done last in patch applications.  If these git
+# configuration variables are left set then future commits to the repository
+# will be attributed incorrectly.
+git config --worktree --unset user.email
+git config --worktree --unset user.name
 # END OF PATCH APPLICATIONS
 
 # Any further pre-build tree manipulations happen here.
