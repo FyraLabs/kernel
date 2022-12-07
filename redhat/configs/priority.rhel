@@ -25,7 +25,7 @@ x86_64-debug=generic:generic-x86:debug:debug-x86
 x86_64-kgcov=generic:generic-x86:kgcov
 x86_64-rt=generic:generic-x86:rt-generic:rt-generic-x86
 x86_64-auto=generic:generic-x86:auto-generic:auto-generic-x86
-x86_64-rt_debug=generic:generic-x86:debug:debug-x86:rt-debug:rt-debug-x86
+x86_64-rt_debug=generic:generic-x86:debug:debug-x86:rt-generic:rt-generic-x86:rt-debug:rt-debug-x86
 x86_64-auto_debug=generic:generic-x86:debug:debug-x86:auto-generic:auto-generic-x86:auto-debug:auto-debug-x86
 
 # ppc64le
