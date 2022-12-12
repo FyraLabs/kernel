@@ -18,6 +18,8 @@ endif
 SPECRELEASED_KERNEL=$(RELEASED_KERNEL)
 SPECINCLUDE_FEDORA_FILES=$(INCLUDE_FEDORA_FILES)
 SPECINCLUDE_RHEL_FILES=$(INCLUDE_RHEL_FILES)
+SPECINCLUDE_RT_FILES=$(INCLUDE_RT_FILES)
+SPECINCLUDE_AUTO_FILES=$(INCLUDE_AUTO_FILES)
 
 ifneq (,$(findstring n,$(MAKEFLAGS)))
   # Do not set RHTEST on the command line. Use the make command built-in options
@@ -634,6 +636,7 @@ sources-rh: $(TARBALL) generate-testpatch-tmp setup-source dist-configs-check
 		scripts/mod/mod-internal.list \
 		scripts/mod/mod-partner.list \
 		scripts/mod/mod-sign.sh \
+		scripts/mod/mod-kvm.list \
 		configs/flavors \
 		configs/generate_all_configs.sh \
 		configs/merge.pl \
@@ -701,13 +704,18 @@ dist-release-finish: setup-source
 dist-release-changed:
 	@CLOGF="$$(mktemp)"; \
 	trap 'rm -f "$$CLOGF"' SIGHUP SIGINT SIGTERM EXIT; \
-	$(REDHAT)/scripts/genspec/genlog.sh "$$CLOGF"; \
-	if [ "$(MARKER)" == "$$(cat $(REDHAT)/marker)" ] && \
-	   [ "$$(wc -l $$CLOGF | cut -d ' ' -f 1)" -le 3 ]; then \
-		echo "Nothing changed, skipping updates"; \
+	if $(REDHAT)/scripts/genspec/genlog.sh "$$CLOGF"; then \
+		if [ "$(MARKER)" == "$$(cat $(REDHAT)/marker)" ] && \
+		   [ "$$(wc -l $$CLOGF | cut -d ' ' -f 1)" -le 3 ]; then \
+			echo "Nothing changed, skipping updates"; \
+		else \
+			$(REDHAT)/scripts/new_release.sh; \
+			$(MAKE) dist-release-finish; \
+		fi \
 	else \
-		$(REDHAT)/scripts/new_release.sh; \
-		$(MAKE) dist-release-finish; \
+		retval=$$?; \
+		echo "genlog.sh failed with return code $$retval, aborting."; \
+		exit $$retval; \
 	fi
 
 dist-release: dist-clean-sources

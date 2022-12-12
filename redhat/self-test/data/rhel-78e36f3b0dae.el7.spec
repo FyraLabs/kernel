@@ -11,6 +11,6 @@
 %define tarfile_release 5.17.0-0.rc0.78e36f3b0dae.6.test.el7
 %define patchlevel 17
 %define specrelease 0.rc0.78e36f3b0dae.6%{?buildid}%{?dist}
-%define kabiversion 5.17.0-0.rc0.78e36f3b0dae.6.test.el7
+%define kabiversion 5.17.0-0.rc0.78e36f3b0dae.6.test
 %define selftests_must_build 0
 Mon Mar 28 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [5.17.0-0.rc0.78e36f3b0dae.6.test]
