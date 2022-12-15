@@ -1,3 +1,7 @@
+* Thu Dec 15 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc0.041fae9c105a.5]
+- Add drm_kunit_helpers to mod-internal.list (Justin M. Forbes)
+Resolves: 
+
 * Thu Dec 15 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc0.041fae9c105a.4]
 - Linux v6.2.0-0.rc0.041fae9c105a
 Resolves: 
