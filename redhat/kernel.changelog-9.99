@@ -1,3 +1,8 @@
+* Mon Dec 19 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.14-0]
+- Remove F35 from release_targets due to EOL (Justin M. Forbes)
+- Linux v6.0.14
+Resolves: 
+
 * Wed Dec 14 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.0.13-0]
 - Linux v6.0.13
 Resolves: 
