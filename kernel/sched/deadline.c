@@ -1405,6 +1405,13 @@ throttle:
 	}
 }
 
+static void delayed_put_task_struct(struct rcu_head *rhp)
+{
+	struct task_struct *tsk = container_of(rhp, struct task_struct, rcu);
+
+	__put_task_struct(tsk);
+}
+
 static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
 {
 	struct sched_dl_entity *dl_se = container_of(timer,
@@ -1442,7 +1449,13 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
 	dl_se->dl_non_contending = 0;
 unlock:
 	task_rq_unlock(rq, p, &rf);
-	put_task_struct(p);
+
+	if (refcount_dec_and_test(&p->usage)) {
+		if (IS_ENABLED(CONFIG_PREEMPT_RT))
+			call_rcu(&p->rcu, delayed_put_task_struct);
+		else
+			__put_task_struct(p);
+	}
 
 	return HRTIMER_NORESTART;
 }
