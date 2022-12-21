@@ -1,3 +1,17 @@
+* Wed Dec 21 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.1-0]
+- ovl: update ->f_iocb_flags when ovl_change_flags() modifies ->f_flags (Al Viro)
+- Updates for building stable Fedora (Justin M. Forbes)
+- Config fixup for discarded RHEL patches (Justin M. Forbes)
+- Reset RHEL_RELEASE for the 6.2 window. (Justin M. Forbes)
+- redhat/kernel.spec.template: Fix cpupower file error (Prarit Bhargava)
+- redhat/configs: aarhc64: clean up some erratum configs (Mark Salter)
+- More Fedora configs for 6.1 as deps were switched on (Justin M. Forbes)
+- redhat/configs: make SOC_TEGRA_CBB a module (Mark Salter)
+- redhat/configs: aarch64: reorganize tegra configs to common dir (Mark Salter)
+- Enforces buildroot if cross_arm (Nicolas Chauvet)
+- Linux v6.1.1
+Resolves: 
+
 * Mon Dec 12 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.1.0-65]
 - Linux v6.1.0
 Resolves: 
