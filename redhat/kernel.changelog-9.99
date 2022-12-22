@@ -1,3 +1,7 @@
+* Thu Dec 22 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc0.9d2f6060fe4c.11]
+- Revert "arm64: remove special treatment for the link order of head.o" (Justin M. Forbes)
+Resolves: 
+
 * Thu Dec 22 2022 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc0.9d2f6060fe4c.10]
 - spec: add missing BuildRequires: python3-docutils for tools (Ondrej Mosnacek)
 - Linux v6.2.0-0.rc0.9d2f6060fe4c
