@@ -1,4 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0 */
+#include "linux/sched.h"
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM rcu
 
@@ -311,11 +312,12 @@ TRACE_EVENT_RCU(rcu_nocb_wake,
  */
 TRACE_EVENT_RCU(rcu_preempt_task,
 
-	TP_PROTO(const char *rcuname, int pid, unsigned long gp_seq),
+	TP_PROTO(const char *rcuname, int pid, const char *comm, unsigned long gp_seq),
 
-	TP_ARGS(rcuname, pid, gp_seq),
+	TP_ARGS(rcuname, pid, comm, gp_seq),
 
 	TP_STRUCT__entry(
+		__array(char, comm, TASK_COMM_LEN)
 		__field(const char *, rcuname)
 		__field(long, gp_seq)
 		__field(int, pid)
@@ -325,10 +327,11 @@ TRACE_EVENT_RCU(rcu_preempt_task,
 		__entry->rcuname = rcuname;
 		__entry->gp_seq = (long)gp_seq;
 		__entry->pid = pid;
+		memcpy(__entry->comm, comm, TASK_COMM_LEN);
 	),
 
-	TP_printk("%s %ld %d",
-		  __entry->rcuname, __entry->gp_seq, __entry->pid)
+	TP_printk("%s %ld %s(%d)",
+		  __entry->rcuname, __entry->gp_seq, __entry->comm, __entry->pid)
 );
 
 /*
@@ -338,11 +341,12 @@ TRACE_EVENT_RCU(rcu_preempt_task,
  */
 TRACE_EVENT_RCU(rcu_unlock_preempted_task,
 
-	TP_PROTO(const char *rcuname, unsigned long gp_seq, int pid),
+	TP_PROTO(const char *rcuname, unsigned long gp_seq, int pid, const char *comm),
 
-	TP_ARGS(rcuname, gp_seq, pid),
+	TP_ARGS(rcuname, gp_seq, pid, comm),
 
 	TP_STRUCT__entry(
+		__array(char, comm, TASK_COMM_LEN)
 		__field(const char *, rcuname)
 		__field(long, gp_seq)
 		__field(int, pid)
@@ -352,9 +356,11 @@ TRACE_EVENT_RCU(rcu_unlock_preempted_task,
 		__entry->rcuname = rcuname;
 		__entry->gp_seq = (long)gp_seq;
 		__entry->pid = pid;
+		memcpy(__entry->comm, comm, TASK_COMM_LEN);
 	),
 
-	TP_printk("%s %ld %d", __entry->rcuname, __entry->gp_seq, __entry->pid)
+	TP_printk("%s %ld %s(%d)",
+		  __entry->rcuname, __entry->gp_seq, __entry->comm, __entry->pid)
 );
 
 /*

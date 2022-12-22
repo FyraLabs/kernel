@@ -334,6 +334,7 @@ void rcu_note_context_switch(bool preempt)
 		WARN_ON_ONCE(!list_empty(&t->rcu_node_entry));
 		trace_rcu_preempt_task(rcu_state.name,
 				       t->pid,
+				       t->comm,
 				       (rnp->qsmask & rdp->grpmask)
 				       ? rnp->gp_seq
 				       : rcu_seq_snap(&rnp->gp_seq));
@@ -525,7 +526,7 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
 		list_del_init(&t->rcu_node_entry);
 		t->rcu_blocked_node = NULL;
 		trace_rcu_unlock_preempted_task(TPS("rcu_preempt"),
-						rnp->gp_seq, t->pid);
+						rnp->gp_seq, t->pid, t->comm);
 		if (&t->rcu_node_entry == rnp->gp_tasks)
 			WRITE_ONCE(rnp->gp_tasks, np);
 		if (&t->rcu_node_entry == rnp->exp_tasks)
@@ -702,7 +703,7 @@ static void rcu_preempt_check_blocked_tasks(struct rcu_node *rnp)
 		t = container_of(rnp->gp_tasks, struct task_struct,
 				 rcu_node_entry);
 		trace_rcu_unlock_preempted_task(TPS("rcu_preempt-GPS"),
-						rnp->gp_seq, t->pid);
+						rnp->gp_seq, t->pid, t->comm);
 	}
 	WARN_ON_ONCE(rnp->qsmask);
 }
