@@ -1,3 +1,7 @@
+* Wed Jan 04 2023 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.3-0]
+- Linux v6.1.3
+Resolves: 
+
 * Sat Dec 31 2022 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.2-0]
 - Configs fix up for 6.1.2 (Justin M. Forbes)
 - disable enum64 BTF in fedora rawhide (Jiri Olsa)
