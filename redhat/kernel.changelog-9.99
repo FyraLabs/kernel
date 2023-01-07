@@ -1,3 +1,9 @@
+* Sat Jan 07 2023 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.4-0]
+- brcmfmac: Prefer DT board type over DMI board type (Ivan T. Ivanov)
+- Remove the revert patch from F36, as a new pahole is being pushed to stable making it unnecessary (Justin M. Forbes)
+- Linux v6.1.4
+Resolves: 
+
 * Wed Jan 04 2023 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.3-0]
 - Linux v6.1.3
 Resolves: 
