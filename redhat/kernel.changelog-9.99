@@ -1,3 +1,8 @@
+* Sun Jan 08 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc2.9b43a525db12.23]
+- Revert "redhat: fix elf got hardening for vm tools" (Don Zickus)
+- Revert "arm64: remove special treatment for the link order of head.o" (Justin M. Forbes)
+Resolves: 
+
 * Sun Jan 08 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc2.9b43a525db12.22]
 - Linux v6.2.0-0.rc2.9b43a525db12
 Resolves: 
