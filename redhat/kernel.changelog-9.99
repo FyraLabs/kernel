@@ -1,5 +1,9 @@
-* Wed Jan 11 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc3.7dd4b804e080.26]
+* Thu Jan 12 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc3.e8f60cd7db24.27]
 - Revert "redhat: fix elf got hardening for vm tools" (Don Zickus)
+Resolves: 
+
+* Thu Jan 12 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc3.e8f60cd7db24.26]
+- Linux v6.2.0-0.rc3.e8f60cd7db24
 Resolves: 
 
 * Wed Jan 11 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc3.7dd4b804e080.25]
