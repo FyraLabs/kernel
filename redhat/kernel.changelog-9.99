@@ -1,3 +1,11 @@
+* Thu Jan 12 2023 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.5-0]
+- KVM: VMX: Execute IBPB on emulated VM-exit when guest has IBRS (Jim Mattson)
+- Update module filters for nvmem_u-boot-env (Justin M. Forbes)
+- drivers/firmware: skip simpledrm if nvidia-drm.modeset=1 is set (Javier Martinez Canillas)
+- fedora: Updates for 6.1 merge (Peter Robinson)
+- Linux v6.1.5
+Resolves: 
+
 * Sat Jan 07 2023 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.4-0]
 - brcmfmac: Prefer DT board type over DMI board type (Ivan T. Ivanov)
 - Remove the revert patch from F36, as a new pahole is being pushed to stable making it unnecessary (Justin M. Forbes)
