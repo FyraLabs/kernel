@@ -1,3 +1,7 @@
+* Sat Jan 14 2023 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.6-0]
+- Linux v6.1.6
+Resolves: 
+
 * Thu Jan 12 2023 Justin M. Forbes <jforbes@fedoraproject.org> [6.1.5-0]
 - KVM: VMX: Execute IBPB on emulated VM-exit when guest has IBRS (Jim Mattson)
 - Update module filters for nvmem_u-boot-env (Justin M. Forbes)
