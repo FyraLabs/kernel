@@ -1,5 +1,11 @@
-* Tue Jan 17 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc4.6e50979a9c87.32]
+* Wed Jan 18 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc4.c1649ec55708.33]
+- Turn off CONFIG_MTK_T7XX for S390x (Justin M. Forbes)
 - Revert "redhat: fix elf got hardening for vm tools" (Don Zickus)
+Resolves: 
+
+* Wed Jan 18 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc4.c1649ec55708.32]
+- Fix up configs with SND_SOC_NAU8315 mismatch (Justin M. Forbes)
+- Linux v6.2.0-0.rc4.c1649ec55708
 Resolves: 
 
 * Tue Jan 17 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc4.6e50979a9c87.31]
