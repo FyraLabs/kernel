@@ -1,3 +1,7 @@
+* Sat Jan 21 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc4.f883675bf652.36]
+- Revert "redhat: fix elf got hardening for vm tools" (Don Zickus)
+Resolves: 
+
 * Sat Jan 21 2023 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.2.0-0.rc4.f883675bf652.35]
 - fedora: Updates for 6.2 merge (Peter Robinson)
 - fedora: Updates for 6.1 merge (Peter Robinson)
