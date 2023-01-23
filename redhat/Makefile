@@ -62,13 +62,14 @@ ARCHCONFIG := $(shell uname -m | sed -e s/x86_64/X86_64/ \
 				     -e s/s390x/S390/ -e s/ppc.*/PPC/ )
 
 # rpm information
-SPECFILE:=$(PACKAGE_NAME).spec
+SPECFILE:=$(SPECPACKAGE_NAME).spec
 RPM:=$(REDHAT)/rpm
 SRPMS:=$(RPM)/SRPMS
 SOURCES:=$(RPM)/SOURCES
 TESTPATCH:=$(REDHAT)/linux-kernel-test.patch
-SPECCHANGELOG:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(RHEL_MINOR)
-CHANGELOG_PREV:=$(PACKAGE_NAME).changelog-$(RHEL_MAJOR).$(shell expr $(RHEL_MINOR) - 1)
+CHANGELOG_EXT:=changelog-$(RHEL_MAJOR).$(RHEL_MINOR)
+SPECCHANGELOG:=$(SPECPACKAGE_NAME).$(CHANGELOG_EXT)
+CHANGELOG_PREV_EXT:=changelog-$(RHEL_MAJOR).$(shell expr $(RHEL_MINOR) - 1)
 ARCH_LIST=aarch64 ppc64le s390x x86_64
 
 ifndef DISTRO
@@ -208,19 +209,19 @@ endif
 # The NVR looks like, for example, kernel-5.17.0-0.rc8.551acdc3c3d2.124.test.fc35.
 # This string can be deconstructed as
 #
-# $(PACKAGE_NAME)-$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)-$(UPSTREAMBUILD)$(BUILD)$(DISTLOCALVERSION)$(DIST)
+# $(SPECPACKAGE_NAME)-$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)-$(UPSTREAMBUILD)$(BUILD)$(DISTLOCALVERSION)$(DIST)
 #
 # This can be evaluated as
 #
-# $(PACKAGE_NAME)-$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)-$(SPECBUILD)          $(DIST)
-# $(PACKAGE_NAME)-$(SPECVERSION)                                     -$(SPECBUILD)          $(DIST)
-# $(PACKAGE_NAME)-$(BASEVERSION)                                                            $(DIST)
+# $(SPECPACKAGE_NAME)-$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)-$(SPECBUILD)          $(DIST)
+# $(SPECPACKAGE_NAME)-$(SPECVERSION)                                     -$(SPECBUILD)          $(DIST)
+# $(SPECPACKAGE_NAME)-$(BASEVERSION)                                                            $(DIST)
 # $(RELEASETAG)                                                                             $(DIST)
 #
 SPECBUILD:=$(UPSTREAMBUILD)$(BUILD)$(DISTLOCALVERSION)
 SPECVERSION:=$(SPECKVERSION).$(SPECKPATCHLEVEL).$(SPECKSUBLEVEL)
 BASEVERSION:=$(SPECVERSION)-$(SPECBUILD)
-RELEASETAG:=$(PACKAGE_NAME)-$(BASEVERSION)
+RELEASETAG:=$(SPECPACKAGE_NAME)-$(BASEVERSION)
 SRPM:=$(SRPMS)/$(RELEASETAG)$(DIST).src.rpm
 
 #
@@ -511,7 +512,7 @@ dist-configs-check: dist-configs-prep
 
 dist-configs-prep: dist-clean-configs
 	+cd $(REDHAT)/configs; ./build_configs.sh "partial" "snip"
-	+cd $(REDHAT)/configs; ./build_configs.sh "$(PACKAGE_NAME)" "$(FLAVOR)"
+	+cd $(REDHAT)/configs; ./build_configs.sh "$(SPECPACKAGE_NAME)" "$(FLAVOR)"
 
 dist-configs-arch: ARCH_MACH = $(MACH)
 dist-configs-arch: dist-configs
@@ -583,10 +584,19 @@ dist-get-buildreqs: setup-source
 	fi
 
 _setup-source: dist-git-version-check
+	@if [ ! -e $(REDHAT)/$(SPECFILE).template ]; then \
+		echo "Creating $(REDHAT)/$(SPECFILE).template as a copy of $(REDHAT)/kernel.spec.template"; \
+		cp $(REDHAT)/kernel.spec.template $(REDHAT)/$(SPECFILE).template; \
+	fi
 	@cp $(REDHAT)/$(SPECFILE).template $(SOURCES)/$(SPECFILE)
 	@if [ ! -e  $(REDHAT)/$(SPECCHANGELOG) ]; then \
-		echo "Creating $(SPECCHANGELOG) as copy of $(CHANGELOG_PREV)"; \
-		cp $(REDHAT)/$(CHANGELOG_PREV) $(REDHAT)/$(SPECCHANGELOG); \
+		if [ -e $(SPECPACKAGE_NAME).$(CHANGELOG_PREV_EXT) ]; then \
+			echo "Creating $(SPECCHANGELOG) as copy of $(CHANGELOG_PREV_EXT)"; \
+			cp $(REDHAT)/$(SPECPACKAGE_NAME).$(CHANGELOG_PREV_EXT) $(REDHAT)/$(SPECCHANGELOG); \
+		else \
+			echo "Creating $(SPECCHANGELOG) as copy of $(REDHAT)/kernel.$(CHANGELOG_EXT)"; \
+			cp $(REDHAT)/kernel.$(CHANGELOG_EXT) $(SPECCHANGELOG); \
+		fi; \
 	fi
 	@if [ -z "$(RHSELFTESTDATA)" ]; then \
 		cp $(REDHAT)/$(SPECCHANGELOG) $(SOURCES)/$(SPECCHANGELOG); \
@@ -624,7 +634,7 @@ sources-rh: $(TARBALL) generate-testpatch-tmp setup-source dist-configs-check
 	@cp scripts/kernel-tools/kvm_stat.logrotate \
 		keys/rhel*.x509 \
 		kabi/check-kabi \
-		configs/$(PACKAGE_NAME)-*.config \
+		configs/$(SPECPACKAGE_NAME)-*.config \
 		configs/partial*.config \
 		scripts/gating/gating.yaml \
 		scripts/update_scripts.sh \

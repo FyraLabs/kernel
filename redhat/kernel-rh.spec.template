@@ -406,7 +406,7 @@ Summary: The Linux kernel
 %define with_bpftool 0
 %define with_selftests 0
 %define with_debug 0
-%define all_arch_configs %{name}-%{version}-*.config
+%define all_arch_configs %{package_name}-%{version}-*.config
 %endif
 
 # sparse blows up on ppc
@@ -429,13 +429,13 @@ Summary: The Linux kernel
 %ifarch i686
 %define asmarch x86
 %define hdrarch i386
-%define all_arch_configs %{name}-%{version}-i?86*.config
+%define all_arch_configs %{package_name}-%{version}-i?86*.config
 %define kernel_image arch/x86/boot/bzImage
 %endif
 
 %ifarch x86_64
 %define asmarch x86
-%define all_arch_configs %{name}-%{version}-x86_64*.config
+%define all_arch_configs %{package_name}-%{version}-x86_64*.config
 %define kernel_image arch/x86/boot/bzImage
 %endif
 
@@ -446,19 +446,19 @@ Summary: The Linux kernel
 %define kernel_image vmlinux
 %define kernel_image_elf 1
 %define use_vdso 0
-%define all_arch_configs %{name}-%{version}-ppc64le*.config
+%define all_arch_configs %{package_name}-%{version}-ppc64le*.config
 %endif
 
 %ifarch s390x
 %define asmarch s390
 %define hdrarch s390
-%define all_arch_configs %{name}-%{version}-s390x.config
+%define all_arch_configs %{package_name}-%{version}-s390x.config
 %define kernel_image arch/s390/boot/bzImage
 %define vmlinux_decompressor arch/s390/boot/vmlinux
 %endif
 
 %ifarch %{arm}
-%define all_arch_configs %{name}-%{version}-arm*.config
+%define all_arch_configs %{package_name}-%{version}-arm*.config
 %define skip_nonpae_vdso 1
 %define asmarch arm
 %define hdrarch arm
@@ -477,7 +477,7 @@ Summary: The Linux kernel
 %endif
 
 %ifarch aarch64
-%define all_arch_configs %{name}-%{version}-aarch64*.config
+%define all_arch_configs %{package_name}-%{version}-aarch64*.config
 %define asmarch arm64
 %define hdrarch arm64
 %define make_target Image.gz
@@ -772,17 +772,17 @@ Source21: mod-sign.sh
 %if 0%{?include_rhel}
 Source23: x509.genkey.rhel
 
-Source24: %{name}-aarch64-rhel.config
-Source25: %{name}-aarch64-debug-rhel.config
+Source24: %{package_name}-aarch64-rhel.config
+Source25: %{package_name}-aarch64-debug-rhel.config
 Source26: mod-extra.list.rhel
 
-Source27: %{name}-ppc64le-rhel.config
-Source28: %{name}-ppc64le-debug-rhel.config
-Source29: %{name}-s390x-rhel.config
-Source30: %{name}-s390x-debug-rhel.config
-Source31: %{name}-s390x-zfcpdump-rhel.config
-Source32: %{name}-x86_64-rhel.config
-Source33: %{name}-x86_64-debug-rhel.config
+Source27: %{package_name}-ppc64le-rhel.config
+Source28: %{package_name}-ppc64le-debug-rhel.config
+Source29: %{package_name}-s390x-rhel.config
+Source30: %{package_name}-s390x-debug-rhel.config
+Source31: %{package_name}-s390x-zfcpdump-rhel.config
+Source32: %{package_name}-x86_64-rhel.config
+Source33: %{package_name}-x86_64-debug-rhel.config
 
 Source34: filter-x86_64.sh.rhel
 Source35: filter-armv7hl.sh.rhel
@@ -798,18 +798,18 @@ Source41: x509.genkey.centos
 Source50: x509.genkey.fedora
 Source51: mod-extra.list.fedora
 
-Source52: %{name}-aarch64-fedora.config
-Source53: %{name}-aarch64-debug-fedora.config
-Source54: %{name}-armv7hl-fedora.config
-Source55: %{name}-armv7hl-debug-fedora.config
-Source56: %{name}-armv7hl-lpae-fedora.config
-Source57: %{name}-armv7hl-lpae-debug-fedora.config
-Source60: %{name}-ppc64le-fedora.config
-Source61: %{name}-ppc64le-debug-fedora.config
-Source62: %{name}-s390x-fedora.config
-Source63: %{name}-s390x-debug-fedora.config
-Source64: %{name}-x86_64-fedora.config
-Source65: %{name}-x86_64-debug-fedora.config
+Source52: %{package_name}-aarch64-fedora.config
+Source53: %{package_name}-aarch64-debug-fedora.config
+Source54: %{package_name}-armv7hl-fedora.config
+Source55: %{package_name}-armv7hl-debug-fedora.config
+Source56: %{package_name}-armv7hl-lpae-fedora.config
+Source57: %{package_name}-armv7hl-lpae-debug-fedora.config
+Source60: %{package_name}-ppc64le-fedora.config
+Source61: %{package_name}-ppc64le-debug-fedora.config
+Source62: %{package_name}-s390x-fedora.config
+Source63: %{package_name}-s390x-debug-fedora.config
+Source64: %{package_name}-x86_64-fedora.config
+Source65: %{package_name}-x86_64-debug-fedora.config
 
 Source67: filter-x86_64.sh.fedora
 Source68: filter-armv7hl.sh.fedora
@@ -1512,13 +1512,13 @@ mkdir configs
 cd configs
 
 # Drop some necessary files from the source dir into the buildroot
-cp $RPM_SOURCE_DIR/%{name}-*.config .
+cp $RPM_SOURCE_DIR/kernel-*.config .
 cp %{SOURCE80} .
 # merge.pl
 cp %{SOURCE3000} .
 # kernel-local
 cp %{SOURCE3001} .
-FLAVOR=%{primary_target} SPECPACKAGE_NAME=%{name} SPECVERSION=%{version} ./generate_all_configs.sh %{debugbuildsenabled}
+FLAVOR=%{primary_target} SPECVERSION=%{version} ./generate_all_configs.sh %{debugbuildsenabled}
 
 # Merge in any user-provided local config option changes
 %ifnarch %nobuildarches
@@ -1576,7 +1576,7 @@ for opt in %{clang_make_opts}; do
   OPTS="$OPTS -m $opt"
 done
 %endif
-RHJOBS=$RPM_BUILD_NCPUS SPECPACKAGE_NAME=${name} ./process_configs.sh $OPTS ${specversion}
+RHJOBS=$RPM_BUILD_NCPUS SPECPACKAGE_NAME=kernel ./process_configs.sh $OPTS ${specversion}
 
 cp %{SOURCE82} .
 RPM_SOURCE_DIR=$RPM_SOURCE_DIR ./update_scripts.sh %{primary_target}
@@ -1638,7 +1638,7 @@ InitBuildVars() {
     Variant=$1
 
     # Pick the right kernel config file
-    Config=%{name}-%{version}-%{_target_cpu}${Variant:+-${Variant}}.config
+    Config=kernel-%{version}-%{_target_cpu}${Variant:+-${Variant}}.config
     DevelDir=/usr/src/kernels/%{KVERREL}${Variant:++${Variant}}
 
     KernelVer=%{version}-%{release}.%{_target_cpu}${Variant:++${Variant}}
@@ -2474,8 +2474,7 @@ find Documentation -type d | xargs chmod u+w
     fi \
   fi \
   if [ "%{zipmodules}" -eq "1" ]; then \
-    echo "Compressing kernel modules ..." \
-    find $RPM_BUILD_ROOT/lib/modules/ -type f -name '*.ko' | xargs -n 16 -P${RPM_BUILD_NCPUS} -r xz; \
+    find $RPM_BUILD_ROOT/lib/modules/ -type f -name '*.ko' | xargs -P${RPM_BUILD_NCPUS} -r xz; \
   fi \
 %{nil}
 
